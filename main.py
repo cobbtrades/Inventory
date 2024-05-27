@@ -30,12 +30,13 @@ def load_data(file_paths):
         'KH3': 'Super Black', 'NAW': 'Coulis Red', 'NBL': 'Scarlet Ember', 'NBQ': 'Rosewood',
         'NBY': 'Cardinal Red', 'QAB': 'Pearl White', 'QAC': 'Aspen White', 'QAK': 'Glacier White',
         'QM1': 'Fresh Powder', 'RAY': 'Deep Blue Pearl', 'RBD': 'Storm Blue', 'RBY': 'Caspian Blue',
-        'RCJ': 'Deep Ocean Blue', 'XAB': 'White/Black Roof', 'XAH': 'Orange/Black Roof', 'XBJ': 'White/Black Roof',
-        'XDU': 'Red/Black Roof', 'XEU': 'Blue/Black Roof', 'XEW': 'Champ/Black Roof', 'XEX': 'Gray/Black Roof',
-        'XFN': 'Green/Black Roof', 'XGY': 'Blue/Black Roof', 'XKV': 'Tan/Black Roof', 'XEV': 'Orange/Black Roof',
-        'DAP': 'Northern Lights', 'GAT': 'Black Diamond', 'XGA': 'White/Black Roof', 'XGB': 'Silver/Black Roof',
-        'XGD': 'Red/Black Roof', 'XGH': 'Gray/Black Roof', 'XGJ': 'Copper/Black Roof', 'XGU': 'Blue/Black Roof',
-        'NCA': 'Burgundy', 'QBE': 'Everest White', 'KBZ': 'Atlantic Gray'
+        'RCJ': 'Deep Ocean Blue', 'XAB': 'White/Black', 'XAH': 'Orange/Black', 'XBJ': 'White/Black',
+        'XDU': 'Red/Black', 'XEU': 'Blue/Black', 'XEW': 'Champ/Black', 'XEX': 'Gray/Black',
+        'XFN': 'Green/Black', 'XGY': 'Blue/Black', 'XKV': 'Tan/Black', 'XEV': 'Orange/Black',
+        'DAP': 'Northern Lights', 'GAT': 'Black Diamond', 'XGA': 'White/Black', 'XGB': 'Silver/Black',
+        'XGD': 'Red/Black', 'XGH': 'Gray/Black', 'XGJ': 'Copper/Black', 'XGU': 'Blue/Black',
+        'NCA': 'Burgundy', 'QBE': 'Everest White', 'KBZ': 'Atlantic Gray', 'XKY': 'Atlantic/Black Roof',
+        'XKJ': 'Everest/Black'
     }
     data_frames = []
     
