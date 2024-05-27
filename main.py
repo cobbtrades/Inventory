@@ -31,12 +31,9 @@ def load_data(file_paths):
                 df = dfs[0]
                 # Ensure we only process the expected columns
                 df = df[[col for col in expected_columns if col in df.columns]]
-                # Rename columns
                 df.rename(columns=new_column_names, inplace=True)
-                # Process MDLYR column
                 if 'MDLYR' in df.columns:
                     df['MDLYR'] = df['MDLYR'].apply(lambda x: str(x).strip()[:-1])
-                # Remove commas from MCODE column
                 if 'MCODE' in df.columns:
                     df['MCODE'] = df['MCODE'].astype(str).str.replace(',', '')
                 data_frames.append((df, file))
@@ -62,13 +59,13 @@ st.write(
         padding-left: 2rem;
         padding-right: 2rem;
     }
-    .retailed-row {
-        color: red;
-    }
     </style>
     """,
     unsafe_allow_html=True
 )
+
+# Create tabs
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["Concord", "Winston", "Lake", "Hickory", "All Stores"])
 
 # Function to save edited data back to GitHub
 def save_to_github(file_path, data_frame, token):
@@ -99,25 +96,14 @@ def save_to_github(file_path, data_frame, token):
     else:
         st.error(f"Failed to update {file_path} on GitHub: {update_response.text}")
 
-# Function to style rows
-def style_rows(df):
-    def highlight_retailed(s):
-        return ['color: red' if v == 'RETAILED' else '' for v in s]
-
-    return df.style.apply(highlight_retailed, subset=['LOC'])
-
-# Create tabs
-tab1, tab2, tab3, tab4, tab5 = st.tabs(["Concord", "Winston", "Lake", "Hickory", "All Stores"])
-
 # Function to display data for each store
 def display_store_data(tab, df, file_path, store_name):
     with tab:
         st.write(f"### {store_name} Inventory")
-        styled_df = style_rows(df)
-        st.write(styled_df.to_html(), unsafe_allow_html=True)
+        edited_df = st.data_editor(df, height=780)
         token = os.getenv('GITHUB_TOKEN')
-        if token:
-            save_to_github(file_path, df, token)
+        if token and not edited_df.equals(df):
+            save_to_github(file_path, edited_df, token)
 
 # Display individual store data
 store_names = ["Concord", "Winston", "Lake", "Hickory"]
@@ -130,7 +116,6 @@ if data_frames:
 if not combined_data.empty:
     with tab5:
         st.write("### Group Inventory")
-        styled_combined_data = style_rows(combined_data)
-        st.write(styled_combined_data.to_html(), unsafe_allow_html=True)
+        st.data_editor(combined_data, use_container_width=True, height=780)
 else:
     st.error("No data to display.")
