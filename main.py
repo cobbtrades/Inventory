@@ -14,18 +14,24 @@ file_paths = [
 def load_data(file_paths):
     data_frames = []
     for file in file_paths:
-        if os.path.exists(file):
-            df = pd.read_excel(file)
-            data_frames.append(df)
-        else:
-            st.error(f"File {file} not found in the repository.")
+        try:
+            if os.path.exists(file):
+                df = pd.read_excel(file)
+                data_frames.append(df)
+            else:
+                st.error(f"File {file} not found in the repository.")
+        except Exception as e:
+            st.error(f"Error loading {file}: {e}")
     return data_frames
 
 # Load the data
 data_frames = load_data(file_paths)
 
-# Combine all data into one DataFrame
-combined_data = pd.concat(data_frames) if data_frames else None
+# Combine all data into one DataFrame if data is available
+if data_frames:
+    combined_data = pd.concat(data_frames)
+else:
+    combined_data = pd.DataFrame()
 
 # Create tabs
 tab1, tab2, tab3, tab4, tab5 = st.tabs(["Store 1", "Store 2", "Store 3", "Store 4", "All Stores"])
@@ -47,11 +53,9 @@ if data_frames:
         st.write("### Store 4 Inventory")
         st.dataframe(data_frames[3])
 
-    if combined_data is not None:
-        with tab5:
-            st.write("### Combined Inventory")
-            st.dataframe(combined_data)
-    else:
-        st.error("No data to display.")
+if not combined_data.empty:
+    with tab5:
+        st.write("### Combined Inventory")
+        st.dataframe(combined_data)
 else:
-    st.error("No data loaded. Please check the file paths and try again.")
+    st.error("No data to display.")
