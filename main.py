@@ -85,9 +85,6 @@ def save_to_github(file_path, data_frame, token):
     else:
         st.error(f"Failed to update {file_path} on GitHub: {update_response.text}")
 
-# Read GitHub token from Streamlit secrets
-github_token = st.secrets["GIT_TOKEN"]
-
 # Display individual store data
 if data_frames:
     for i, (df, file_path) in enumerate(data_frames):
@@ -97,10 +94,9 @@ if data_frames:
             edited_df = st.experimental_data_editor(df)
             save_button = st.button("Save Changes", key=f"save_{i}")
             if save_button:
-                if github_token:
-                    save_to_github(file_path, edited_df, github_token)
-                else:
-                    st.error("GitHub token not found in secrets.")
+                token = st.text_input("Enter your GitHub token", type="password", key=f"token_{i}")
+                if token:
+                    save_to_github(file_path, edited_df, token)
 
 # Display combined data for all stores
 if not combined_data.empty:
