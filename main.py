@@ -101,11 +101,10 @@ def save_to_github(file_path, data_frame, token):
 
 # Function to style rows
 def style_rows(df):
-    def row_style(row):
-        return ['retailed-row' if row['LOC'] == 'RETAILED' else '' for _ in row]
+    def highlight_retailed(s):
+        return ['color: red' if v == 'RETAILED' else '' for v in s]
 
-    styled_df = df.style.apply(row_style, axis=1)
-    return styled_df
+    return df.style.apply(highlight_retailed, subset=['LOC'])
 
 # Create tabs
 tab1, tab2, tab3, tab4, tab5 = st.tabs(["Concord", "Winston", "Lake", "Hickory", "All Stores"])
@@ -115,7 +114,7 @@ def display_store_data(tab, df, file_path, store_name):
     with tab:
         st.write(f"### {store_name} Inventory")
         styled_df = style_rows(df)
-        st.dataframe(styled_df, height=780)
+        st.write(styled_df.to_html(), unsafe_allow_html=True)
         token = os.getenv('GITHUB_TOKEN')
         if token:
             save_to_github(file_path, df, token)
@@ -132,6 +131,6 @@ if not combined_data.empty:
     with tab5:
         st.write("### Group Inventory")
         styled_combined_data = style_rows(combined_data)
-        st.dataframe(styled_combined_data, use_container_width=True, height=780)
+        st.write(styled_combined_data.to_html(), unsafe_allow_html=True)
 else:
     st.error("No data to display.")
