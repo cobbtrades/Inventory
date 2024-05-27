@@ -19,9 +19,12 @@ def load_data(file_paths):
     data_frames = []
     for file in file_paths:
         if os.path.exists(file):
-            df = pd.read_html(file)[0]  # Read the first table from the HTML file
-            df = pd.read_excel(file) if file.endswith('.xls') else df  # If the file is actually an Excel file, read it as Excel
-            data_frames.append((df, file))
+            # Read the file as an Excel file
+            try:
+                df = pd.read_excel(file)
+                data_frames.append((df, file))
+            except Exception as e:
+                st.error(f"Failed to read {file}: {e}")
         else:
             st.error(f"File {file} not found in the repository.")
     return data_frames
