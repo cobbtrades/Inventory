@@ -2,6 +2,7 @@ import pandas as pd
 import streamlit as st
 import os
 import requests
+import base64
 
 # Set page configuration
 st.set_page_config(layout="wide")
@@ -9,17 +10,28 @@ st.set_page_config(layout="wide")
 # Define file paths
 file_paths = ['files/Concord', 'files/Winston', 'files/Lake', 'files/Hickory']
 
-# Function to rename .xls files to .html and load data
+# Function to load data and handle columns dynamically
 def load_data(file_paths):
-    new_column_names = {'LOC_DESC':'LOC','DLRORD':'ORDER','TRM_LVL':'TRIM','DRV_TRN':'DRIVE','DLRETA':'ETA','ORD_CUST_NAME':'CUST_NAME','ORD_CUST_EMAIL_ADDR':'CUST_EMAIL','ORD_CUST_DATE':'ORD_DATE','DLR_DLV_DT':'DLV_DATE'}
+    expected_columns = [
+        'LOC_DESC', 'DLRORD', 'MDL', 'MDLYR', 'MCODE', 'VIN', 'OPTS', 'GOPTS',
+        'EXT', 'INT', 'DEALER_NAME', 'TRM_LVL', 'DRV_TRN', 'DLR_DLV_DT',
+        'DLRETA', 'ORD_CUST_NAME', 'ORD_CUST_EMAIL_ADDR', 'ORD_CUST_DATE'
+    ]
+    new_column_names = {
+        'LOC_DESC': 'LOC', 'DLRORD': 'ORDER', 'TRM_LVL': 'TRIM', 'DRV_TRN': 'DRIVE',
+        'DLRETA': 'ETA', 'ORD_CUST_NAME': 'CUST_NAME', 'ORD_CUST_EMAIL_ADDR': 'CUST_EMAIL',
+        'ORD_CUST_DATE': 'ORD_DATE', 'DLR_DLV_DT': 'DLV_DATE'
+    }
     data_frames = []
+    
     for file in file_paths:
         if os.path.exists(file):
             dfs = pd.read_html(file)
-            df = dfs[0] if dfs else None
-            df = df[['LOC_DESC','DLRORD','MDL','MDLYR','MCODE','VIN','OPTS','GOPTS','EXT','INT','DEALER_NAME','TRM_LVL','DRV_TRN','DLR_DLV_DT','DLRETA','ORD_CUST_NAME','ORD_CUST_EMAIL_ADDR','ORD_CUST_DATE']]
-            df.rename(columns=new_column_names, inplace=True)
-            if df is not None:
+            if dfs:
+                df = dfs[0]
+                # Ensure we only process the expected columns
+                df = df[[col for col in expected_columns if col in df.columns]]
+                df.rename(columns=new_column_names, inplace=True)
                 data_frames.append((df, file))
         else:
             st.error(f"File {file} not found in the repository.")
@@ -40,6 +52,8 @@ st.write(
     <style>
     .main .block-container {
         padding-top: 1rem;
+        padding-left: 2rem;
+        padding-right: 2rem;
     }
     </style>
     """,
@@ -51,7 +65,7 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs(["Concord", "Winston", "Lake", "Hickory",
 
 # Function to save edited data back to GitHub
 def save_to_github(file_path, data_frame, token):
-    html_data = data_frame.to_html(index=False)
+    html_data = base64.b64encode(data_frame.to_html(index=False).encode('utf-8')).decode('utf-8')
     headers = {
         "Authorization": f"token {token}",
         "Content-Type": "application/json"
@@ -67,7 +81,7 @@ def save_to_github(file_path, data_frame, token):
     # Prepare the payload
     payload = {
         "message": "Update data",
-        "content": html_data.encode("utf-8").decode("utf-8"),
+        "content": html_data,
         "sha": sha
     }
     
@@ -78,16 +92,21 @@ def save_to_github(file_path, data_frame, token):
     else:
         st.error(f"Failed to update {file_path} on GitHub: {update_response.text}")
 
+# Function to display data for each store
+def display_store_data(tab, df, file_path, store_name):
+    with tab:
+        st.write(f"### {store_name} Inventory")
+        edited_df = st.data_editor(df, height=780)
+        token = os.getenv('GITHUB_TOKEN')
+        if token and not edited_df.equals(df):
+            save_to_github(file_path, edited_df, token)
+
 # Display individual store data
+store_names = ["Concord", "Winston", "Lake", "Hickory"]
+tabs = [tab1, tab2, tab3, tab4]
 if data_frames:
     for i, (df, file_path) in enumerate(data_frames):
-        tab = [tab1, tab2, tab3, tab4][i]
-        with tab:
-            st.write(f"### {['Concord', 'Winston', 'Lake', 'Hickory'][i]} Inventory")
-            edited_df = st.data_editor(df, height=780)
-            token = os.getenv('GITHUB_TOKEN')
-            if token and not edited_df.equals(df):
-                save_to_github(file_path, edited_df, token)
+        display_store_data(tabs[i], df, file_path, store_names[i])
 
 # Display combined data for all stores
 if not combined_data.empty:
