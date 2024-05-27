@@ -15,7 +15,7 @@ def load_data(file_paths):
     data_frames = []
     for file in file_paths:
         if os.path.exists(file):
-            df = pd.read_excel(file)
+            df = pd.read_csv(file)
             data_frames.append(df)
         else:
             st.error(f"File {file} not found in the repository.")
