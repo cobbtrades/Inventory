@@ -38,15 +38,17 @@ if data_frames:
 else:
     combined_data = pd.DataFrame()
 
-# Custom CSS for padding and container width
+# Custom CSS for padding, container width, and table height
 st.write(
     """
     <style>
     .main .block-container {
         padding-top: 1rem;
     }
-    .dataframe { width: 100% !important; }
-    .element-container { width: 100% !important; }
+    .dataframe-container {
+        height: 780px;
+        overflow-y: auto;
+    }
     </style>
     """,
     unsafe_allow_html=True
@@ -102,6 +104,9 @@ if data_frames:
 if not combined_data.empty:
     with tab5:
         st.write("### Group Inventory")
-        st.dataframe(combined_data, use_container_width=True, height=780)
+        st.markdown(
+            combined_data.to_html(index=False, classes="dataframe-container"),
+            unsafe_allow_html=True
+        )
 else:
     st.error("No data to display.")
