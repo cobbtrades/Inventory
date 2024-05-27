@@ -92,6 +92,6 @@ if data_frames:
 if not combined_data.empty:
     with tab5:
         st.write("### Group Inventory")
-        st.data_editor(combined_data, use_container_width=True, height=700)
+        st.data_editor(combined_data, use_container_width=True, height=780)
 else:
     st.error("No data to display.")
