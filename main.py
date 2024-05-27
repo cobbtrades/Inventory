@@ -5,9 +5,9 @@ import os
 # Define the file paths
 file_paths = [
     'VinpipeReport.xls',
-    'VinpipeReport.xls (1)',
-    'VinpipeReport.xls (2)',
-    'VinpipeReport.xls (3)'
+    'VinpipeReport (1).xls',
+    'VinpipeReport (2).xls',
+    'VinpipeReport (3).xls'
 ]
 
 # Function to load data from files
