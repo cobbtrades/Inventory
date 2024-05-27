@@ -16,7 +16,13 @@ def load_data(file_paths):
     for file in file_paths:
         try:
             if os.path.exists(file):
-                df = pd.read_excel(file)
+                if file.endswith('.xls'):
+                    df = pd.read_excel(file, engine='xlrd')
+                elif file.endswith('.xlsx'):
+                    df = pd.read_excel(file, engine='openpyxl')
+                else:
+                    st.error(f"Unsupported file format: {file}")
+                    continue
                 data_frames.append(df)
             else:
                 st.error(f"File {file} not found in the repository.")
