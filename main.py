@@ -18,7 +18,7 @@ def rename_and_load_data(file_paths):
             df = dfs[0] if dfs else None
             df = df[['LOC_DESC','DLRORD','MDL','MDLYR','MCODE','VIN','OPTS','GOPTS','EXT','INT','DEALER_NAME','TRM_LVL','DRV_TRN','DLRETA','ORD_CUST_NAME','ORD_CUST_EMAIL_ADDR','ORD_CUST_DATE','DLR_DLV_DT']]
             if df is not None:
-                data_frames.append((df, new_file))
+                data_frames.append((df, file))
         else:
             st.error(f"File {file} not found in the repository.")
     return data_frames
