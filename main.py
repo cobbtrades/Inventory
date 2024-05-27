@@ -14,9 +14,7 @@ def rename_and_load_data(file_paths):
     data_frames = []
     for file in file_paths:
         if os.path.exists(file):
-            new_file = file.replace('.xls', '.html')
-            os.rename(file, new_file)
-            dfs = pd.read_html(new_file)
+            dfs = pd.read_html(file)
             df = dfs[0] if dfs else None
             df = df[['LOC_DESC','DLRORD','MDL','MDLYR','MCODE','VIN','OPTS','GOPTS','EXT','INT','DEALER_NAME','TRM_LVL','DRV_TRN','DLRETA','ORD_CUST_NAME','ORD_CUST_EMAIL_ADDR','ORD_CUST_DATE','DLR_DLV_DT']]
             if df is not None:
