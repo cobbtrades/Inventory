@@ -10,13 +10,15 @@ st.set_page_config(layout="wide")
 file_paths = ['files/Concord', 'files/Winston', 'files/Lake', 'files/Hickory']
 
 # Function to rename .xls files to .html and load data
-def rename_and_load_data(file_paths):
+def load_data(file_paths):
+    new_column_names = {'LOC_DESC':'LOC','DLRORD':'ORDER','TRM_LVL':'TRIM','DRV_TRN':'DRIVE','DLRETA':'ETA','ORD_CUST_NAME':'CUST_NAME','ORD_CUST_EMAIL_ADDR':'CUST_EMAIL','ORD_CUST_DATE':'ORD_DATE','DLR_DLV_DT':'DLV_DATE'}
     data_frames = []
     for file in file_paths:
         if os.path.exists(file):
             dfs = pd.read_html(file)
             df = dfs[0] if dfs else None
-            df = df[['LOC_DESC','DLRORD','MDL','MDLYR','MCODE','VIN','OPTS','GOPTS','EXT','INT','DEALER_NAME','TRM_LVL','DRV_TRN','DLRETA','ORD_CUST_NAME','ORD_CUST_EMAIL_ADDR','ORD_CUST_DATE','DLR_DLV_DT']]
+            df = df[['LOC_DESC','DLRORD','MDL','MDLYR','MCODE','VIN','OPTS','GOPTS','EXT','INT','DEALER_NAME','TRM_LVL','DRV_TRN','DLR_DLV_DT','DLRETA','ORD_CUST_NAME','ORD_CUST_EMAIL_ADDR','ORD_CUST_DATE']]
+            df.rename(columns=new_column_names, inplace=True
             if df is not None:
                 data_frames.append((df, file))
         else:
@@ -24,7 +26,7 @@ def rename_and_load_data(file_paths):
     return data_frames
 
 # Load data
-data_frames = rename_and_load_data(file_paths)
+data_frames = load_data(file_paths)
 
 # Combine data
 if data_frames:
