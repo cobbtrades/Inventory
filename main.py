@@ -22,7 +22,7 @@ def load_data(file_paths):
         'DLRETA': 'ETA', 'ORD_CUST_NAME': 'CUST_NAME', 'ORD_CUST_EMAIL_ADDR': 'CUST_EMAIL',
         'ORD_CUST_DATE': 'ORD_DATE', 'DLR_DLV_DT': 'DLV_DATE'
     }
-    mdl_mapping = {
+    ext_mapping = {
         'A20': 'Red Alert', 'B51': 'Electric Blue', 'BW5': 'Hermosa Blue', 'CAS': 'Mocha Almond',
         'DAN': 'Obsidian Green', 'DAQ': 'Tactical Green', 'EBB': 'Monarch Orange', 'EBL': 'Sunset Drift',
         'G41': 'Magnetic Black', 'GAQ': 'Gray/Black Roof', 'HAL': 'Baja Storm', 'K23': 'Brilliant Silver',
@@ -52,7 +52,7 @@ def load_data(file_paths):
                 if 'MCODE' in df.columns:
                     df['MCODE'] = df['MCODE'].astype(str).str.replace(',', '')
                 if 'MDL' in df.columns:
-                    df['MDL'] = df['MDL'].replace(mdl_mapping)
+                    df['EXT'] = df['EXT'].replace(ext_mapping)
                 df.sort_values(by='MDL', inplace=True)
                 data_frames.append((df, file))
         else:
