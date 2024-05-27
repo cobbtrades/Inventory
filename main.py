@@ -16,20 +16,32 @@ file_paths = [
     'VinpipeReport (3).xls'
 ]
 
-# Function to load data from HTML files
+# Function to load data from files
 def load_data(file_paths):
     data_frames = []
     for file in file_paths:
         try:
             if os.path.exists(file):
-                # Read HTML content as a DataFrame
+                # Check if the file contains HTML content
                 with open(file, 'r', encoding='utf-8') as f:
                     content = f.read()
-                    dfs = pd.read_html(content)
-                    # Assuming the first table in the HTML is the relevant data
-                    df = dfs[0] if dfs else None
-                    if df is not None:
-                        data_frames.append(df)
+                    if '<html' in content.lower() or '<!doctype' in content.lower():
+                        # Read HTML content as a DataFrame
+                        dfs = pd.read_html(content)
+                        # Assuming the first table in the HTML is the relevant data
+                        df = dfs[0] if dfs else None
+                    else:
+                        # Fallback to read_excel for actual Excel files
+                        if file.endswith('.xls'):
+                            df = pd.read_excel(file, engine='xlrd')
+                        elif file.endswith('.xlsx'):
+                            df = pd.read_excel(file, engine='openpyxl')
+                        else:
+                            st.error(f"Unsupported file format: {file}")
+                            continue
+                
+                if df is not None:
+                    data_frames.append(df)
             else:
                 st.error(f"File {file} not found in the repository.")
         except Exception as e:
@@ -44,9 +56,12 @@ def save_data_to_github(data_frames, file_paths):
 
     for df, file_path in zip(data_frames, file_paths):
         try:
-            # Convert DataFrame to HTML and get binary content
-            html_content = df.to_html(index=False)
-            encoded_content = base64.b64encode(html_content.encode()).decode()
+            # Convert DataFrame to Excel and get binary content
+            with pd.ExcelWriter(file_path, engine='xlsxwriter') as writer:
+                df.to_excel(writer, index=False)
+            with open(file_path, 'rb') as f:
+                content = f.read()
+            encoded_content = base64.b64encode(content).decode()
 
             # Get the file from the repo
             contents = repo.get_contents(file_path)
@@ -115,3 +130,4 @@ if not combined_data.empty:
 if st.button("Save Changes"):
     save_data_to_github(data_frames, file_paths)
     st.success("Changes saved to GitHub.")
+
