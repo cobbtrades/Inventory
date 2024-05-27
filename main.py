@@ -14,23 +14,23 @@ file_paths = [
     'files/VinpipeReport (3).xls'
 ]
 
-# Function to load data from Excel files
-def load_data(file_paths):
+# Function to rename .xls files to .html and load data
+def rename_and_load_data(file_paths):
     data_frames = []
     for file in file_paths:
         if os.path.exists(file):
-            # Read the file as an Excel file
-            try:
-                df = pd.read_excel(file)
-                data_frames.append((df, file))
-            except Exception as e:
-                st.error(f"Failed to read {file}: {e}")
+            new_file = file.replace('.xls', '.html')
+            os.rename(file, new_file)
+            dfs = pd.read_html(new_file)
+            df = dfs[0] if dfs else None
+            if df is not None:
+                data_frames.append((df, new_file))
         else:
             st.error(f"File {file} not found in the repository.")
     return data_frames
 
 # Load data
-data_frames = load_data(file_paths)
+data_frames = rename_and_load_data(file_paths)
 
 # Combine data
 if data_frames:
@@ -57,10 +57,10 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs(["Concord", "Winston", "Lake", "Hickory",
 
 # Function to save edited data back to GitHub
 def save_to_github(file_path, data_frame, token):
-    excel_data = data_frame.to_excel(index=False, engine='xlsxwriter')
+    html_data = data_frame.to_html(index=False)
     headers = {
         "Authorization": f"token {token}",
-        "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        "Content-Type": "application/json"
     }
     repo = "cobbtrades/Inventory"  # replace with your repository
     path = file_path
@@ -74,7 +74,7 @@ def save_to_github(file_path, data_frame, token):
     # Prepare the payload
     payload = {
         "message": "Update data",
-        "content": excel_data.encode("utf-8").decode("utf-8"),
+        "content": html_data.encode("utf-8").decode("utf-8"),
         "sha": sha
     }
     
