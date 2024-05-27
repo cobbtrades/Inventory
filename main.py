@@ -3,7 +3,12 @@ import streamlit as st
 import os
 
 st.set_page_config(layout="wide")
-file_paths = ['VinpipeReport.xls','VinpipeReport (1).xls','VinpipeReport (2).xls','VinpipeReport (3).xls']
+file_paths = [
+    'files/VinpipeReport.xls',
+    'files/VinpipeReport (1).xls',
+    'files/VinpipeReport (2).xls',
+    'files/VinpipeReport (3).xls'
+]
 def load_data(file_paths):
     data_frames = []
     for file in file_paths:
