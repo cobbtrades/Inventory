@@ -93,7 +93,7 @@ if data_frames:
         tab = [tab1, tab2, tab3, tab4][i]
         with tab:
             st.write(f"### {['Concord', 'Winston', 'Lake', 'Hickory'][i]} Inventory")
-            edited_df = st.data_editor(df)
+            edited_df = st.data_editor(df, height=None)
             save_button = st.button("Save Changes", key=f"save_{i}")
             if save_button:
                 token = st.text_input("Enter your GitHub token", type="password", key=f"token_{i}")
