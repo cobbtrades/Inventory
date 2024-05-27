@@ -99,7 +99,9 @@ if data_frames:
             if save_button:
                 token = st.text_input("Enter your GitHub token", type="password", key=f"token_{i}")
                 if token:
-                    save_to_github(file_path, edited_df, token)
+                    # Rename the file back to .xls for saving
+                    original_file_path = file_path.replace('.html', '.xls')
+                    save_to_github(original_file_path, edited_df, token)
 
 # Display combined data for all stores
 if not combined_data.empty:
