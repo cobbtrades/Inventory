@@ -38,16 +38,12 @@ if data_frames:
 else:
     combined_data = pd.DataFrame()
 
-# Custom CSS for padding, container width, and table height
+# Custom CSS for padding and container width
 st.write(
     """
     <style>
     .main .block-container {
         padding-top: 1rem;
-    }
-    .dataframe-container {
-        height: 780px;
-        overflow-y: auto;
     }
     </style>
     """,
@@ -93,7 +89,7 @@ if data_frames:
         tab = [tab1, tab2, tab3, tab4][i]
         with tab:
             st.write(f"### {['Concord', 'Winston', 'Lake', 'Hickory'][i]} Inventory")
-            edited_df = st.data_editor(df, height=None)
+            edited_df = st.data_editor(df, height=780)
             save_button = st.button("Save Changes", key=f"save_{i}")
             if save_button:
                 token = st.text_input("Enter your GitHub token", type="password", key=f"token_{i}")
@@ -104,9 +100,6 @@ if data_frames:
 if not combined_data.empty:
     with tab5:
         st.write("### Group Inventory")
-        st.markdown(
-            combined_data.to_html(index=False, classes="dataframe-container"),
-            unsafe_allow_html=True
-        )
+        st.data_editor(combined_data, use_container_width=True, height=780)
 else:
     st.error("No data to display.")
