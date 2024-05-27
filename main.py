@@ -2,23 +2,35 @@ import pandas as pd
 import streamlit as st
 import os
 import requests
+import base64
 
+# Set page configuration
 st.set_page_config(layout="wide")
-file_paths = ['files/VinpipeReport.xls','files/VinpipeReport (1).xls','files/VinpipeReport (2).xls','files/VinpipeReport (3).xls']
-def rename_and_load_data(file_paths):
+
+# Define file paths
+file_paths = [
+    'files/VinpipeReport.xls',
+    'files/VinpipeReport (1).xls',
+    'files/VinpipeReport (2).xls',
+    'files/VinpipeReport (3).xls'
+]
+
+# Function to load data directly from .xls files
+def load_data(file_paths):
     data_frames = []
     for file in file_paths:
         if os.path.exists(file):
-            new_file = file.replace('.xls', '.html')
-            os.rename(file, new_file)
-            dfs = pd.read_html(new_file)
-            df = dfs[0] if dfs else None
+            df = pd.read_html(file, flavor='html5lib')[0]
             if df is not None:
-                data_frames.append((df, new_file))
+                data_frames.append((df, file))
         else:
             st.error(f"File {file} not found in the repository.")
     return data_frames
-data_frames = rename_and_load_data(file_paths)
+
+# Load data
+data_frames = load_data(file_paths)
+
+# Combine data
 if data_frames:
     combined_data = pd.concat([df[0] for df in data_frames], ignore_index=True)
 else:
@@ -31,7 +43,7 @@ st.write(
     .main .block-container {
         padding-top: 1rem;
     }
-    .dataframe { width: 100% !important; }
+    .dataframe { width: 100% !important; height: 780px !important; }
     .element-container { width: 100% !important; }
     </style>
     """,
@@ -44,6 +56,8 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs(["Concord", "Winston", "Lake", "Hickory",
 # Function to save edited data back to GitHub
 def save_to_github(file_path, data_frame, token):
     html_data = data_frame.to_html(index=False)
+    html_content = base64.b64encode(html_data.encode('utf-8')).decode('utf-8')
+    
     headers = {
         "Authorization": f"token {token}",
         "Content-Type": "application/json"
@@ -60,7 +74,7 @@ def save_to_github(file_path, data_frame, token):
     # Prepare the payload
     payload = {
         "message": "Update data",
-        "content": html_data.encode("utf-8").decode("utf-8"),
+        "content": html_content,
         "sha": sha
     }
     
@@ -88,6 +102,6 @@ if data_frames:
 if not combined_data.empty:
     with tab5:
         st.write("### Group Inventory")
-        st.dataframe(combined_data, use_container_width=True, height=780)
+        st.dataframe(combined_data, use_container_width=True)
 else:
     st.error("No data to display.")
