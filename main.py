@@ -84,7 +84,7 @@ if data_frames:
         with tab:
             st.write(f"### {['Concord', 'Winston', 'Lake', 'Hickory'][i]} Inventory")
             edited_df = st.data_editor(df, height=780)
-            token = st.text_input("Enter your GitHub token", type="password", key=f"token_{i}")
+            token = os.getenv('GITHUB_TOKEN')
             if token and not edited_df.equals(df):
                 save_to_github(file_path, edited_df, token)
 
