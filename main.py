@@ -62,7 +62,7 @@ def save_to_github(file_path, data_frame, token):
         "Authorization": f"token {token}",
         "Content-Type": "application/json"
     }
-    repo = "your-username/your-repo"  # replace with your repository
+    repo = "cobbtrades/Inventory"  # replace with your repository
     path = file_path
     url = f"https://api.github.com/repos/{repo}/contents/{path}"
     
