@@ -1,6 +1,7 @@
 import pandas as pd
 import streamlit as st
 import os
+from bs4 import BeautifulSoup
 
 # Define the file paths
 file_paths = [
@@ -10,19 +11,30 @@ file_paths = [
     'VinpipeReport (3).xls'
 ]
 
+# Function to check if content is HTML
+def is_html(file_path):
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read(1024)
+    return '<html' in content.lower()
+
+# Function to load data from HTML file
+def load_html(file_path):
+    with open(file_path, 'r', encoding='utf-8') as f:
+        soup = BeautifulSoup(f, 'html.parser')
+    tables = soup.find_all('table')
+    df = pd.read_html(str(tables))[0]  # Assuming the first table is the desired one
+    return df
+
 # Function to load data from files
 def load_data(file_paths):
     data_frames = []
     for file in file_paths:
         try:
             if os.path.exists(file):
-                if file.endswith('.xls'):
-                    df = pd.read_excel(file, engine='xlrd')
-                elif file.endswith('.xlsx'):
-                    df = pd.read_excel(file, engine='openpyxl')
+                if is_html(file):
+                    df = load_html(file)
                 else:
-                    st.error(f"Unsupported file format: {file}")
-                    continue
+                    df = pd.read_excel(file)
                 data_frames.append(df)
             else:
                 st.error(f"File {file} not found in the repository.")
