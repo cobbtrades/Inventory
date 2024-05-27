@@ -84,11 +84,9 @@ if data_frames:
         with tab:
             st.write(f"### {['Concord', 'Winston', 'Lake', 'Hickory'][i]} Inventory")
             edited_df = st.data_editor(df, height=780)
-            save_button = st.button("Save Changes", key=f"save_{i}")
-            if save_button:
-                token = st.text_input("Enter your GitHub token", type="password", key=f"token_{i}")
-                if token:
-                    save_to_github(file_path, edited_df, token)
+            token = st.text_input("Enter your GitHub token", type="password", key=f"token_{i}")
+            if token and not edited_df.equals(df):
+                save_to_github(file_path, edited_df, token)
 
 # Display combined data for all stores
 if not combined_data.empty:
