@@ -55,7 +55,7 @@ else:
 tab1, tab2, tab3, tab4, tab5 = st.tabs(["Store 1", "Store 2", "Store 3", "Store 4", "All Stores"])
 
 # Define table display size
-table_width = 1000
+table_width = 1500
 table_height = 600
 
 if data_frames:
