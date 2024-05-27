@@ -71,23 +71,23 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs(["Concord", "Winston", "Lake", "Hickory",
 if data_frames:
     with tab1:
         st.write("### Store 1 Inventory")
-        st.dataframe(data_frames[0], use_container_width=True, height=600)
+        st.dataframe(data_frames[0], use_container_width=True, height=1000)
 
     with tab2:
         st.write("### Store 2 Inventory")
-        st.dataframe(data_frames[1], use_container_width=True, height=600)
+        st.dataframe(data_frames[1], use_container_width=True, height=1000)
 
     with tab3:
         st.write("### Store 3 Inventory")
-        st.dataframe(data_frames[2], use_container_width=True, height=600)
+        st.dataframe(data_frames[2], use_container_width=True, height=1000)
 
     with tab4:
         st.write("### Store 4 Inventory")
-        st.dataframe(data_frames[3], use_container_width=True, height=600)
+        st.dataframe(data_frames[3], use_container_width=True, height=1000)
 
 if not combined_data.empty:
     with tab5:
         st.write("### Combined Inventory")
-        st.dataframe(combined_data, use_container_width=True, height=600)
+        st.dataframe(combined_data, use_container_width=True, height=1000)
 else:
     st.error("No data to display.")
