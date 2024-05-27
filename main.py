@@ -7,12 +7,7 @@ import requests
 st.set_page_config(layout="wide")
 
 # Define file paths
-file_paths = [
-    'files/Concord',
-    'files/Winston',
-    'files/Lake',
-    'files/Hickory'
-]
+file_paths = ['files/Concord', 'files/Winston', 'files/Lake', 'files/Hickory']
 
 # Function to rename .xls files to .html and load data
 def rename_and_load_data(file_paths):
@@ -60,9 +55,8 @@ def save_to_github(file_path, data_frame, token):
         "Authorization": f"token {token}",
         "Content-Type": "application/json"
     }
-    repo = "cobbtrades/Inventory"  # replace with your repository
     path = file_path
-    url = f"https://api.github.com/repos/{repo}/contents/{path}"
+    url = f"https://api.github.com/repos/cobbtrades/Inventory/contents/{path}"
     
     # Get the SHA of the file to update
     response = requests.get(url, headers=headers)
@@ -100,6 +94,6 @@ if data_frames:
 if not combined_data.empty:
     with tab5:
         st.write("### Group Inventory")
-        st.data_editor(combined_data, use_container_width=True, height=780)
+        st.data_editor(combined_data, use_container_width=True, height=730)
 else:
     st.error("No data to display.")
