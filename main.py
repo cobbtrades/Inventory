@@ -62,7 +62,7 @@ st.write(
         padding-left: 2rem;
         padding-right: 2rem;
     }
-    .dataframe tbody tr.retailed-row {
+    .retailed-row {
         color: red;
     }
     </style>
@@ -101,16 +101,20 @@ def save_to_github(file_path, data_frame, token):
 
 # Function to style rows
 def style_rows(df):
-    styled_df = df.copy()
-    styled_df['row_color'] = styled_df['LOC'].apply(lambda x: 'retailed-row' if x == 'RETAILED' else '')
+    def row_style(row):
+        return ['retailed-row' if row['LOC'] == 'RETAILED' else '' for _ in row]
+
+    styled_df = df.style.apply(row_style, axis=1)
     return styled_df
+
+# Create tabs
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["Concord", "Winston", "Lake", "Hickory", "All Stores"])
 
 # Function to display data for each store
 def display_store_data(tab, df, file_path, store_name):
     with tab:
         st.write(f"### {store_name} Inventory")
         styled_df = style_rows(df)
-        styled_df.drop(columns=['row_color'], inplace=True)
         st.dataframe(styled_df, height=780)
         token = os.getenv('GITHUB_TOKEN')
         if token:
@@ -128,7 +132,6 @@ if not combined_data.empty:
     with tab5:
         st.write("### Group Inventory")
         styled_combined_data = style_rows(combined_data)
-        styled_combined_data.drop(columns=['row_color'], inplace=True)
         st.dataframe(styled_combined_data, use_container_width=True, height=780)
 else:
     st.error("No data to display.")
