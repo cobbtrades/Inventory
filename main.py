@@ -7,10 +7,10 @@ st.set_page_config(layout="wide")
 
 # Define the file paths
 file_paths = [
-    'VinpipeReport.html',
-    'VinpipeReport (1).html',
-    'VinpipeReport (2).html',
-    'VinpipeReport (3).html'
+    'VinpipeReport.xls',
+    'VinpipeReport (1).xls',
+    'VinpipeReport (2).xls',
+    'VinpipeReport (3).xls'
 ]
 
 # Function to load data from files
