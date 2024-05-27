@@ -54,26 +54,30 @@ else:
 # Create tabs
 tab1, tab2, tab3, tab4, tab5 = st.tabs(["Store 1", "Store 2", "Store 3", "Store 4", "All Stores"])
 
+# Define table display size
+table_width = 1000
+table_height = 600
+
 if data_frames:
     with tab1:
         st.write("### Store 1 Inventory")
-        st.dataframe(data_frames[0])
+        st.dataframe(data_frames[0], width=table_width, height=table_height)
 
     with tab2:
         st.write("### Store 2 Inventory")
-        st.dataframe(data_frames[1])
+        st.dataframe(data_frames[1], width=table_width, height=table_height)
 
     with tab3:
         st.write("### Store 3 Inventory")
-        st.dataframe(data_frames[2])
+        st.dataframe(data_frames[2], width=table_width, height=table_height)
 
     with tab4:
         st.write("### Store 4 Inventory")
-        st.dataframe(data_frames[3])
+        st.dataframe(data_frames[3], width=table_width, height=table_height)
 
 if not combined_data.empty:
     with tab5:
         st.write("### Combined Inventory")
-        st.dataframe(combined_data)
+        st.dataframe(combined_data, width=table_width, height=table_height)
 else:
     st.error("No data to display.")
