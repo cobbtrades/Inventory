@@ -4,10 +4,10 @@ import os
 
 # Define the file paths
 file_paths = [
-    'VinpipeReport',
-    'VinpipeReport (1)',
-    'VinpipeReport (2)',
-    'VinpipeReport (3)'
+    'VinpipeReport.xls',
+    'VinpipeReport.xls (1)',
+    'VinpipeReport.xls (2)',
+    'VinpipeReport.xls (3)'
 ]
 
 # Function to load data from files
