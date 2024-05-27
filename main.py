@@ -2,7 +2,6 @@ import pandas as pd
 import streamlit as st
 import os
 import requests
-import base64
 
 # Set page configuration
 st.set_page_config(layout="wide")
@@ -46,7 +45,7 @@ st.write(
     .main .block-container {
         padding-top: 1rem;
     }
-    .dataframe { width: 100% !important; height: 780px !important; }
+    .dataframe { width: 100% !important; }
     .element-container { width: 100% !important; }
     </style>
     """,
@@ -59,13 +58,11 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs(["Concord", "Winston", "Lake", "Hickory",
 # Function to save edited data back to GitHub
 def save_to_github(file_path, data_frame, token):
     html_data = data_frame.to_html(index=False)
-    html_content = base64.b64encode(html_data.encode('utf-8')).decode('utf-8')
-    
     headers = {
         "Authorization": f"token {token}",
         "Content-Type": "application/json"
     }
-    repo = "cobbtrades/Inventory"  # replace with your repository
+    repo = "your-username/your-repo"  # replace with your repository
     path = file_path
     url = f"https://api.github.com/repos/{repo}/contents/{path}"
     
@@ -77,7 +74,7 @@ def save_to_github(file_path, data_frame, token):
     # Prepare the payload
     payload = {
         "message": "Update data",
-        "content": html_content,
+        "content": html_data.encode("utf-8").decode("utf-8"),
         "sha": sha
     }
     
@@ -99,14 +96,12 @@ if data_frames:
             if save_button:
                 token = st.text_input("Enter your GitHub token", type="password", key=f"token_{i}")
                 if token:
-                    # Rename the file back to .xls for saving
-                    original_file_path = file_path.replace('.html', '.xls')
-                    save_to_github(original_file_path, edited_df, token)
+                    save_to_github(file_path, edited_df, token)
 
 # Display combined data for all stores
 if not combined_data.empty:
     with tab5:
         st.write("### Group Inventory")
-        st.dataframe(combined_data, use_container_width=True)
+        st.dataframe(combined_data, use_container_width=True, height=780)
 else:
     st.error("No data to display.")
