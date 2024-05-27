@@ -35,7 +35,7 @@ def load_data(file_paths):
         'XFN': 'Green/Black Roof', 'XGY': 'Blue/Black Roof', 'XKV': 'Tan/Black Roof', 'XEV': 'Orange/Black Roof',
         'DAP': 'Northern Lights', 'GAT': 'Black Diamond', 'XGA': 'White/Black Roof', 'XGB': 'Silver/Black Roof',
         'XGD': 'Red/Black Roof', 'XGH': 'Gray/Black Roof', 'XGJ': 'Copper/Black Roof', 'XGU': 'Blue/Black Roof',
-        'NCA': 'Burgundy', 'QBE': 'Everest White'
+        'NCA': 'Burgundy', 'QBE': 'Everest White', 'KBZ': 'Atlantic Gray'
     }
     data_frames = []
     
