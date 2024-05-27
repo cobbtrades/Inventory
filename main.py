@@ -15,20 +15,23 @@ file_paths = [
     'files/VinpipeReport (3).xls'
 ]
 
-# Function to load data directly from .xls files
-def load_data(file_paths):
+# Function to rename .xls files to .html and load data
+def rename_and_load_data(file_paths):
     data_frames = []
     for file in file_paths:
         if os.path.exists(file):
-            df = pd.read_html(file, flavor='html5lib')[0]
+            new_file = file.replace('.xls', '.html')
+            os.rename(file, new_file)
+            dfs = pd.read_html(new_file)
+            df = dfs[0] if dfs else None
             if df is not None:
-                data_frames.append((df, file))
+                data_frames.append((df, new_file))
         else:
             st.error(f"File {file} not found in the repository.")
     return data_frames
 
 # Load data
-data_frames = load_data(file_paths)
+data_frames = rename_and_load_data(file_paths)
 
 # Combine data
 if data_frames:
