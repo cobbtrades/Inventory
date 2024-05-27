@@ -55,6 +55,7 @@ def load_data(file_paths):
                 if 'MDL' in df.columns:
                     df['EXT'] = df['EXT'].replace(ext_mapping)
                 df.sort_values(by='MDL', inplace=True)
+                df.reset_index(drop=True, inplace=True)
                 data_frames.append((df, file))
         else:
             st.error(f"File {file} not found in the repository.")
@@ -66,6 +67,7 @@ data_frames = load_data(file_paths)
 # Combine data
 if data_frames:
     combined_data = pd.concat([df[0] for df in data_frames], ignore_index=True)
+    combined_data.reset_index(drop=True, inplace=True)
 else:
     combined_data = pd.DataFrame()
 
