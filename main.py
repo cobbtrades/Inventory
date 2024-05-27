@@ -36,6 +36,7 @@ def load_data(file_paths):
                     df['MDLYR'] = df['MDLYR'].apply(lambda x: str(x).strip()[:-1])
                 if 'MCODE' in df.columns:
                     df['MCODE'] = df['MCODE'].astype(str).str.replace(',', '')
+                df.sort_values(by='MDL', inplace=True)
                 data_frames.append((df, file))
         else:
             st.error(f"File {file} not found in the repository.")
