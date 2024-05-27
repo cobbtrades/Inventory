@@ -8,10 +8,10 @@ st.set_page_config(layout="wide")
 
 # Define file paths
 file_paths = [
-    'files/VinpipeReport.xls',
-    'files/VinpipeReport (1).xls',
-    'files/VinpipeReport (2).xls',
-    'files/VinpipeReport (3).xls'
+    'files/Concord',
+    'files/Winston',
+    'files/Lake',
+    'files/Hickory'
 ]
 
 # Function to rename .xls files to .html and load data
