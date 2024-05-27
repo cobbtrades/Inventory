@@ -18,7 +18,7 @@ def load_data(file_paths):
             dfs = pd.read_html(file)
             df = dfs[0] if dfs else None
             df = df[['LOC_DESC','DLRORD','MDL','MDLYR','MCODE','VIN','OPTS','GOPTS','EXT','INT','DEALER_NAME','TRM_LVL','DRV_TRN','DLR_DLV_DT','DLRETA','ORD_CUST_NAME','ORD_CUST_EMAIL_ADDR','ORD_CUST_DATE']]
-            df.rename(columns=new_column_names, inplace=True
+            df.rename(columns=new_column_names, inplace=True)
             if df is not None:
                 data_frames.append((df, file))
         else:
