@@ -32,6 +32,8 @@ def load_data(file_paths):
                 # Ensure we only process the expected columns
                 df = df[[col for col in expected_columns if col in df.columns]]
                 df.rename(columns=new_column_names, inplace=True)
+                if 'MDLYR' in df.columns:
+                    df['MDLYR'] = df['MDLYR'].apply(lambda x: str(x).strip()[:-1])
                 data_frames.append((df, file))
         else:
             st.error(f"File {file} not found in the repository.")
