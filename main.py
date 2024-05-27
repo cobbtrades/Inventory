@@ -2,6 +2,7 @@ import pandas as pd
 import streamlit as st
 import os
 
+# Set page configuration to wide mode
 st.set_page_config(layout="wide")
 
 # Define the file paths
@@ -53,33 +54,40 @@ if data_frames:
 else:
     combined_data = pd.DataFrame()
 
-# Create tabs
-tab1, tab2, tab3, tab4, tab5 = st.tabs(["Store 1", "Store 2", "Store 3", "Store 4", "All Stores"])
+# CSS to make the table full width
+st.write(
+    """
+    <style>
+    .dataframe { width: 100% !important; }
+    .element-container { width: 100% !important; }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
-# Define table display size
-table_width = 1500
-table_height = 600
+# Create tabs
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["Concord", "Winston", "Lake", "Hickory", "All Stores"])
 
 if data_frames:
     with tab1:
         st.write("### Store 1 Inventory")
-        st.dataframe(data_frames[0], width=table_width, height=table_height)
+        st.dataframe(data_frames[0], use_container_width=True, height=600)
 
     with tab2:
         st.write("### Store 2 Inventory")
-        st.dataframe(data_frames[1], width=table_width, height=table_height)
+        st.dataframe(data_frames[1], use_container_width=True, height=600)
 
     with tab3:
         st.write("### Store 3 Inventory")
-        st.dataframe(data_frames[2], width=table_width, height=table_height)
+        st.dataframe(data_frames[2], use_container_width=True, height=600)
 
     with tab4:
         st.write("### Store 4 Inventory")
-        st.dataframe(data_frames[3], width=table_width, height=table_height)
+        st.dataframe(data_frames[3], use_container_width=True, height=600)
 
 if not combined_data.empty:
     with tab5:
         st.write("### Combined Inventory")
-        st.dataframe(combined_data, width=table_width, height=table_height)
+        st.dataframe(combined_data, use_container_width=True, height=600)
 else:
     st.error("No data to display.")
