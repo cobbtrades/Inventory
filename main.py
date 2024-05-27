@@ -22,6 +22,21 @@ def load_data(file_paths):
         'DLRETA': 'ETA', 'ORD_CUST_NAME': 'CUST_NAME', 'ORD_CUST_EMAIL_ADDR': 'CUST_EMAIL',
         'ORD_CUST_DATE': 'ORD_DATE', 'DLR_DLV_DT': 'DLV_DATE'
     }
+    mdl_mapping = {
+        'A20': 'Red Alert', 'B51': 'Electric Blue', 'BW5': 'Hermosa Blue', 'CAS': 'Mocha Almond',
+        'DAN': 'Obsidian Green', 'DAQ': 'Tactical Green', 'EBB': 'Monarch Orange', 'EBL': 'Sunset Drift',
+        'G41': 'Magnetic Black', 'GAQ': 'Gray/Black Roof', 'HAL': 'Baja Storm', 'K23': 'Brilliant Silver',
+        'KAD': 'Gun Metallic', 'KAY': 'Champagne Silver', 'KBY': 'Boulder Gray', 'KCH': 'Ethos Gray',
+        'KH3': 'Super Black', 'NAW': 'Coulis Red', 'NBL': 'Scarlet Ember', 'NBQ': 'Rosewood',
+        'NBY': 'Cardinal Red', 'QAB': 'Pearl White', 'QAC': 'Aspen White', 'QAK': 'Glacier White',
+        'QM1': 'Fresh Powder', 'RAY': 'Deep Blue Pearl', 'RBD': 'Storm Blue', 'RBY': 'Caspian Blue',
+        'RCJ': 'Deep Ocean Blue', 'XAB': 'White/Black Roof', 'XAH': 'Orange/Black Roof', 'XBJ': 'White/Black Roof',
+        'XDU': 'Red/Black Roof', 'XEU': 'Blue/Black Roof', 'XEW': 'Champ/Black Roof', 'XEX': 'Gray/Black Roof',
+        'XFN': 'Green/Black Roof', 'XGY': 'Blue/Black Roof', 'XKV': 'Tan/Black Roof', 'XEV': 'Orange/Black Roof',
+        'DAP': 'Northern Lights', 'GAT': 'Black Diamond', 'XGA': 'White/Black Roof', 'XGB': 'Silver/Black Roof',
+        'XGD': 'Red/Black Roof', 'XGH': 'Gray/Black Roof', 'XGJ': 'Copper/Black Roof', 'XGU': 'Blue/Black Roof',
+        'NCA': 'Burgundy'
+    }
     data_frames = []
     
     for file in file_paths:
@@ -36,6 +51,8 @@ def load_data(file_paths):
                     df['MDLYR'] = df['MDLYR'].apply(lambda x: str(x).strip()[:-1])
                 if 'MCODE' in df.columns:
                     df['MCODE'] = df['MCODE'].astype(str).str.replace(',', '')
+                if 'MDL' in df.columns:
+                    df['MDL'] = df['MDL'].replace(mdl_mapping)
                 df.sort_values(by='MDL', inplace=True)
                 data_frames.append((df, file))
         else:
