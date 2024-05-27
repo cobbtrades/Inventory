@@ -3,18 +3,8 @@ import streamlit as st
 import os
 import requests
 
-# Set page configuration
 st.set_page_config(layout="wide")
-
-# Define file paths
-file_paths = [
-    'files/VinpipeReport.xls',
-    'files/VinpipeReport (1).xls',
-    'files/VinpipeReport (2).xls',
-    'files/VinpipeReport (3).xls'
-]
-
-# Function to rename .xls files to .html and load data
+file_paths = ['files/VinpipeReport.xls','files/VinpipeReport (1).xls','files/VinpipeReport (2).xls','files/VinpipeReport (3).xls']
 def rename_and_load_data(file_paths):
     data_frames = []
     for file in file_paths:
@@ -28,11 +18,7 @@ def rename_and_load_data(file_paths):
         else:
             st.error(f"File {file} not found in the repository.")
     return data_frames
-
-# Load data
 data_frames = rename_and_load_data(file_paths)
-
-# Combine data
 if data_frames:
     combined_data = pd.concat([df[0] for df in data_frames], ignore_index=True)
 else:
@@ -62,7 +48,7 @@ def save_to_github(file_path, data_frame, token):
         "Authorization": f"token {token}",
         "Content-Type": "application/json"
     }
-    repo = "your-username/your-repo"  # replace with your repository
+    repo = "cobbtrades/Inventory"  # replace with your repository
     path = file_path
     url = f"https://api.github.com/repos/{repo}/contents/{path}"
     
