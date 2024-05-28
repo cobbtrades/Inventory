@@ -36,7 +36,7 @@ def load_data(file_paths):
         'DAP': 'Northern Lights', 'GAT': 'Black Diamond', 'XGA': 'White/Black', 'XGB': 'Silver/Black',
         'XGD': 'Red/Black', 'XGH': 'Gray/Black', 'XGJ': 'Copper/Black', 'XGU': 'Blue/Black',
         'NCA': 'Burgundy', 'QBE': 'Everest White', 'KBZ': 'Atlantic Gray', 'XKY': 'Atlantic/Black Roof',
-        'XKJ': 'Everest/Black', 'RCF': 'Bluestone Pearl', 'XHQ': 'Deep Ocean/Black', 'XRJ': 'Seiran Blue/Black'
+        'XKJ': 'Everest/Black', 'RCF': 'Bluestone Pearl', 'XHQ': 'Deep Ocean/Black', 'XJR': 'Seiran Blue/Black'
     }
     data_frames = []
     
