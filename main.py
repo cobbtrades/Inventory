@@ -20,7 +20,7 @@ def load_data(file_paths):
     new_column_names = {
         'LOC_DESC': 'LOC', 'DLRORD': 'ORDER', 'TRM_LVL': 'TRIM', 'DRV_TRN': 'DRIVE',
         'DLRETA': 'ETA', 'ORD_CUST_NAME': 'CUST_NAME', 'ORD_CUST_EMAIL_ADDR': 'CUST_EMAIL',
-        'ORD_CUST_DATE': 'ORD_DATE', 'DLR_DLV_DT': 'DLV_DATE', 'EXT': 'COLOR'
+        'ORD_CUST_DATE': 'ORD_DATE', 'DLR_DLV_DT': 'DLV_DATE', 'EXT': 'COLOR', 'MDLYR': 'YEAR'
     }
     ext_mapping = {
         'A20': 'Red Alert', 'B51': 'Electric Blue', 'BW5': 'Hermosa Blue', 'CAS': 'Mocha Almond',
@@ -47,7 +47,7 @@ def load_data(file_paths):
                 df = dfs[0]
                 df = df[[col for col in expected_columns if col in df.columns]]
                 df.rename(columns=new_column_names, inplace=True)
-                df['MDLYR'] = df['MDLYR'].apply(lambda x: str(x).strip()[:-1])
+                df['YEAR'] = df['YEAR'].apply(lambda x: str(x).strip()[:-1])
                 df['MCODE'] = df['MCODE'].astype(str).str.replace(',', '')
                 df['COLOR'] = df['COLOR'].replace(ext_mapping)
                 date_columns = ['ETA', 'DLV_DATE', 'ORD_DATE']
