@@ -140,13 +140,17 @@ def filter_data(df, model, trim, package, color):
 # Function to display data for each store
 def display_store_data(tab, df, file_path, store_name):
     with tab:
-        st.markdown(f"### {store_name} Inventory")
-        
-        # Create selectboxes for filtering
-        model = st.selectbox('Select Model', options=['All'] + df['MDL'].unique().tolist())
-        trim = st.selectbox('Select Trim', options=['All'] + df['TRIM'].unique().tolist())
-        package = st.selectbox('Select Package', options=['All'] + df['PACKAGE'].unique().tolist())
-        color = st.selectbox('Select Color', options=['All'] + df['COLOR'].unique().tolist())
+        cols = st.columns([1, 1, 1, 1, 6])
+        with cols[0]:
+            model = st.selectbox('Model', options=['All'] + df['MDL'].unique().tolist())
+        with cols[1]:
+            trim = st.selectbox('Trim', options=['All'] + df['TRIM'].unique().tolist())
+        with cols[2]:
+            package = st.selectbox('Package', options=['All'] + df['PACKAGE'].unique().tolist())
+        with cols[3]:
+            color = st.selectbox('Color', options=['All'] + df['COLOR'].unique().tolist())
+        with cols[4]:
+            st.markdown(f"### {store_name} Inventory")
         
         filtered_df = filter_data(df, model, trim, package, color)
         
