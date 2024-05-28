@@ -125,15 +125,44 @@ def save_to_github(file_path, data_frame, token):
     else:
         st.error(f"Failed to update {file_path} on GitHub: {update_response.text}")
 
+# Function to filter data based on selectbox inputs
+def filter_data(df, model, trim, package, color):
+    if model != 'All':
+        df = df[df['MDL'] == model]
+    if trim != 'All':
+        df = df[df['TRIM'] == trim]
+    if package != 'All':
+        df = df[df['Package'].str.contains(package)]
+    if color != 'All':
+        df = df[df['EXT'] == color]
+    return df
+
 # Function to display data for each store
 def display_store_data(tab, df, file_path, store_name):
     with tab:
-        num_rows = len(df)
-        st.markdown(f"### {store_name} Inventory <span style='font-size: small;'>{num_rows} vehicles</span>", unsafe_allow_html=True)
-        edited_df = st.data_editor(df, height=780, hide_index=True)
+        st.markdown(f"### {store_name} Inventory")
+        
+        # Create selectboxes for filtering
+        model = st.selectbox('Select Model', options=['All'] + df['MDL'].unique().tolist())
+        trim = st.selectbox('Select Trim', options=['All'] + df['TRIM'].unique().tolist())
+        package = st.selectbox('Select Package', options=['All'] + df['PACKAGE'].unique().tolist())
+        color = st.selectbox('Select Color', options=['All'] + df['COLOR'].unique().tolist())
+        
+        filtered_df = filter_data(df, model, trim, package, color)
+        
+        num_rows = len(filtered_df)
+        st.markdown(f"<span style='font-size: small;'>{num_rows} vehicles</span>", unsafe_allow_html=True)
+        
+        edited_df = st.data_editor(filtered_df, height=780, hide_index=True)
+        
+        # Update the original dataframe with the changes from the edited dataframe
+        for index, row in edited_df.iterrows():
+            original_index = df[df['VIN'] == row['VIN']].index[0]
+            df.loc[original_index] = row
+        
         token = os.getenv('GITHUB_TOKEN')
-        if token and not edited_df.equals(df):
-            save_to_github(file_path, edited_df, token)
+        if token:
+            save_to_github(file_path, df, token)
 
 # Display individual store data
 store_names = ["Concord", "Winston", "Lake", "Hickory"]
