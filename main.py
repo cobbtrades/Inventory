@@ -181,7 +181,7 @@ def display_store_data(tab, df, file_path, store_name, tab_key):
 def authenticate(username, password):
     valid_username = os.getenv('VALID_USERNAME')
     valid_password = os.getenv('VALID_PASSWORD')
-    print(f"DEBUG: Valid Username: {valid_username}, Valid Password: {valid_password}")  # Debugging line
+    st.write(f"DEBUG: Valid Username: {valid_username}, Valid Password: {valid_password}")  # Debugging line
     return username == valid_username and password == valid_password
 
 # Login form
