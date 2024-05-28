@@ -96,17 +96,6 @@ st.write(
     unsafe_allow_html=True
 )
 
-# Initialize session state for select boxes
-for i, store_name in enumerate(["Concord", "Winston", "Lake", "Hickory"]):
-    if f'store_{i}_model' not in st.session_state:
-        st.session_state[f'store_{i}_model'] = 'All'
-    if f'store_{i}_trim' not in st.session_state:
-        st.session_state[f'store_{i}_trim'] = 'All'
-    if f'store_{i}_package' not in st.session_state:
-        st.session_state[f'store_{i}_color'] = 'All'
-    if f'store_{i}_color' not in st.session_state:
-        st.session_state[f'store_{i}_color'] = 'All'
-
 # Create tabs
 tab1, tab2, tab3, tab4, tab5 = st.tabs(["Concord", "Winston", "Lake", "Hickory", "All Stores"])
 
@@ -154,12 +143,13 @@ def filter_data(df, model, trim, package, color):
 # Function to display data for each store
 def display_store_data(tab, df, file_path, store_name, tab_key):
     with tab:
-        cols = st.columns([2, 1, 1, 1, 1, 1])
+        cols = st.columns([2, 1, 1, 1, 1])
         with cols[0]:
             st.markdown(f"### {store_name} Inventory")
         with cols[1]:
             model = st.selectbox('Model', options=['All'] + df['MDL'].unique().tolist(), key=f'{tab_key}_model')
         with cols[2]:
+            # Filter options based on selected model
             trims = ['All'] if model == 'All' else ['All'] + df[df['MDL'] == model]['TRIM'].unique().tolist()
             trim = st.selectbox('Trim', options=trims, key=f'{tab_key}_trim')
         with cols[3]:
@@ -168,14 +158,8 @@ def display_store_data(tab, df, file_path, store_name, tab_key):
         with cols[4]:
             colors = ['All'] if model == 'All' else ['All'] + df[df['MDL'] == model]['EXT'].unique().tolist()
             color = st.selectbox('Color', options=colors, key=f'{tab_key}_color')
-        with cols[5]:
-            if st.button('Reset Filters', key=f'{tab_key}_reset'):
-                st.session_state[f'{tab_key}_model'] = 'All'
-                st.session_state[f'{tab_key}_trim'] = 'All'
-                st.session_state[f'{tab_key}_package'] = 'All'
-                st.session_state[f'{tab_key}_color'] = 'All'
 
-        filtered_df = filter_data(df, st.session_state[f'{tab_key}_model'], st.session_state[f'{tab_key}_trim'], st.session_state[f'{tab_key}_package'], st.session_state[f'{tab_key}_color'])
+        filtered_df = filter_data(df, model, trim, package, color)
         
         num_rows = len(filtered_df)
         st.markdown(f"<span style='font-size: small;'>{num_rows} vehicles</span>", unsafe_allow_html=True)
