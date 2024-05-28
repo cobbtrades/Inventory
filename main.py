@@ -57,7 +57,7 @@ def load_data(file_paths):
                 df[date_columns] = df[date_columns].apply(lambda col: pd.to_datetime(col).dt.strftime('%m-%d-%Y'))
                 df['Package'] = df['GOPTS'].apply(lambda x: ' '.join(
                     [pkg for pkg in ['PRM', 'TECH', 'CONV']
-                     if any(sub in x for sub in [pkg, pkg[0] + '1', pkg[0] + '2', pkg[0] + '3'])]))
+                     if any(sub in x for sub in [pkg, pkg[0] + '1', pkg[0] + '2', pkg[0] + '3', pkg[0] + '4', pkg[0] + '5'])]))
                 df.sort_values(by='MDL', inplace=True)
                 df.reset_index(drop=True, inplace=True)
                 cols = df.columns.tolist()
