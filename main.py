@@ -7,7 +7,7 @@ import base64
 # Set page configuration
 st.set_page_config(layout="wide")
 
-AUTHORIZED_USERS = st.secrets["authorized_users"]
+AUTHORIZED_USERS = ['cobbtrades@gmail.com']
 
 # Define file paths
 file_paths = ['files/Concord', 'files/Winston', 'files/Lake', 'files/Hickory']
