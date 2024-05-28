@@ -3,7 +3,9 @@ import streamlit as st
 import os
 import requests
 import base64
+from dotenv import load_dotenv
 
+load_dotenv()
 # Set page configuration
 st.set_page_config(layout="wide")
 
