@@ -56,6 +56,15 @@ def load_data(file_paths):
                     df['EXT'] = df['EXT'].replace(ext_mapping)
                 date_columns = ['ETA', 'DLV_DATE', 'ORD_DATE']
                 df[date_columns] = df[date_columns].apply(lambda col: pd.to_datetime(col).dt.strftime('%m-%d-%Y'))
+                df['Premium'] = df['GOPTS'].apply(lambda x: 'PRM' if any(sub in x for sub in ['PRM', 'PR1', 'PR2', 'PR3']) else x)
+                df['Technology'] = df['GOPTS'].apply(lambda x: 'TECH' if any(sub in x for sub in ['TEC', 'TE1', 'TE2', 'TE3']) else x)
+                df['Convenience'] = df['GOPTS'].apply(lambda x: 'CONV' if any(sub in x for sub in ['CN1', 'CN2', 'CN3', 'CN4']) else x)
+                df['Package'] = df[['Premium', 'Technology', 'Convenience']].apply(lambda x: ' '.join(filter(None, x)), axis=1)
+                df.drop(columns=['Premium', 'Technology', 'Convenience'], inplace=True)
+                cols = df.columns.tolist()
+                drive_index = cols.index('DRIVE')
+                cols.insert(drive_index + 1, cols.pop(cols.index('Package')))
+                df = df[cols]
                 df.sort_values(by='MDL', inplace=True)
                 df.reset_index(drop=True, inplace=True)
                 data_frames.append((df, file))
