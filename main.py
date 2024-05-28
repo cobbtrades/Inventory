@@ -143,22 +143,20 @@ def filter_data(df, model, trim, package, color):
 # Function to display data for each store
 def display_store_data(tab, df, file_path, store_name, tab_key):
     with tab:
-        st.markdown(f"### {store_name} Inventory")
-
-        # Select box for model
-        model = st.selectbox('Model', options=['All'] + df['MDL'].unique().tolist(), key=f'{tab_key}_model')
-
-        # Filter options based on selected model
-        trims = ['All'] if model == 'All' else ['All'] + df[df['MDL'] == model]['TRIM'].unique().tolist()
-        packages = ['All'] if model == 'All' else ['All'] + df[df['MDL'] == model]['Package'].unique().tolist()
-        colors = ['All'] if model == 'All' else ['All'] + df[df['MDL'] == model]['EXT'].unique().tolist()
-
-        cols = st.columns([1, 1, 1, 6])
+        cols = st.columns([2, 1, 1, 1, 1])
         with cols[0]:
-            trim = st.selectbox('Trim', options=trims, key=f'{tab_key}_trim')
+            st.markdown(f"### {store_name} Inventory")
         with cols[1]:
-            package = st.selectbox('Package', options=packages, key=f'{tab_key}_package')
+            model = st.selectbox('Model', options=['All'] + df['MDL'].unique().tolist(), key=f'{tab_key}_model')
         with cols[2]:
+            # Filter options based on selected model
+            trims = ['All'] if model == 'All' else ['All'] + df[df['MDL'] == model]['TRIM'].unique().tolist()
+            trim = st.selectbox('Trim', options=trims, key=f'{tab_key}_trim')
+        with cols[3]:
+            packages = ['All'] if model == 'All' else ['All'] + df[df['MDL'] == model]['Package'].unique().tolist()
+            package = st.selectbox('Package', options=packages, key=f'{tab_key}_package')
+        with cols[4]:
+            colors = ['All'] if model == 'All' else ['All'] + df[df['MDL'] == model]['EXT'].unique().tolist()
             color = st.selectbox('Color', options=colors, key=f'{tab_key}_color')
 
         filtered_df = filter_data(df, model, trim, package, color)
