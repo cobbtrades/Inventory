@@ -8,8 +8,8 @@ from functools import wraps
 st.set_page_config(layout="wide")
 
 # Access credentials from Streamlit secrets
-VALID_USERNAME = st.secrets["credentials"]["username"]
-VALID_PASSWORD = st.secrets["credentials"]["password"]
+VALID_USERNAME = st.secrets["username"]
+VALID_PASSWORD = st.secrets["password"]
 
 # Authentication decorator
 def login_required(func):
