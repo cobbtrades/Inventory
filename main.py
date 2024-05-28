@@ -58,11 +58,11 @@ def load_data(file_paths):
                 df['Premium'] = df['GOPTS'].apply(lambda x: 'PRM' if any(sub in x for sub in ['PRM', 'PR1', 'PR2', 'PR3']) else '')
                 df['Technology'] = df['GOPTS'].apply(lambda x: 'TECH' if any(sub in x for sub in ['TEC', 'TE1', 'TE2', 'TE3']) else '')
                 df['Convenience'] = df['GOPTS'].apply(lambda x: 'CONV' if any(sub in x for sub in ['CN1', 'CN2', 'CN3', 'CN4', 'CN5']) else '')
-                df['Package'] = df[['Premium', 'Technology', 'Convenience']].apply(lambda x: ' '.join(filter(None, x)), axis=1)
+                df['PACKAGE'] = df[['Premium', 'Technology', 'Convenience']].apply(lambda x: ' '.join(filter(None, x)), axis=1)
                 df.drop(columns=['Premium', 'Technology', 'Convenience', 'GOPTS'], inplace=True)
                 cols = df.columns.tolist()
                 drive_index = cols.index('DRIVE')
-                cols.insert(drive_index + 1, cols.pop(cols.index('Package')))
+                cols.insert(drive_index + 1, cols.pop(cols.index('PACKAGE')))
                 df = df[cols]
                 df.sort_values(by='MDL', inplace=True)
                 df.reset_index(drop=True, inplace=True)
@@ -135,7 +135,7 @@ def filter_data(df, model, trim, package, color):
     if trim != 'All':
         df = df[df['TRIM'] == trim]
     if package != 'All':
-        df = df[df['Package'].str.contains(package)]
+        df = df[df['PACKAGE'].str.contains(package)]
     if color != 'All':
         df = df[df['EXT'] == color]
     return df
@@ -153,7 +153,7 @@ def display_store_data(tab, df, file_path, store_name, tab_key):
             trims = ['All'] if model == 'All' else ['All'] + df[df['MDL'] == model]['TRIM'].unique().tolist()
             trim = st.selectbox('Trim', options=trims, key=f'{tab_key}_trim')
         with cols[3]:
-            packages = ['All'] if model == 'All' else ['All'] + df[df['MDL'] == model]['Package'].unique().tolist()
+            packages = ['All'] if model == 'All' else ['All'] + df[df['MDL'] == model]['PACKAGE'].unique().tolist()
             package = st.selectbox('Package', options=packages, key=f'{tab_key}_package')
         with cols[4]:
             colors = ['All'] if model == 'All' else ['All'] + df[df['MDL'] == model]['EXT'].unique().tolist()
