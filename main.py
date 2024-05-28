@@ -155,9 +155,9 @@ def display_store_data(tab, df, file_path, store_name, tab_key):
         with cols[4]:
             color = st.selectbox('Color', options=['All'] + df['EXT'].unique().tolist(), key=f'{tab_key}_color')
         with cols[5]:
+            filtered_df = filter_data(df, model, trim, package, color)
+            num_rows = len(filtered_df)
             st.markdown(f"<span style='font-size: small;'>{num_rows} vehicles</span>", unsafe_allow_html=True)
-        filtered_df = filter_data(df, model, trim, package, color)
-        num_rows = len(filtered_df)
         edited_df = st.data_editor(filtered_df, height=780, hide_index=True, key=f'{tab_key}_data_editor')
         
         # Update the original dataframe with the changes from the edited dataframe
