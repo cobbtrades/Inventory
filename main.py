@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import requests
 import base64
+import os
 from functools import wraps
 
 # Set page configuration
