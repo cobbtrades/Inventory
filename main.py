@@ -1,11 +1,38 @@
-import pandas as pd
 import streamlit as st
-import os
+import pandas as pd
 import requests
 import base64
+from functools import wraps
 
 # Set page configuration
 st.set_page_config(layout="wide")
+
+# Access credentials from Streamlit secrets
+VALID_USERNAME = os.getenv('username')
+VALID_PASSWORD = os.getenv('password')
+
+# Authentication decorator
+def login_required(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        if 'authenticated' not in st.session_state or not st.session_state.authenticated:
+            st.warning("Please log in to access this page.")
+            login()
+        else:
+            return func(*args, **kwargs)
+    return wrapper
+
+# Login function
+def login():
+    st.session_state.authenticated = False
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+    if st.button("Login"):
+        if username == VALID_USERNAME and password == VALID_PASSWORD:
+            st.session_state.authenticated = True
+            st.experimental_rerun()
+        else:
+            st.error("Invalid credentials")
 
 # Define file paths
 file_paths = ['files/Concord', 'files/Winston', 'files/Lake', 'files/Hickory']
@@ -190,3 +217,10 @@ if not combined_data.empty:
         st.data_editor(combined_data, use_container_width=True, height=780, hide_index=True)
 else:
     st.error("No data to display.")
+
+# Call the main function with login required
+@login_required
+def main():
+    pass
+
+main()
