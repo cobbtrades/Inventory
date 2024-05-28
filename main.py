@@ -47,12 +47,9 @@ def load_data(file_paths):
                 df = dfs[0]
                 df = df[[col for col in expected_columns if col in df.columns]]
                 df.rename(columns=new_column_names, inplace=True)
-                if 'MDLYR' in df.columns:
-                    df['MDLYR'] = df['MDLYR'].apply(lambda x: str(x).strip()[:-1])
-                if 'MCODE' in df.columns:
-                    df['MCODE'] = df['MCODE'].astype(str).str.replace(',', '')
-                if 'MDL' in df.columns:
-                    df['EXT'] = df['EXT'].replace(ext_mapping)
+                df['MDLYR'] = df['MDLYR'].apply(lambda x: str(x).strip()[:-1])
+                df['MCODE'] = df['MCODE'].astype(str).str.replace(',', '')
+                df['COLOR'] = df['COLOR'].replace(ext_mapping)
                 date_columns = ['ETA', 'DLV_DATE', 'ORD_DATE']
                 df[date_columns] = df[date_columns].apply(lambda col: pd.to_datetime(col).dt.strftime('%m-%d-%Y'))
                 df['Premium'] = df['GOPTS'].apply(lambda x: 'PRM' if any(sub in x for sub in ['PRM', 'PR1', 'PR2', 'PR3']) else '')
