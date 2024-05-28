@@ -59,7 +59,7 @@ def load_data(file_paths):
                 df.drop(columns=['Premium', 'Technology', 'Convenience', 'GOPTS'], inplace=True)
                 cols = df.columns.tolist()
                 drive_index = cols.index('DRIVE')
-                cols.insert(drive_index + 1, cols.pop(cols.index('Package')))
+                cols.insert(drive_index + 1, cols.pop(cols.index('PACKAGE')))
                 df = df[cols]
                 df.sort_values(by='MDL', inplace=True)
                 df.reset_index(drop=True, inplace=True)
