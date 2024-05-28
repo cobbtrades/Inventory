@@ -141,17 +141,17 @@ def filter_data(df, model, trim, package, color):
     return df
 
 # Function to display data for each store
-def display_store_data(tab, df, file_path, store_name):
+def display_store_data(tab, df, file_path, store_name, tab_key):
     with tab:
         cols = st.columns([1, 1, 1, 1, 6])
         with cols[0]:
-            model = st.selectbox('Model', options=['All'] + df['MDL'].unique().tolist())
+            model = st.selectbox('Model', options=['All'] + df['MDL'].unique().tolist(), key=f'{tab_key}_model')
         with cols[1]:
-            trim = st.selectbox('Trim', options=['All'] + df['TRIM'].unique().tolist())
+            trim = st.selectbox('Trim', options=['All'] + df['TRIM'].unique().tolist(), key=f'{tab_key}_trim')
         with cols[2]:
-            package = st.selectbox('Package', options=['All'] + df['Package'].unique().tolist())
+            package = st.selectbox('Package', options=['All'] + df['Package'].unique().tolist(), key=f'{tab_key}_package')
         with cols[3]:
-            color = st.selectbox('Color', options=['All'] + df['EXT'].unique().tolist())
+            color = st.selectbox('Color', options=['All'] + df['EXT'].unique().tolist(), key=f'{tab_key}_color')
         with cols[4]:
             st.markdown(f"### {store_name} Inventory")
         
@@ -160,7 +160,7 @@ def display_store_data(tab, df, file_path, store_name):
         num_rows = len(filtered_df)
         st.markdown(f"<span style='font-size: small;'>{num_rows} vehicles</span>", unsafe_allow_html=True)
         
-        edited_df = st.data_editor(filtered_df, height=780, hide_index=True)
+        edited_df = st.data_editor(filtered_df, height=780, hide_index=True, key=f'{tab_key}_data_editor')
         
         # Update the original dataframe with the changes from the edited dataframe
         for index, row in edited_df.iterrows():
@@ -176,7 +176,7 @@ store_names = ["Concord", "Winston", "Lake", "Hickory"]
 tabs = [tab1, tab2, tab3, tab4]
 if data_frames:
     for i, (df, file_path) in enumerate(data_frames):
-        display_store_data(tabs[i], df, file_path, store_names[i])
+        display_store_data(tabs[i], df, file_path, store_names[i], f'store_{i}')
 
 # Display combined data for all stores
 if not combined_data.empty:
