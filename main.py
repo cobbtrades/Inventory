@@ -3,9 +3,6 @@ import streamlit as st
 import os
 import requests
 import base64
-from dotenv import load_dotenv
-
-load_dotenv()
 
 # Set page configuration
 st.set_page_config(layout="wide")
@@ -178,42 +175,18 @@ def display_store_data(tab, df, file_path, store_name, tab_key):
         if token:
             save_to_github(file_path, df, token)
 
-def authenticate(username, password):
-    valid_username = os.getenv('VALID_USERNAME')
-    valid_password = os.getenv('VALID_PASSWORD')
-    return username == valid_username and password == valid_password
+# Display individual store data
+store_names = ["Concord", "Winston", "Lake", "Hickory"]
+tabs = [tab1, tab2, tab3, tab4]
+if data_frames:
+    for i, (df, file_path) in enumerate(data_frames):
+        display_store_data(tabs[i], df, file_path, store_names[i], f'store_{i}')
 
-# Login form
-if 'authenticated' not in st.session_state:
-    st.session_state.authenticated = False
-
-if not st.session_state.authenticated:
-    with st.form("login_form"):
-        st.write("Please login to access the inventory data")
-        username = st.text_input("Username")
-        password = st.text_input("Password", type="password")
-        submitted = st.form_submit_button("Login")
-
-        if submitted:
-            if authenticate(username, password):
-                st.session_state.authenticated = True
-                st.success("Login successful")
-            else:
-                st.error("Invalid username or password")
-                
-if st.session_state.authenticated:
-    # Display individual store data
-    store_names = ["Concord", "Winston", "Lake", "Hickory"]
-    tabs = [tab1, tab2, tab3, tab4]
-    if data_frames:
-        for i, (df, file_path) in enumerate(data_frames):
-            display_store_data(tabs[i], df, file_path, store_names[i], f'store_{i}')
-    
-    # Display combined data for all stores
-    if not combined_data.empty:
-        num_rows = len(combined_data)
-        with tab5:
-            st.markdown(f"### Group Inventory <span style='font-size: small;'>{num_rows} vehicles</span>", unsafe_allow_html=True)
-            st.data_editor(combined_data, use_container_width=True, height=780, hide_index=True)
-    else:
-        st.error("No data to display.")
+# Display combined data for all stores
+if not combined_data.empty:
+    num_rows = len(combined_data)
+    with tab5:
+        st.markdown(f"### Group Inventory <span style='font-size: small;'>{num_rows} vehicles</span>", unsafe_allow_html=True)
+        st.data_editor(combined_data, use_container_width=True, height=780, hide_index=True)
+else:
+    st.error("No data to display.")
