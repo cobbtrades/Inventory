@@ -13,9 +13,9 @@ file_paths = ['files/Concord', 'files/Winston', 'files/Lake', 'files/Hickory']
 # Function to load data and handle columns dynamically
 def load_data(file_paths):
     expected_columns = [
-        'LOC_DESC', 'DLRORD', 'MDL', 'MDLYR', 'MCODE', 'VIN', 'OPTS', 'GOPTS',
-        'EXT', 'INT', 'DEALER_NAME', 'TRM_LVL', 'DRV_TRN', 'DLR_DLV_DT',
-        'DLRETA', 'ORD_CUST_NAME', 'ORD_CUST_EMAIL_ADDR', 'ORD_CUST_DATE'
+        'LOC_DESC', 'DLRORD', 'MDLYR', 'MDL', 'TRM_LVL', 'DRV_TRN', 'EXT', 'INT',
+        'MCODE', 'VIN', 'DEALER_NAME', 'DLR_DLV_DT', 'DLRETA', 'ORD_CUST_NAME',
+        'ORD_CUST_EMAIL_ADDR', 'ORD_CUST_DATE', 'OPTS', 'GOPTS'
     ]
     new_column_names = {
         'LOC_DESC': 'LOC', 'DLRORD': 'ORDER', 'TRM_LVL': 'TRIM', 'DRV_TRN': 'DRIVE',
