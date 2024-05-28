@@ -143,6 +143,7 @@ def filter_data(df, model, trim, package, color):
 # Function to display data for each store
 def display_store_data(tab, df, file_path, store_name, tab_key):
     with tab:
+        st.markdown(f"### {store_name} Inventory")
         cols = st.columns([1, 1, 1, 1, 6])
         with cols[0]:
             model = st.selectbox('Model', options=['All'] + df['MDL'].unique().tolist(), key=f'{tab_key}_model')
@@ -152,8 +153,6 @@ def display_store_data(tab, df, file_path, store_name, tab_key):
             package = st.selectbox('Package', options=['All'] + df['Package'].unique().tolist(), key=f'{tab_key}_package')
         with cols[3]:
             color = st.selectbox('Color', options=['All'] + df['EXT'].unique().tolist(), key=f'{tab_key}_color')
-        with cols[4]:
-            st.markdown(f"### {store_name} Inventory")
         
         filtered_df = filter_data(df, model, trim, package, color)
         
