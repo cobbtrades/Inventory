@@ -143,6 +143,23 @@ def filter_data(df, model, trim, package, color):
 # Function to display data for each store
 def display_store_data(tab, df, file_path, store_name, tab_key):
     with tab:
+        # Initialize session state for select boxes
+        if f'{tab_key}_model' not in st.session_state:
+            st.session_state[f'{tab_key}_model'] = 'All'
+        if f'{tab_key}_trim' not in st.session_state:
+            st.session_state[f'{tab_key}_trim'] = 'All'
+        if f'{tab_key}_package' not in st.session_state:
+            st.session_state[f'{tab_key}_package'] = 'All'
+        if f'{tab_key}_color' not in st.session_state:
+            st.session_state[f'{tab_key}_color'] = 'All'
+
+        # Reset filters button
+        if st.button('Reset Filters', key=f'{tab_key}_reset'):
+            st.session_state[f'{tab_key}_model'] = 'All'
+            st.session_state[f'{tab_key}_trim'] = 'All'
+            st.session_state[f'{tab_key}_package'] = 'All'
+            st.session_state[f'{tab_key}_color'] = 'All'
+
         cols = st.columns([2, 1, 1, 1, 1])
         with cols[0]:
             st.markdown(f"### {store_name} Inventory")
