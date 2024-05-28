@@ -132,7 +132,7 @@ def save_to_github(file_path, data_frame, token):
 def display_store_data(tab, df, file_path, store_name):
     with tab:
         num_rows = len(df)
-        st.write(f"### {store_name} Inventory ({num_rows} rows)")
+        st.markdown(f"### {store_name} Inventory <span style='font-size: small;'>{num_rows} vehicles</span>", unsafe_allow_html=True)
         edited_df = st.data_editor(df, height=780, hide_index=True)
         token = os.getenv('GITHUB_TOKEN')
         if token and not edited_df.equals(df):
@@ -149,7 +149,7 @@ if data_frames:
 if not combined_data.empty:
     num_rows = len(combined_data)
     with tab5:
-        st.write(f"### Group Inventory ({num_rows} rows)")
+        st.markdown(f"### Group Inventory <span style='font-size: small;'>{num_rows} vehicles</span>", unsafe_allow_html=True)
         st.data_editor(combined_data, use_container_width=True, height=780, hide_index=True)
 else:
     st.error("No data to display.")
