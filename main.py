@@ -54,6 +54,8 @@ def load_data(file_paths):
                     df['MCODE'] = df['MCODE'].astype(str).str.replace(',', '')
                 if 'MDL' in df.columns:
                     df['EXT'] = df['EXT'].replace(ext_mapping)
+                date_columns = ['ETA', 'DLV_DATE', 'ORD_DATE']
+                df[date_columns] = df[date_columns].apply(lambda col: pd.to_datetime(col).dt.strftime('%m-%d-%Y'))
                 df.sort_values(by='MDL', inplace=True)
                 df.reset_index(drop=True, inplace=True)
                 data_frames.append((df, file))
