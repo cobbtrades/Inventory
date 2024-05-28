@@ -9,8 +9,8 @@ from functools import wraps
 st.set_page_config(layout="wide")
 
 # Access credentials from Streamlit secrets
-VALID_USERNAME = os.getenv('username')
-VALID_PASSWORD = os.getenv('password')
+VALID_USERNAME = os.getenv('APP_UN')
+VALID_PASSWORD = os.getenv('APP_PW')
 
 # Authentication decorator
 def login_required(func):
