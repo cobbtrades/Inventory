@@ -123,7 +123,7 @@ def save_to_github(file_path, data_frame, token):
     
     # Update the file on GitHub
     update_response = requests.put(url, headers=headers, json=payload)
-    if update_response.status_code == 200):
+    if update_response.status_code == 200:
         st.success(f"Successfully updated {file_path} on GitHub.")
     else:
         st.error(f"Failed to update {file_path} on GitHub: {update_response.text}")
