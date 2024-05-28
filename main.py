@@ -177,8 +177,8 @@ def display_store_data(tab, df, file_path, store_name, tab_key):
 
 def authenticate(username, password):
     # Replace these with your desired username and password
-    valid_username = "admin"
-    valid_password = "password123"
+    valid_username = os.getenv("VALID_USERNAME")
+    valid_password = os.getenv("VALID_PASSWORD")
     return username == valid_username and password == valid_password
 
 # Login form
