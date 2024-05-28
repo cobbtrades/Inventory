@@ -15,7 +15,7 @@ def load_data(file_paths):
     expected_columns = [
         'LOC_DESC', 'DLRORD', 'MDLYR', 'MDL', 'TRM_LVL', 'DRV_TRN', 'EXT', 'INT',
         'MCODE', 'VIN', 'DEALER_NAME', 'DLR_DLV_DT', 'DLRETA', 'ORD_CUST_NAME',
-        'ORD_CUST_EMAIL_ADDR', 'ORD_CUST_DATE', 'OPTS', 'GOPTS'
+        'ORD_CUST_EMAIL_ADDR', 'ORD_CUST_DATE', 'GOPTS'
     ]
     new_column_names = {
         'LOC_DESC': 'LOC', 'DLRORD': 'ORDER', 'TRM_LVL': 'TRIM', 'DRV_TRN': 'DRIVE',
@@ -59,7 +59,7 @@ def load_data(file_paths):
                 df['Technology'] = df['GOPTS'].apply(lambda x: 'TECH' if any(sub in x for sub in ['TEC', 'TE1', 'TE2', 'TE3']) else '')
                 df['Convenience'] = df['GOPTS'].apply(lambda x: 'CONV' if any(sub in x for sub in ['CN1', 'CN2', 'CN3', 'CN4', 'CN5']) else '')
                 df['Package'] = df[['Premium', 'Technology', 'Convenience']].apply(lambda x: ' '.join(filter(None, x)), axis=1)
-                df.drop(columns=['Premium', 'Technology', 'Convenience'], inplace=True)
+                df.drop(columns=['Premium', 'Technology', 'Convenience', 'GOPTS'], inplace=True)
                 cols = df.columns.tolist()
                 drive_index = cols.index('DRIVE')
                 cols.insert(drive_index + 1, cols.pop(cols.index('Package')))
