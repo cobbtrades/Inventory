@@ -20,7 +20,7 @@ def load_data(file_paths):
     new_column_names = {
         'LOC_DESC': 'LOC', 'DLRORD': 'ORDER', 'TRM_LVL': 'TRIM', 'DRV_TRN': 'DRIVE',
         'DLRETA': 'ETA', 'ORD_CUST_NAME': 'CUST_NAME', 'ORD_CUST_EMAIL_ADDR': 'CUST_EMAIL',
-        'ORD_CUST_DATE': 'ORD_DATE', 'DLR_DLV_DT': 'DLV_DATE'
+        'ORD_CUST_DATE': 'ORD_DATE', 'DLR_DLV_DT': 'DLV_DATE', 'EXT': 'COLOR'
     }
     ext_mapping = {
         'A20': 'Red Alert', 'B51': 'Electric Blue', 'BW5': 'Hermosa Blue', 'CAS': 'Mocha Almond',
