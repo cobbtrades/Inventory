@@ -123,7 +123,7 @@ def save_to_github(file_path, data_frame, token):
     
     # Update the file on GitHub
     update_response = requests.put(url, headers=headers, json=payload)
-    if update_response.status_code == 200:
+    if update_response.status_code == 200):
         st.success(f"Successfully updated {file_path} on GitHub.")
     else:
         st.error(f"Failed to update {file_path} on GitHub: {update_response.text}")
@@ -143,21 +143,29 @@ def filter_data(df, model, trim, package, color):
 # Function to display data for each store
 def display_store_data(tab, df, file_path, store_name, tab_key):
     with tab:
-        cols = st.columns([1, 1, 1, 1, 1, 3])
+        st.markdown(f"### {store_name} Inventory")
+
+        # Select box for model
+        model = st.selectbox('Model', options=['All'] + df['MDL'].unique().tolist(), key=f'{tab_key}_model')
+
+        # Filter options based on selected model
+        trims = ['All'] if model == 'All' else ['All'] + df[df['MDL'] == model]['TRIM'].unique().tolist()
+        packages = ['All'] if model == 'All' else ['All'] + df[df['MDL'] == model]['Package'].unique().tolist()
+        colors = ['All'] if model == 'All' else ['All'] + df[df['MDL'] == model]['EXT'].unique().tolist()
+
+        cols = st.columns([1, 1, 1, 6])
         with cols[0]:
-            st.markdown(f"### {store_name} Inventory")
+            trim = st.selectbox('Trim', options=trims, key=f'{tab_key}_trim')
         with cols[1]:
-            model = st.selectbox('Model', options=['All'] + df['MDL'].unique().tolist(), key=f'{tab_key}_model')
+            package = st.selectbox('Package', options=packages, key=f'{tab_key}_package')
         with cols[2]:
-            trim = st.selectbox('Trim', options=['All'] + df['TRIM'].unique().tolist(), key=f'{tab_key}_trim')
-        with cols[3]:
-            package = st.selectbox('Package', options=['All'] + df['Package'].unique().tolist(), key=f'{tab_key}_package')
-        with cols[4]:
-            color = st.selectbox('Color', options=['All'] + df['EXT'].unique().tolist(), key=f'{tab_key}_color')
-        with cols[5]:
-            filtered_df = filter_data(df, model, trim, package, color)
-            num_rows = len(filtered_df)
-            st.markdown(f"<span style='font-size: small;'>{num_rows} vehicles</span>", unsafe_allow_html=True)
+            color = st.selectbox('Color', options=colors, key=f'{tab_key}_color')
+
+        filtered_df = filter_data(df, model, trim, package, color)
+        
+        num_rows = len(filtered_df)
+        st.markdown(f"<span style='font-size: small;'>{num_rows} vehicles</span>", unsafe_allow_html=True)
+        
         edited_df = st.data_editor(filtered_df, height=780, hide_index=True, key=f'{tab_key}_data_editor')
         
         # Update the original dataframe with the changes from the edited dataframe
