@@ -66,6 +66,7 @@ def load_data(file_paths):
                 df = df[cols]
                 df.sort_values(by='MDL', inplace=True)
                 df.reset_index(drop=True, inplace=True)
+                df.fillna('', inplace=True)
                 data_frames.append((df, file))
         else:
             st.error(f"File {file} not found in the repository.")
