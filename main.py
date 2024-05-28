@@ -96,6 +96,17 @@ st.write(
     unsafe_allow_html=True
 )
 
+# Initialize session state for select boxes
+for i, store_name in enumerate(["Concord", "Winston", "Lake", "Hickory"]):
+    if f'store_{i}_model' not in st.session_state:
+        st.session_state[f'store_{i}_model'] = 'All'
+    if f'store_{i}_trim' not in st.session_state:
+        st.session_state[f'store_{i}_trim'] = 'All'
+    if f'store_{i}_package' not in st.session_state:
+        st.session_state[f'store_{i}_color'] = 'All'
+    if f'store_{i}_color' not in st.session_state:
+        st.session_state[f'store_{i}_color'] = 'All'
+
 # Create tabs
 tab1, tab2, tab3, tab4, tab5 = st.tabs(["Concord", "Winston", "Lake", "Hickory", "All Stores"])
 
