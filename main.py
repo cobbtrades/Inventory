@@ -20,7 +20,7 @@ def load_data(file_paths):
     new_column_names = {
         'LOC_DESC': 'LOC', 'DLRORD': 'ORDER', 'TRM_LVL': 'TRIM', 'DRV_TRN': 'DRIVE',
         'DLRETA': 'ETA', 'ORD_CUST_NAME': 'CUST_NAME', 'ORD_CUST_EMAIL_ADDR': 'CUST_EMAIL',
-        'ORD_CUST_DATE': 'ORD_DATE', 'DLR_DLV_DT': 'DLV_DATE', 'EXT': 'COLOR', 'MDLYR': 'YEAR'
+        'ORD_CUST_DATE': 'ORD_DATE', 'DLR_DLV_DT': 'DLV_DATE'
     }
     ext_mapping = {
         'A20': 'Red Alert', 'B51': 'Electric Blue', 'BW5': 'Hermosa Blue', 'CAS': 'Mocha Almond',
@@ -47,19 +47,22 @@ def load_data(file_paths):
                 df = dfs[0]
                 df = df[[col for col in expected_columns if col in df.columns]]
                 df.rename(columns=new_column_names, inplace=True)
-                df['YEAR'] = df['YEAR'].apply(lambda x: str(x).strip()[:-1])
-                df['MCODE'] = df['MCODE'].astype(str).str.replace(',', '')
-                df['COLOR'] = df['COLOR'].replace(ext_mapping)
+                if 'MDLYR' in df.columns:
+                    df['MDLYR'] = df['MDLYR'].apply(lambda x: str(x).strip()[:-1])
+                if 'MCODE' in df.columns:
+                    df['MCODE'] = df['MCODE'].astype(str).str.replace(',', '')
+                if 'MDL' in df.columns:
+                    df['EXT'] = df['EXT'].replace(ext_mapping)
                 date_columns = ['ETA', 'DLV_DATE', 'ORD_DATE']
                 df[date_columns] = df[date_columns].apply(lambda col: pd.to_datetime(col).dt.strftime('%m-%d-%Y'))
                 df['Premium'] = df['GOPTS'].apply(lambda x: 'PRM' if any(sub in x for sub in ['PRM', 'PR1', 'PR2', 'PR3']) else '')
                 df['Technology'] = df['GOPTS'].apply(lambda x: 'TECH' if any(sub in x for sub in ['TEC', 'TE1', 'TE2', 'TE3']) else '')
                 df['Convenience'] = df['GOPTS'].apply(lambda x: 'CONV' if any(sub in x for sub in ['CN1', 'CN2', 'CN3', 'CN4', 'CN5']) else '')
-                df['PACKAGE'] = df[['Premium', 'Technology', 'Convenience']].apply(lambda x: ' '.join(filter(None, x)), axis=1)
+                df['Package'] = df[['Premium', 'Technology', 'Convenience']].apply(lambda x: ' '.join(filter(None, x)), axis=1)
                 df.drop(columns=['Premium', 'Technology', 'Convenience', 'GOPTS'], inplace=True)
                 cols = df.columns.tolist()
                 drive_index = cols.index('DRIVE')
-                cols.insert(drive_index + 1, cols.pop(cols.index('PACKAGE')))
+                cols.insert(drive_index + 1, cols.pop(cols.index('Package')))
                 df = df[cols]
                 df.sort_values(by='MDL', inplace=True)
                 df.reset_index(drop=True, inplace=True)
@@ -146,9 +149,9 @@ def display_store_data(tab, df, file_path, store_name):
         with cols[1]:
             trim = st.selectbox('Trim', options=['All'] + df['TRIM'].unique().tolist())
         with cols[2]:
-            package = st.selectbox('Package', options=['All'] + df['PACKAGE'].unique().tolist())
+            package = st.selectbox('Package', options=['All'] + df['Package'].unique().tolist())
         with cols[3]:
-            color = st.selectbox('Color', options=['All'] + df['COLOR'].unique().tolist())
+            color = st.selectbox('Color', options=['All'] + df['EXT'].unique().tolist())
         with cols[4]:
             st.markdown(f"### {store_name} Inventory")
         
