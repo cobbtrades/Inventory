@@ -141,7 +141,7 @@ st.write(
 )
 
 # Create tabs for "All Stores" and "Current"
-tab1, tab2 = st.tabs(["All Stores", "Current", "Dealer Trade"])
+tab1, tab2, tab3 = st.tabs(["All Stores", "Current", "Dealer Trade"])
 
 # Function to save edited data back to GitHub
 def save_to_github(file_path, data_frame, token):
