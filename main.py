@@ -261,9 +261,9 @@ with tab3:
         st.markdown('<div class="form-container">', unsafe_allow_html=True)
         col1, col2 = st.columns(2)
         with col1:
-            tod_date = datetime.today().strftime("%B %d, %Y")
-            formatted_date = tod_date.strftime("%B %d, %Y")
-            st.write("Selected Date:", formatted_date)
+            current_date = datetime.today()
+            formatted_date = current_date.strftime("%B %d, %Y")
+            st.write(f"Date: {formatted_date}")
         with col2:
             st.text_input("Manager", key="manager_input")
         st.markdown('<div class="small-spacing"><hr></div>', unsafe_allow_html=True)
