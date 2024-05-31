@@ -235,10 +235,28 @@ st.markdown("""
     .short-input input {
         max-width: 200px;
     }
+    .page {
+        width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: white;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .print-button {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
     </style>
+    <script>
+    function printPage() {
+        window.print();
+    }
+    </script>
     """, unsafe_allow_html=True)
 
 with tab3:
+    st.markdown('<div class="page">', unsafe_allow_html=True)
     st.markdown("### Dealer Trade")
     
     # Create form layout
@@ -270,55 +288,60 @@ with tab3:
     st.markdown("---")
     
     st.text("Intercompany DX")
-    st.text_input("# of Keys", value="2", key="keys_input", help="e.g., 2", placeholder="Enter number of keys")
+    st.text_input("# of Keys", value="2", key="keys_input")
     
     col7, col8 = st.columns(2)
     with col7:
-        st.markdown('<div class="short-input">' + st.text_input("From:", key="from_input", help="e.g., From Location", placeholder="Enter location") + '</div>', unsafe_allow_html=True)
+        st.markdown('<div class="short-input">' + st.text_input("From:", key="from_input") + '</div>', unsafe_allow_html=True)
     
     with col8:
-        st.markdown('<div class="short-input">' + st.text_input("To:", key="to_input", help="e.g., To Location", placeholder="Enter location") + '</div>', unsafe_allow_html=True)
+        st.markdown('<div class="short-input">' + st.text_input("To:", key="to_input") + '</div>', unsafe_allow_html=True)
     
     col9, col10 = st.columns(2)
     with col9:
-        st.markdown('<div class="short-input">' + st.text_input("Stock Number", key="stock_number_input", help="e.g., 123456", placeholder="Enter stock number") + '</div>', unsafe_allow_html=True)
-        st.markdown('<div class="short-input">' + st.text_input("Year Make Model", key="year_make_model_input", help="e.g., 2021 Toyota Camry", placeholder="Enter year make model") + '</div>', unsafe_allow_html=True)
-        st.markdown('<div class="short-input">' + st.text_input("Full VIN #", key="full_vin_input", help="e.g., 1HGCM82633A123456", placeholder="Enter full VIN") + '</div>', unsafe_allow_html=True)
+        st.markdown('<div class="short-input">' + st.text_input("Stock Number", key="stock_number_input") + '</div>', unsafe_allow_html=True)
+        st.markdown('<div class="short-input">' + st.text_input("Year Make Model", key="year_make_model_input") + '</div>', unsafe_allow_html=True)
+        st.markdown('<div class="short-input">' + st.text_input("Full VIN #", key="full_vin_input") + '</div>', unsafe_allow_html=True)
     
     with col10:
-        st.markdown('<div class="short-input">' + st.text_input("Key Charge", value="-400", key="key_charge_input", help="e.g., -400", placeholder="Enter key charge") + '</div>', unsafe_allow_html=True)
-        st.markdown('<div class="short-input">' + st.text_input("Pack + PPM", key="pack_ppm_input", help="e.g., Pack + PPM", placeholder="Enter Pack + PPM") + '</div>', unsafe_allow_html=True)
-        st.markdown('<div class="short-input">' + st.text_input("Transfer Amount", value="33,728.00", key="transfer_amount_input", help="e.g., 33,728.00", placeholder="Enter transfer amount") + '</div>', unsafe_allow_html=True)
+        st.markdown('<div class="short-input">' + st.text_input("Key Charge", value="-400", key="key_charge_input") + '</div>', unsafe_allow_html=True)
+        st.markdown('<div class="short-input">' + st.text_input("Pack + PPM", key="pack_ppm_input") + '</div>', unsafe_allow_html=True)
+        st.markdown('<div class="short-input">' + st.text_input("Transfer Amount", value="33,728.00", key="transfer_amount_input") + '</div>', unsafe_allow_html=True)
     
     st.markdown("---")
     
     st.text("Dealership Information")
-    st.markdown('<div class="short-input">' + st.text_input("Dealership Name", key="dealership_name_input", help="e.g., ABC Motors", placeholder="Enter dealership name") + '</div>', unsafe_allow_html=True)
-    st.markdown('<div class="short-input">' + st.text_input("Address", key="address_input", help="e.g., 123 Main St", placeholder="Enter address") + '</div>', unsafe_allow_html=True)
-    st.markdown('<div class="short-input">' + st.text_input("City, State ZIP Code", key="city_state_zip_input", help="e.g., City, State ZIP", placeholder="Enter city, state ZIP") + '</div>', unsafe_allow_html=True)
-    st.markdown('<div class="short-input">' + st.text_input("Phone Number", key="phone_number_input", help="e.g., (123) 456-7890", placeholder="Enter phone number") + '</div>', unsafe_allow_html=True)
-    st.markdown('<div class="short-input">' + st.text_input("Dealer Code", key="dealer_code_input", help="e.g., ABC123", placeholder="Enter dealer code") + '</div>', unsafe_allow_html=True)
-    st.markdown('<div class="short-input">' + st.text_input("Contact Name", key="contact_name_input", help="e.g., John Doe", placeholder="Enter contact name") + '</div>', unsafe_allow_html=True)
+    st.markdown('<div class="short-input">' + st.text_input("Dealership Name", key="dealership_name_input") + '</div>', unsafe_allow_html=True)
+    st.markdown('<div class="short-input">' + st.text_input("Address", key="address_input") + '</div>', unsafe_allow_html=True)
+    st.markdown('<div class="short-input">' + st.text_input("City, State ZIP Code", key="city_state_zip_input") + '</div>', unsafe_allow_html=True)
+    st.markdown('<div class="short-input">' + st.text_input("Phone Number", key="phone_number_input") + '</div>', unsafe_allow_html=True)
+    st.markdown('<div class="short-input">' + st.text_input("Dealer Code", key="dealer_code_input") + '</div>', unsafe_allow_html=True)
+    st.markdown('<div class="short-input">' + st.text_input("Contact Name", key="contact_name_input") + '</div>', unsafe_allow_html=True)
     
     st.markdown("---")
     
     st.text("Outgoing Unit")
-    st.markdown('<div class="short-input">' + st.text_input("Outgoing Stock Number", key="outgoing_stock_number_input", help="e.g., 123456", placeholder="Enter stock number") + '</div>', unsafe_allow_html=True)
-    st.markdown('<div class="short-input">' + st.text_input("Outgoing Year Make Model", key="outgoing_year_make_model_input", help="e.g., 2021 Toyota Camry", placeholder="Enter year make model") + '</div>', unsafe_allow_html=True)
-    st.markdown('<div class="short-input">' + st.text_input("Outgoing Full VIN #", key="outgoing_full_vin_input", help="e.g., 1HGCM82633A123456", placeholder="Enter full VIN") + '</div>', unsafe_allow_html=True)
-    st.markdown('<div class="short-input">' + st.text_input("Outgoing Sale Price", key="outgoing_sale_price_input", help="e.g., 30,000.00", placeholder="Enter sale price") + '</div>', unsafe_allow_html=True)
+    st.markdown('<div class="short-input">' + st.text_input("Outgoing Stock Number", key="outgoing_stock_number_input") + '</div>', unsafe_allow_html=True)
+    st.markdown('<div class="short-input">' + st.text_input("Outgoing Year Make Model", key="outgoing_year_make_model_input") + '</div>', unsafe_allow_html=True)
+    st.markdown('<div class="short-input">' + st.text_input("Outgoing Full VIN #", key="outgoing_full_vin_input") + '</div>', unsafe_allow_html=True)
+    st.markdown('<div class="short-input">' + st.text_input("Outgoing Sale Price", key="outgoing_sale_price_input") + '</div>', unsafe_allow_html=True)
     
     st.markdown("---")
     
     st.text("Incoming Unit")
-    st.markdown('<div class="short-input">' + st.text_input("Incoming Year Make Model", key="incoming_year_make_model_input", help="e.g., 2022 Honda Accord", placeholder="Enter year make model") + '</div>', unsafe_allow_html=True)
-    st.markdown('<div class="short-input">' + st.text_input("Incoming Full VIN #", key="incoming_full_vin_input", help="e.g., 1HGCM82633A123456", placeholder="Enter full VIN") + '</div>', unsafe_allow_html=True)
-    st.markdown('<div class="short-input">' + st.text_input("Incoming Purchase Price", key="incoming_purchase_price_input", help="e.g., 25,000.00", placeholder="Enter purchase price") + '</div>', unsafe_allow_html=True)
+    st.markdown('<div class="short-input">' + st.text_input("Incoming Year Make Model", key="incoming_year_make_model_input") + '</div>', unsafe_allow_html=True)
+    st.markdown('<div class="short-input">' + st.text_input("Incoming Full VIN #", key="incoming_full_vin_input") + '</div>', unsafe_allow_html=True)
+    st.markdown('<div class="short-input">' + st.text_input("Incoming Purchase Price", key="incoming_purchase_price_input") + '</div>', unsafe_allow_html=True)
     
     st.markdown("---")
     
     st.text("Notes")
-    st.text_area("", key="notes_input", help="Enter any additional notes here")
+    st.text_area("", key="notes_input")
     
     if st.button("Submit Trade"):
         st.success("Trade Submitted")
+    
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    # Add a print button
+    st.markdown('<div class="print-button"><button onclick="printPage()">Print</button></div>', unsafe_allow_html=True)
