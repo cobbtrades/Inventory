@@ -254,6 +254,8 @@ st.markdown("""
     }
     </style>
     """, unsafe_allow_html=True)
+def calculate_transfer_amount(key_charge, projected_cost):
+    return projected_cost - key_charge
 
 with tab3:
     st.markdown("### Dealer Trade")
@@ -294,9 +296,10 @@ with tab3:
             st.text_input("Year Make Model", key="year_make_model_input")
             st.text_input("Full VIN #", key="full_vin_input")
         with col9:
-            st.number_input("Key Charge", value=0, key="key_charge_input")
-            st.number_input("Projected Cost", key=0)
-            st.number_input("Transfer Amount", value=0, key="transfer_amount_input")
+            key_charge = st.number_input("Key Charge", value=0, key="key_charge_input")
+            projected_cost = st.number_input("Projected Cost", value=0, key="projected_cost_input")
+            transfer_amount = calculate_transfer_amount(key_charge, projected_cost)
+            st.text_input("Transfer Amount", value=transfer_amount, key="transfer_amount_input", disabled=True)
             
         st.text("Non-Modern Dealership Information")
         st.text_input("Dealership Name", key="dealership_name_input")
