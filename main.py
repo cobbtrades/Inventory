@@ -21,8 +21,7 @@ def load_data(file_paths):
     new_column_names = {
         'LOC_DESC': 'LOC', 'DLRORD': 'ORDER', 'TRM_LVL': 'TRIM', 'DRV_TRN': 'DRIVE',
         'DLRETA': 'ETA', 'ORD_CUST_NAME': 'CUST_NAME', 'ORD_CUST_EMAIL_ADDR': 'CUST_EMAIL',
-        'ORD_CUST_DATE': 'ORD_DATE', 'DLR_DLV_DT': 'DLV_DATE', 'Stock\nNo.': 'Stock',
-        'Model\nNo.': 'MCODE', 'Co.': 'Company'
+        'ORD_CUST_DATE': 'ORD_DATE', 'DLR_DLV_DT': 'DLV_DATE'
     }
     ext_mapping = {
         'A20': 'RED ALERT', 'B51': 'ELECTRIC BLUE', 'BW5': 'HERMOSA BLUE', 'CAS': 'MOCHA ALMOND',
@@ -89,7 +88,7 @@ else:
 def load_incoming_data(file_path):
     if os.path.exists(file_path):
         df = pd.read_excel(file_path, header=4, usecols='B:O')
-        df.rename(columns=new_column_names, inplace=True)
+        df.rename(columns=[{'Stock\nNo.': 'Stock', 'Model\nNo.': 'MCODE', 'Co.': 'Company'}], inplace=True)
         df['Year'] = df['Year'].astype(str).str.replace(',', '')
         df.fillna('', inplace=True)
         del df['Deal \nNo.']
