@@ -240,9 +240,11 @@ st.markdown("""
         margin-top: -10px;
     }
     .form-container {
-        max-width: 800px;
+        max-width: 600px;
         margin: auto;
-        padding: 20px;
+    }
+    .form-container .stTextInput, .form-container .stNumberInput, .form-container .stDateInput {
+        max-width: 100% !important;
     }
     </style>
     """, unsafe_allow_html=True)
