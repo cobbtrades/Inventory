@@ -233,7 +233,7 @@ with tab2:
 st.markdown("""
     <style>
     .short-input {
-        max-width: 200px;
+        max-width: 100px;
     }
     </style>
     """, unsafe_allow_html=True)
