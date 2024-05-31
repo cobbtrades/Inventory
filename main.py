@@ -4,6 +4,7 @@ import os
 import requests
 import base64
 from datetime import datetime
+import pdfkit
 
 # Set page configuration for wide layout
 st.set_page_config(layout="wide")
@@ -254,8 +255,10 @@ st.markdown("""
     }
     </style>
     """, unsafe_allow_html=True)
+
 def calculate_transfer_amount(key_charge, projected_cost):
     return projected_cost - key_charge
+
 def format_currency(value):
     return "${:,.2f}".format(value)
     
@@ -322,5 +325,95 @@ with tab3:
         st.text_input("Incoming Full VIN #", key="incoming_full_vin_input")
         st.text_input("Incoming Purchase Price", key="incoming_purchase_price_input")
         if st.form_submit_button("Submit Trade"):
-            st.success("Trade Submitted")
-        st.markdown('</div>', unsafe_allow_html=True)
+            # Generate PDF
+            pdf_html = st.markdown(
+                f"""
+                <html>
+                <head>
+                    <style>
+                        body {{ font-family: Arial, sans-serif; }}
+                        .form-container {{ max-width: 600px; margin: auto; }}
+                    </style>
+                </head>
+                <body>
+                    <div class="form-container">
+                        <h1>Dealer Trade</h1>
+                        <p>Date: {formatted_date}</p>
+                        <p>Manager: {st.session_state.manager_input}</p>
+                        <hr>
+                        <p>Our Trade: {"Yes" if st.session_state.our_trade_checkbox else "No"}</p>
+                        <p>Sold: {"Yes" if st.session_state.sold_checkbox else "No"}</p>
+                        <p>Their Trade: {"Yes" if st.session_state.their_trade_checkbox else "No"}</p>
+                        <p>Floorplan: {"Yes" if st.session_state.floorplan_checkbox else "No"}</p>
+                        <p>From: {st.session_state.from_input}</p>
+                        <p>To: {st.session_state.to_input}</p>
+                        <p>Stock Number: {st.session_state.stock_number_input}</p>
+                        <p>Year Make Model: {st.session_state.year_make_model_input}</p>
+                        <p>Full VIN #: {st.session_state.full_vin_input}</p>
+                        <p>Key Charge: {format_currency(st.session_state.key_charge_input)}</p>
+                        <p>Projected Cost: {format_currency(st.session_state.projected_cost_input)}</p>
+                        <p>Transfer Amount: {formatted_transfer_amount}</p>
+                        <hr>
+                        <p>Dealership Name: {st.session_state.dealership_name_input}</p>
+                        <p>Address: {st.session_state.address_input}</p>
+                        <p>City, State ZIP Code: {st.session_state.city_state_zip_input}</p>
+                        <p>Phone Number: {st.session_state.phone_number_input}</p>
+                        <p>Dealer Code: {st.session_state.dealer_code_input}</p>
+                        <p>Contact Name: {st.session_state.contact_name_input}</p>
+                        <hr>
+                        <p>Outgoing Stock Number: {st.session_state.outgoing_stock_number_input}</p>
+                        <p>Outgoing Year Make Model: {st.session_state.outgoing_year_make_model_input}</p>
+                        <p>Outgoing Full VIN #: {st.session_state.outgoing_full_vin_input}</p>
+                        <p>Outgoing Sale Price: {st.session_state.outgoing_sale_price_input}</p>
+                        <hr>
+                        <p>Incoming Year Make Model: {st.session_state.incoming_year_make_model_input}</p>
+                        <p>Incoming Full VIN #: {st.session_state.incoming_full_vin_input}</p>
+                        <p>Incoming Purchase Price: {st.session_state.incoming_purchase_price_input}</p>
+                    </div>
+                </body>
+                </html>
+                """,
+                unsafe_allow_html=True
+            )
+
+            pdfkit.from_string(pdf_html, 'dealer_trade.pdf')
+
+            token = os.getenv('GITHUB_TOKEN')
+            if token:
+                save_to_github('dealer_trade.pdf', 'dealer_trade.pdf', token)
+
+            st.success("Trade Submitted and PDF saved.")
+
+# Update save_to_github function to support PDFs
+def save_to_github(file_path, data, token, is_binary=False):
+    if is_binary:
+        with open(data, "rb") as f:
+            content = f.read()
+        encoded_data = base64.b64encode(content).decode('utf-8')
+    else:
+        encoded_data = base64.b64encode(data.encode('utf-8')).decode('utf-8')
+
+    headers = {
+        "Authorization": f"token {token}",
+        "Content-Type": "application/json"
+    }
+    url = f"https://api.github.com/repos/cobbtrades/Inventory/contents/{file_path}"
+    
+    # Get the SHA of the file to update
+    response = requests.get(url, headers=headers)
+    response_data = response.json()
+    sha = response_data.get("sha")
+
+    # Prepare the payload
+    payload = {
+        "message": "Update data",
+        "content": encoded_data,
+        "sha": sha
+    }
+    
+    # Update the file on GitHub
+    update_response = requests.put(url, headers=headers, json=payload)
+    if update_response.status_code == 200:
+        st.success(f"Successfully updated {file_path} on GitHub.")
+    else:
+        st.error(f"Failed to update {file_path} on GitHub: {update_response.text}")
