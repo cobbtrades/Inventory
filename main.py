@@ -87,7 +87,7 @@ else:
 @st.cache_data
 def load_incoming_data(file_path):
     if os.path.exists(file_path):
-        df = pd.read_csv(file_path)
+        df = pd.read_excel(file_path)
         return df
     else:
         st.error(f"File {file_path} not found.")
