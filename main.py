@@ -3,6 +3,7 @@ import streamlit as st
 import os
 import requests
 import base64
+from datetime import datetime
 
 # Set page configuration for wide layout
 st.set_page_config(layout="wide")
@@ -236,14 +237,14 @@ with tab3:
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.text_input("Date", value="31-May")
+        st.text_input("Date", value=datetime.today())
     
     with col2:
         st.text_input("Manager")
     
     st.markdown("---")
     
-    col4, col5, col6 = st.columns(3)
+  col4, col5, col6 = st.columns([1, 1, 2])
     with col4:
         st.checkbox("Our Trade")
         st.checkbox("Sold")
@@ -251,6 +252,12 @@ with tab3:
     with col5:
         st.checkbox("Their Trade")
         st.checkbox("Floorplan")
+    
+    with col6:
+        st.text("PLEASE SEND MCO/CHECK TO:")
+        st.text("MODERN AUTOMOTIVE SUPPORT CENTER")
+        st.text("3901 WEST POINT BLVD.")
+        st.text("WINSTON-SALEM, NC 27103")
     
     st.markdown("---")
     
