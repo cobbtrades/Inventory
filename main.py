@@ -294,7 +294,7 @@ with tab3:
     incoming_full_vin = st.text_input("Incoming Full VIN #", key="incoming_full_vin_input")
     incoming_purchase_price = st.text_input("Incoming Purchase Price", key="incoming_purchase_price_input")
 
-    if st.button("Generate and Download Trade PDF"):
+    if st.button("Generate Trade PDF"):
         # Generate PDF
         pdf_buffer = BytesIO()
         c = canvas.Canvas(pdf_buffer, pagesize=letter)
