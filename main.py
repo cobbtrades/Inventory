@@ -28,10 +28,20 @@ ext_mapping = {
     'XKJ': 'EVEREST/BLACK', 'RCF': 'BLUESTONE PEARL', 'XHQ': 'DEEP OCEAN/BLACK', 'XJR': 'SEIRAN BLUE/BLACK'
 }
 
-# Define mdl_mapping dictionary
 mdl_mapping = {
+    'ALTIMA': 'ALT',
+    'ARMADA': 'ARM',
     'FRONTIER': '720',
-    'ALTIMA': 'ALT'
+    'KICKS': 'KIX',
+    'LEAF ELECTRIC': 'LEF',
+    'MURANO': 'MUR',
+    'PATHFINDER': 'PTH',
+    'ROGUE': 'RGE',
+    'SENTRA': 'SEN',
+    'TITAN': 'TTN',
+    'VERSA': 'VSD',
+    'Z NISMO': 'Z',
+    'Z PROTO': 'Z'
 }
 
 # Function to load data and handle columns dynamically
@@ -60,10 +70,8 @@ def load_data(file_paths):
                     df['MDLYR'] = df['MDLYR'].apply(lambda x: str(x).strip()[:-1])
                 if 'MCODE' in df.columns:
                     df['MCODE'] = df['MCODE'].astype(str).str.replace(',', '')
-                if 'EXT' in df.columns:
-                    df['EXT'] = df['EXT'].replace(ext_mapping)
                 if 'MDL' in df.columns:
-                    df['MDL'] = df['MDL'].replace(mdl_mapping)
+                    df['EXT'] = df['EXT'].replace(ext_mapping)
                 date_columns = ['ETA', 'DLV_DATE', 'ORD_DATE']
                 df[date_columns] = df[date_columns].apply(lambda col: pd.to_datetime(col).dt.strftime('%m-%d-%Y'))
                 df['Premium'] = df['GOPTS'].apply(lambda x: 'PRM' if any(sub in x for sub in ['PRM', 'PR1', 'PR2', 'PR3']) else '')
@@ -105,8 +113,11 @@ def load_incoming_data(file_path):
             'STATUS', 'VIN', 'BALANCE', 'CUSTOM'
         ]
         df['YEAR'] = df['YEAR'].astype(str).str.replace(',', '')
-        df['COLOR'] = df['COLOR'].apply(lambda x: ext_mapping.get(x[:3], x))  # Strip first three letters and map
-        df['MDL'] = df['MDL'].replace(mdl_mapping)  # Apply MDL mapping
+        df['COLOR'] = df['COLOR'].apply(lambda x: ext_mapping.get(x[:3], x))
+        df['MCODE'] = df['MCODE'].astype(str).str.replace(',', '')
+        df['MDL'] = df['MDL'].replace(mdl_mapping)
+        df.sort_values(by='COMPANY', inplace=True)
+        df.reset_index(drop=True, inplace=True)
         df.fillna('', inplace=True)
         return df
     else:
@@ -123,20 +134,6 @@ st.write(
         padding-top: 1rem;
         padding-left: 2rem;
         padding-right: 2rem;
-        background-color: #f0f0f5;  /* Light grey background */
-        color: #333333;  /* Dark text color */
-    }
-    .stApp {
-        background-color: #ffffff;  /* White background for the app */
-        color: #333333;  /* Dark text color */
-    }
-    .stButton>button {
-        background-color: #007bff;  /* Blue button background */
-        color: #ffffff;  /* White button text */
-    }
-    .stSelectbox>div {
-        background-color: #ffffff;  /* White background for select boxes */
-        color: #333333;  /* Dark text color for select boxes */
     }
     </style>
     """,
@@ -226,8 +223,8 @@ else:
 
 # Display Incoming Inventory data in the Incoming tab
 with tab2:
-    st.markdown("### Incoming Inventory")
+    st.markdown("### Current CDK Inventory")
     if not incoming_data.empty:
         st.data_editor(incoming_data, use_container_width=True, height=780, hide_index=True)
     else:
-        st.error("No incoming inventory data to display.")
+        st.error("No current inventory data to display.")
