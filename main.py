@@ -302,24 +302,27 @@ with tab3:
 
         c.setFont("Helvetica", 10)
 
-        # Column positions
-        col1_x = 72
-        col2_x = 200
+        # Center text helper function
+        def draw_centered_string(c, y, text, font="Helvetica", size=10):
+            c.setFont(font, size)
+            text_width = c.stringWidth(text, font, size)
+            x = (width - text_width) / 2
+            c.drawString(x, y, text)
 
         # Top section
-        c.drawString(col1_x, height - 72, "MODERN NISSAN OF CONCORD STORE #3")
-        c.drawString(col1_x, height - 84, f"Date: {formatted_date}")
-        c.drawString(col2_x, height - 84, f"Manager: {manager}")
+        draw_centered_string(c, height - 72, "MODERN NISSAN OF CONCORD STORE #3")
+        c.drawString(72, height - 84, f"Date: {formatted_date}")
+        c.drawString(200, height - 84, f"Manager: {manager}")
 
         # Our Trade / Their Trade / Sold / Floorplan
-        c.drawString(col1_x, height - 108, "OUR TRADE")
-        c.drawString(col1_x, height - 120, f"{'X' if our_trade else ''}")
-        c.drawString(col2_x, height - 108, "THEIR TRADE")
-        c.drawString(col2_x, height - 120, f"{'X' if their_trade else ''}")
-        c.drawString(col1_x, height - 144, "SOLD")
-        c.drawString(col1_x, height - 156, f"{'X' if sold else ''}")
-        c.drawString(col2_x, height - 144, "FLOORPLAN")
-        c.drawString(col2_x, height - 156, f"{'X' if floorplan else ''}")
+        c.drawString(72, height - 108, "OUR TRADE")
+        c.drawString(72, height - 120, f"{'X' if our_trade else ''}")
+        c.drawString(200, height - 108, "THEIR TRADE")
+        c.drawString(200, height - 120, f"{'X' if their_trade else ''}")
+        c.drawString(72, height - 144, "SOLD")
+        c.drawString(72, height - 156, f"{'X' if sold else ''}")
+        c.drawString(200, height - 144, "FLOORPLAN")
+        c.drawString(200, height - 156, f"{'X' if floorplan else ''}")
 
         # Address Information
         addr_x = 320  # Adjust as needed for positioning
@@ -329,10 +332,10 @@ with tab3:
         c.drawString(addr_x, height - 144, "WINSTON-SALEM, NC 27103")
 
         # Intercompany DX
+        draw_centered_string(c, height - 175, "Intercompany DX")
         c.setFillColorRGB(0.7, 0.7, 0.7)
         c.rect(70, height - 180, 475, 20, fill=1)
         c.setFillColorRGB(0, 0, 0)
-        c.drawString(72, height - 175, "Intercompany DX")
 
         c.drawString(72, height - 200, "From:")
         c.drawString(120, height - 200, from_location)
@@ -354,10 +357,10 @@ with tab3:
         c.drawString(400, height - 260, formatted_transfer_amount)
 
         # Non-Modern Dealership Information
+        draw_centered_string(c, height - 285, "Non-Modern Dealership Information")
         c.setFillColorRGB(0.7, 0.7, 0.7)
         c.rect(70, height - 290, 475, 20, fill=1)
         c.setFillColorRGB(0, 0, 0)
-        c.drawString(72, height - 285, "Non-Modern Dealership Information")
 
         c.drawString(72, height - 310, "Dealership Name:")
         c.drawString(170, height - 310, dealership_name)
@@ -373,10 +376,10 @@ with tab3:
         c.drawString(170, height - 410, contact_name)
 
         # Outgoing Unit
+        draw_centered_string(c, height - 435, "Outgoing Unit")
         c.setFillColorRGB(0.7, 0.7, 0.7)
         c.rect(70, height - 440, 475, 20, fill=1)
         c.setFillColorRGB(0, 0, 0)
-        c.drawString(72, height - 435, "Outgoing Unit")
 
         c.drawString(72, height - 460, "Outgoing Stock Number:")
         c.drawString(170, height - 460, outgoing_stock_number)
@@ -388,10 +391,10 @@ with tab3:
         c.drawString(170, height - 520, outgoing_sale_price)
 
         # Incoming Unit
+        draw_centered_string(c, height - 545, "Incoming Unit")
         c.setFillColorRGB(0.7, 0.7, 0.7)
         c.rect(70, height - 550, 475, 20, fill=1)
         c.setFillColorRGB(0, 0, 0)
-        c.drawString(72, height - 545, "Incoming Unit")
 
         c.drawString(72, height - 570, "Incoming Year Make Model:")
         c.drawString(170, height - 570, incoming_year_make_model)
