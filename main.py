@@ -141,7 +141,7 @@ st.write(
 )
 
 # Create tabs for "All Stores" and "Current"
-tab1, tab2 = st.tabs(["All Stores", "Current"])
+tab1, tab2 = st.tabs(["All Stores", "Current", "Dealer Trade"])
 
 # Function to save edited data back to GitHub
 def save_to_github(file_path, data_frame, token):
@@ -228,3 +228,82 @@ with tab2:
         st.data_editor(current_data, use_container_width=True, height=780, hide_index=True)
     else:
         st.error("No current inventory data to display.")
+
+with tab3:
+    st.markdown("### Dealer Trade")
+    
+    # Create form layout
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.text_input("Date", value="31-May")
+    
+    with col2:
+        st.text_input("Manager")
+    
+    st.markdown("---")
+    
+    col4, col5, col6 = st.columns(3)
+    with col4:
+        st.checkbox("Our Trade")
+        st.checkbox("Sold")
+    
+    with col5:
+        st.checkbox("Their Trade")
+        st.checkbox("Floorplan")
+    
+    st.markdown("---")
+    
+    st.text("Intercompany DX")
+    st.text_input("# of Keys", value="2")
+    
+    col7, col8 = st.columns(2)
+    with col7:
+        st.text_input("From:")
+    
+    with col8:
+        st.text_input("To:")
+    
+    col9, col10 = st.columns(2)
+    with col9:
+        st.text_input("Stock Number")
+        st.text_input("Year Make Model")
+        st.text_input("Full VIN #")
+    
+    with col10:
+        st.text_input("Key Charge", value="-400")
+        st.text_input("Pack + PPM")
+        st.text_input("Transfer Amount", value="33,728.00")
+    
+    st.markdown("---")
+    
+    st.text("Dealership Information")
+    st.text_input("Dealership Name")
+    st.text_input("Address")
+    st.text_input("City, State ZIP Code")
+    st.text_input("Phone Number")
+    st.text_input("Dealer Code")
+    st.text_input("Contact Name")
+    
+    st.markdown("---")
+    
+    st.text("Outgoing Unit")
+    st.text_input("Outgoing Stock Number")
+    st.text_input("Outgoing Year Make Model")
+    st.text_input("Outgoing Full VIN #")
+    st.text_input("Outgoing Sale Price")
+    
+    st.markdown("---")
+    
+    st.text("Incoming Unit")
+    st.text_input("Incoming Year Make Model")
+    st.text_input("Incoming Full VIN #")
+    st.text_input("Incoming Purchase Price")
+    
+    st.markdown("---")
+    
+    st.text("Notes")
+    st.text_area("")
+
+    if st.button("Submit Trade"):
+        st.success("Trade Submitted")
