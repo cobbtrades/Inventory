@@ -259,132 +259,6 @@ def calculate_transfer_amount(key_charge, projected_cost):
 def format_currency(value):
     return "${:,.2f}".format(value)
     
-def generate_html(form_data):
-    html_content = f"""
-    <html>
-    <head>
-        <style>
-            body {{
-                font-family: Arial, sans-serif;
-                margin: 20px;
-                padding: 20px;
-                border: 1px solid #ddd;
-                border-radius: 10px;
-                max-width: 800px;
-                margin: auto;
-            }}
-            .form-group {{
-                margin-bottom: 15px;
-            }}
-            .form-group label {{
-                font-weight: bold;
-            }}
-            .form-group input {{
-                width: 100%;
-                padding: 5px;
-                border: 1px solid #ccc;
-                border-radius: 5px;
-            }}
-            .form-container {{
-                max-width: 600px;
-                margin: auto;
-            }}
-            .form-container .stTextInput, .form-container .stNumberInput, .form-container .stDateInput {{
-                max-width: 100% !important;
-            }}
-        </style>
-    </head>
-    <body>
-        <h2>Dealer Trade Form</h2>
-        <p>Date: {form_data['Date']}</p>
-        <p>Manager: {form_data['Manager']}</p>
-        <hr>
-        <div class="form-group">
-            <label>Our Trade:</label> {form_data['Our Trade']}
-        </div>
-        <div class="form-group">
-            <label>Sold:</label> {form_data['Sold']}
-        </div>
-        <div class="form-group">
-            <label>Their Trade:</label> {form_data['Their Trade']}
-        </div>
-        <div class="form-group">
-            <label>Floorplan:</label> {form_data['Floorplan']}
-        </div>
-        <div class="form-group">
-            <label>From:</label> {form_data['From']}
-        </div>
-        <div class="form-group">
-            <label>To:</label> {form_data['To']}
-        </div>
-        <div class="form-group">
-            <label>Stock Number:</label> {form_data['Stock Number']}
-        </div>
-        <div class="form-group">
-            <label>Year Make Model:</label> {form_data['Year Make Model']}
-        </div>
-        <div class="form-group">
-            <label>Full VIN #:</label> {form_data['Full VIN #']}
-        </div>
-        <div class="form-group">
-            <label>Key Charge ($):</label> {form_data['Key Charge ($)']}
-        </div>
-        <div class="form-group">
-            <label>Projected Cost ($):</label> {form_data['Projected Cost ($)']}
-        </div>
-        <div class="form-group">
-            <label>Transfer Amount ($):</label> {form_data['Transfer Amount ($)']}
-        </div>
-        <hr>
-        <h3>Non-Modern Dealership Information</h3>
-        <div class="form-group">
-            <label>Dealership Name:</label> {form_data['Dealership Name']}
-        </div>
-        <div class="form-group">
-            <label>Address:</label> {form_data['Address']}
-        </div>
-        <div class="form-group">
-            <label>City, State ZIP Code:</label> {form_data['City, State ZIP Code']}
-        </div>
-        <div class="form-group">
-            <label>Phone Number:</label> {form_data['Phone Number']}
-        </div>
-        <div class="form-group">
-            <label>Dealer Code:</label> {form_data['Dealer Code']}
-        </div>
-        <div class="form-group">
-            <label>Contact Name:</label> {form_data['Contact Name']}
-        </div>
-        <hr>
-        <h3>Outgoing Unit</h3>
-        <div class="form-group">
-            <label>Outgoing Stock Number:</label> {form_data['Outgoing Stock Number']}
-        </div>
-        <div class="form-group">
-            <label>Outgoing Year Make Model:</label> {form_data['Outgoing Year Make Model']}
-        </div>
-        <div class="form-group">
-            <label>Outgoing Full VIN #:</label> {form_data['Outgoing Full VIN #']}
-        </div>
-        <div class="form-group">
-            <label>Outgoing Sale Price:</label> {form_data['Outgoing Sale Price']}
-        </div>
-        <hr>
-        <h3>Incoming Unit</h3>
-        <div class="form-group">
-            <label>Incoming Year Make Model:</label> {form_data['Incoming Year Make Model']}
-        </div>
-        <div class="form-group">
-            <label>Incoming Full VIN #:</label> {form_data['Incoming Full VIN #']}
-        </div>
-        <div class="form-group">
-            <label>Incoming Purchase Price:</label> {form_data['Incoming Purchase Price']}
-        </div>
-    </body>
-    </html>
-    """
-    return html_content
-
 with tab3:
     st.markdown("### Dealer Trade")
     with st.form(key="dealer_trade_form"):
@@ -395,15 +269,15 @@ with tab3:
             formatted_date = current_date.strftime("%B %d, %Y")
             st.write(f"Date: {formatted_date}")
         with col2:
-            manager = st.text_input("Manager", key="manager_input")
+            st.text_input("Manager", key="manager_input")
         st.markdown('<div class="small-spacing"><hr></div>', unsafe_allow_html=True)
         col3, col4, col5 = st.columns([1, 1, 2])
         with col3:
-            our_trade = st.checkbox("Our Trade", key="our_trade_checkbox")
-            sold = st.checkbox("Sold", key="sold_checkbox")
+            st.checkbox("Our Trade", key="our_trade_checkbox")
+            st.checkbox("Sold", key="sold_checkbox")
         with col4:
-            their_trade = st.checkbox("Their Trade", key="their_trade_checkbox")
-            floorplan = st.checkbox("Floorplan", key="floorplan_checkbox")
+            st.checkbox("Their Trade", key="their_trade_checkbox")
+            st.checkbox("Floorplan", key="floorplan_checkbox")
         with col5:
             st.text("""
             PLEASE SEND MCO/CHECK TO:
@@ -411,68 +285,42 @@ with tab3:
             3901 WEST POINT BLVD.
             WINSTON-SALEM, NC 27103
             """)
-        from_location = st.text_input("From:", key="from_input")
-        to_location = st.text_input("To:", key="to_input")
-        stock_number = st.text_input("Stock Number", key="stock_number_input")
-        year_make_model = st.text_input("Year Make Model", key="year_make_model_input")
-        full_vin = st.text_input("Full VIN #", key="full_vin_input")
-        key_charge = st.number_input("Key Charge ($)", value=0.00, format="%.2f", key="key_charge_input")
-        projected_cost = st.number_input("Projected Cost ($)", value=0.00, format="%.2f", key="projected_cost_input")
-        transfer_amount = calculate_transfer_amount(key_charge, projected_cost)
-        formatted_transfer_amount = format_currency(transfer_amount)
-        transfer_amount_input = st.text_input("Transfer Amount", value=formatted_transfer_amount, key="transfer_amount_input", disabled=True)
-        
-        dealership_name = st.text_input("Dealership Name", key="dealership_name_input")
-        address = st.text_input("Address", key="address_input")
-        city_state_zip = st.text_input("City, State ZIP Code", key="city_state_zip_input")
-        phone_number = st.text_input("Phone Number", key="phone_number_input")
-        dealer_code = st.text_input("Dealer Code", key="dealer_code_input")
-        contact_name = st.text_input("Contact Name", key="contact_name_input")
-        outgoing_stock_number = st.text_input("Outgoing Stock Number", key="outgoing_stock_number_input")
-        outgoing_year_make_model = st.text_input("Outgoing Year Make Model", key="outgoing_year_make_model_input")
-        outgoing_full_vin = st.text_input("Outgoing Full VIN #", key="outgoing_full_vin_input")
-        outgoing_sale_price = st.text_input("Outgoing Sale Price", key="outgoing_sale_price_input")
-        incoming_year_make_model = st.text_input("Incoming Year Make Model", key="incoming_year_make_model_input")
-        incoming_full_vin = st.text_input("Incoming Full VIN #", key="incoming_full_vin_input")
-        incoming_purchase_price = st.text_input("Incoming Purchase Price", key="incoming_purchase_price_input")
-        
+        st.text("Intercompany DX")
+        col6, col7 = st.columns(2)
+        with col6:
+            st.text_input("From:", key="from_input")
+        with col7:
+            st.text_input("To:", key="to_input")
+        col8, col9 = st.columns(2)
+        with col8:
+            st.text_input("Stock Number", key="stock_number_input")
+            st.text_input("Year Make Model", key="year_make_model_input")
+            st.text_input("Full VIN #", key="full_vin_input")
+        with col9:
+            key_charge = st.number_input("Key Charge ($)", value=0.00, format="%.2f", key="key_charge_input")
+            projected_cost = st.number_input("Projected Cost ($)", value=0.00, format="%.2f", key="projected_cost_input")
+            transfer_amount = calculate_transfer_amount(key_charge, projected_cost)
+            formatted_transfer_amount = format_currency(transfer_amount)
+            st.text_input("Transfer Amount", value=formatted_transfer_amount, key="transfer_amount_input", disabled=True)
+            
+        st.text("Non-Modern Dealership Information")
+        st.text_input("Dealership Name", key="dealership_name_input")
+        st.text_input("Address", key="address_input")
+        st.text_input("City, State ZIP Code", key="city_state_zip_input")
+        st.text_input("Phone Number", key="phone_number_input")
+        st.text_input("Dealer Code", key="dealer_code_input")
+        st.text_input("Contact Name", key="contact_name_input")
+        st.markdown('<div class="small-spacing"><hr></div>', unsafe_allow_html=True)
+        st.text("Outgoing Unit")
+        st.text_input("Outgoing Stock Number", key="outgoing_stock_number_input")
+        st.text_input("Outgoing Year Make Model", key="outgoing_year_make_model_input")
+        st.text_input("Outgoing Full VIN #", key="outgoing_full_vin_input")
+        st.text_input("Outgoing Sale Price", key="outgoing_sale_price_input")
+        st.markdown('<div class="small-spacing"><hr></div>', unsafe_allow_html=True)
+        st.text("Incoming Unit")
+        st.text_input("Incoming Year Make Model", key="incoming_year_make_model_input")
+        st.text_input("Incoming Full VIN #", key="incoming_full_vin_input")
+        st.text_input("Incoming Purchase Price", key="incoming_purchase_price_input")
         if st.form_submit_button("Submit Trade"):
-            trade_info = {
-                "Date": formatted_date,
-                "Manager": manager,
-                "Our Trade": our_trade,
-                "Sold": sold,
-                "Their Trade": their_trade,
-                "Floorplan": floorplan,
-                "From": from_location,
-                "To": to_location,
-                "Stock Number": stock_number,
-                "Year Make Model": year_make_model,
-                "Full VIN #": full_vin,
-                "Key Charge ($)": key_charge,
-                "Projected Cost ($)": projected_cost,
-                "Transfer Amount ($)": formatted_transfer_amount,
-                "Dealership Name": dealership_name,
-                "Address": address,
-                "City, State ZIP Code": city_state_zip,
-                "Phone Number": phone_number,
-                "Dealer Code": dealer_code,
-                "Contact Name": contact_name,
-                "Outgoing Stock Number": outgoing_stock_number,
-                "Outgoing Year Make Model": outgoing_year_make_model,
-                "Outgoing Full VIN #": outgoing_full_vin,
-                "Outgoing Sale Price": outgoing_sale_price,
-                "Incoming Year Make Model": incoming_year_make_model,
-                "Incoming Full VIN #": incoming_full_vin,
-                "Incoming Purchase Price": incoming_purchase_price
-            }
-            
-            html_content = generate_html(trade_info)
-            
-            st.download_button(
-                label="Download Trade Form",
-                data=html_content,
-                file_name='trade_form.html',
-                mime='text/html'
-            )
+            st.success("Trade Submitted")
         st.markdown('</div>', unsafe_allow_html=True)
