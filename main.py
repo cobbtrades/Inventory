@@ -97,7 +97,9 @@ def load_incoming_data(file_path):
             'STATUS', 'VIN', 'BALANCE', 'CUSTOM'
         ]
         df['YEAR'] = df['YEAR'].astype(str).str.replace(',', '')
-        df['COLOR'] = df['COLOR'].apply(lambda x: ext_mapping.get(x[:3], x))  # Strip first three letters and map
+        df['COLOR'] = df['COLOR'].apply(lambda x: ext_mapping.get(x[:3], x))
+        df.sort_values(by='COMPANY', inplace=True)
+        df.reset_index(drop=True, inplace=True)
         df.fillna('', inplace=True)
         return df
     else:
