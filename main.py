@@ -337,4 +337,6 @@ with tab3:
             c.save()
 
             pdf_buffer.seek(0)
-            st.download_button(label="Download Trade PDF", data=pdf_buffer.read(), file_name="dealer_trade.pdf", mime="application/pdf")
+            pdf_data = pdf_buffer.getvalue()
+
+            st.download_button(label="Download Trade PDF", data=pdf_data, file_name="dealer_trade.pdf", mime="application/pdf")
