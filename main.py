@@ -305,8 +305,7 @@ with tab3:
 
         title = "MODERN NISSAN OF CONCORD STORE #3"
         c.setFont("Helvetica-Bold", 16)
-        c.drawCentredString(width / 2.0, height - 72 - offset, title)
-        c.line(70, height - 76 - offset, width - 70, height - 76 - offset)
+        c.drawCentredString(width / 2.0, height - 52 - offset, title)
         c.setFont("Helvetica", 10)
 
         # Column positions
