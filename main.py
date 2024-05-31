@@ -241,15 +241,15 @@ with tab3:
         formatted_date = current_date.strftime("%B %d, %Y")
         st.write(f"Date: {formatted_date}")
     with col2:
-        manager = st.text_input("Manager", key="manager_input")
+        manager = st.text_input("Manager", key="manager_input_trade")
     st.markdown('<div class="small-spacing"><hr></div>', unsafe_allow_html=True)
     col3, col4, col5 = st.columns([1, 1, 2])
     with col3:
-        our_trade = st.checkbox("Our Trade", key="our_trade_checkbox")
-        sold = st.checkbox("Sold", key="sold_checkbox")
+        our_trade = st.checkbox("Our Trade", key="our_trade_checkbox_trade")
+        sold = st.checkbox("Sold", key="sold_checkbox_trade")
     with col4:
-        their_trade = st.checkbox("Their Trade", key="their_trade_checkbox")
-        floorplan = st.checkbox("Floorplan", key="floorplan_checkbox")
+        their_trade = st.checkbox("Their Trade", key="their_trade_checkbox_trade")
+        floorplan = st.checkbox("Floorplan", key="floorplan_checkbox_trade")
     with col5:
         st.text("""
         PLEASE SEND MCO/CHECK TO:
@@ -260,57 +260,57 @@ with tab3:
     st.text("Intercompany DX")
     col6, col7 = st.columns(2)
     with col6:
-        from_location = st.text_input("From:", key="from_input")
+        from_location = st.text_input("From:", key="from_input_trade")
     with col7:
-        to_location = st.text_input("To:", key="to_input")
+        to_location = st.text_input("To:", key="to_input_trade")
     col8, col9 = st.columns(2)
     with col8:
-        stock_number = st.text_input("Stock Number", key="stock_number_input")
-        year_make_model = st.text_input("Year Make Model", key="year_make_model_input")
-        full_vin = st.text_input("Full VIN #", key="full_vin_input")
+        stock_number = st.text_input("Stock Number", key="stock_number_input_trade")
+        year_make_model = st.text_input("Year Make Model", key="year_make_model_input_trade")
+        full_vin = st.text_input("Full VIN #", key="full_vin_input_trade")
     with col9:
-        key_charge = st.number_input("Key Charge ($)", value=0.00, format="%.2f", key="key_charge_input")
-        projected_cost = st.number_input("Projected Cost ($)", value=0.00, format="%.2f", key="projected_cost_input")
+        key_charge = st.number_input("Key Charge ($)", value=0.00, format="%.2f", key="key_charge_input_trade")
+        projected_cost = st.number_input("Projected Cost ($)", value=0.00, format="%.2f", key="projected_cost_input_trade")
         transfer_amount = calculate_transfer_amount(key_charge, projected_cost)
         formatted_transfer_amount = format_currency(transfer_amount)
-        st.text_input("Transfer Amount", value=formatted_transfer_amount, key="transfer_amount_input", disabled=True)
+        st.text_input("Transfer Amount", value=formatted_transfer_amount, key="transfer_amount_input_trade", disabled=True)
         
     st.text("Non-Modern Dealership Information")
-    dealership_name = st.text_input("Dealership Name", key="dealership_name_input")
-    address = st.text_input("Address", key="address_input")
-    city_state_zip = st.text_input("City, State ZIP Code", key="city_state_zip_input")
-    phone_number = st.text_input("Phone Number", key="phone_number_input")
-    dealer_code = st.text_input("Dealer Code", key="dealer_code_input")
-    contact_name = st.text_input("Contact Name", key="contact_name_input")
+    dealership_name = st.text_input("Dealership Name", key="dealership_name_input_trade")
+    address = st.text_input("Address", key="address_input_trade")
+    city_state_zip = st.text_input("City, State ZIP Code", key="city_state_zip_input_trade")
+    phone_number = st.text_input("Phone Number", key="phone_number_input_trade")
+    dealer_code = st.text_input("Dealer Code", key="dealer_code_input_trade")
+    contact_name = st.text_input("Contact Name", key="contact_name_input_trade")
     st.markdown('<div class="small-spacing"><hr></div>', unsafe_allow_html=True)
     st.text("Outgoing Unit")
-    outgoing_stock_number = st.text_input("Outgoing Stock Number", key="outgoing_stock_number_input")
-    outgoing_year_make_model = st.text_input("Outgoing Year Make Model", key="outgoing_year_make_model_input")
-    outgoing_full_vin = st.text_input("Outgoing Full VIN #", key="outgoing_full_vin_input")
-    outgoing_sale_price = st.text_input("Outgoing Sale Price", key="outgoing_sale_price_input")
+    outgoing_stock_number = st.text_input("Outgoing Stock Number", key="outgoing_stock_number_input_trade")
+    outgoing_year_make_model = st.text_input("Outgoing Year Make Model", key="outgoing_year_make_model_input_trade")
+    outgoing_full_vin = st.text_input("Outgoing Full VIN #", key="outgoing_full_vin_input_trade")
+    outgoing_sale_price = st.text_input("Outgoing Sale Price", key="outgoing_sale_price_input_trade")
     st.markdown('<div class="small-spacing"><hr></div>', unsafe_allow_html=True)
     st.text("Incoming Unit")
-    incoming_year_make_model = st.text_input("Incoming Year Make Model", key="incoming_year_make_model_input")
-    incoming_full_vin = st.text_input("Incoming Full VIN #", key="incoming_full_vin_input")
-    incoming_purchase_price = st.text_input("Incoming Purchase Price", key="incoming_purchase_price_input")
+    incoming_year_make_model = st.text_input("Incoming Year Make Model", key="incoming_year_make_model_input_trade")
+    incoming_full_vin = st.text_input("Incoming Full VIN #", key="incoming_full_vin_input_trade")
+    incoming_purchase_price = st.text_input("Incoming Purchase Price", key="incoming_purchase_price_input_trade")
 
-    if st.button("Generate Trade PDF"):
+    if st.button("Generate Trade PDF", key="generate_trade_pdf_button"):
         # Generate PDF
         pdf_buffer = BytesIO()
         c = canvas.Canvas(pdf_buffer, pagesize=letter)
         width, height = letter
-    
+
         c.setFont("Helvetica", 10)
-    
+
         # Column positions
         col1_x = 72
         col2_x = 200
-    
+
         # Top section
         c.drawString(col1_x, height - 72, "MODERN NISSAN OF CONCORD STORE #3")
         c.drawString(col1_x, height - 84, f"Date: {formatted_date}")
         c.drawString(col2_x, height - 84, f"Manager: {manager}")
-    
+
         # Our Trade / Their Trade / Sold / Floorplan
         c.drawString(col1_x, height - 108, "OUR TRADE")
         c.drawString(col1_x, height - 120, f"{'X' if our_trade else ''}")
@@ -320,25 +320,25 @@ with tab3:
         c.drawString(col1_x, height - 156, f"{'X' if sold else ''}")
         c.drawString(col2_x, height - 144, "FLOORPLAN")
         c.drawString(col2_x, height - 156, f"{'X' if floorplan else ''}")
-    
+
         # Address Information
         addr_x = 320  # Adjust as needed for positioning
         c.drawString(addr_x, height - 108, "PLEASE SEND MCO/CHECK TO:")
         c.drawString(addr_x, height - 120, "MODERN AUTOMOTIVE SUPPORT CENTER")
         c.drawString(addr_x, height - 132, "3901 WEST POINT BLVD.")
         c.drawString(addr_x, height - 144, "WINSTON-SALEM, NC 27103")
-    
+
         # Intercompany DX
         c.setFillColorRGB(0.7, 0.7, 0.7)
         c.rect(70, height - 180, 475, 20, fill=1)
         c.setFillColorRGB(0, 0, 0)
         c.drawString(72, height - 175, "Intercompany DX")
-    
+
         c.drawString(72, height - 200, "From:")
         c.drawString(120, height - 200, from_location)
         c.drawString(320, height - 200, "To:")
         c.drawString(350, height - 200, to_location)
-    
+
         # Vehicle details
         c.drawString(72, height - 220, "Stock Number:")
         c.drawString(150, height - 220, stock_number)
@@ -352,13 +352,13 @@ with tab3:
         c.drawString(400, height - 240, format_currency(projected_cost))
         c.drawString(320, height - 260, "Transfer Amount:")
         c.drawString(400, height - 260, formatted_transfer_amount)
-    
+
         # Non-Modern Dealership Information
         c.setFillColorRGB(0.7, 0.7, 0.7)
         c.rect(70, height - 290, 475, 20, fill=1)
         c.setFillColorRGB(0, 0, 0)
         c.drawString(72, height - 285, "Non-Modern Dealership Information")
-    
+
         c.drawString(72, height - 310, "Dealership Name:")
         c.drawString(170, height - 310, dealership_name)
         c.drawString(72, height - 330, "Address:")
@@ -371,13 +371,13 @@ with tab3:
         c.drawString(170, height - 390, dealer_code)
         c.drawString(72, height - 410, "Contact Name:")
         c.drawString(170, height - 410, contact_name)
-    
+
         # Outgoing Unit
         c.setFillColorRGB(0.7, 0.7, 0.7)
         c.rect(70, height - 440, 475, 20, fill=1)
         c.setFillColorRGB(0, 0, 0)
         c.drawString(72, height - 435, "Outgoing Unit")
-    
+
         c.drawString(72, height - 460, "Outgoing Stock Number:")
         c.drawString(170, height - 460, outgoing_stock_number)
         c.drawString(72, height - 480, "Outgoing Year Make Model:")
@@ -386,27 +386,24 @@ with tab3:
         c.drawString(170, height - 500, outgoing_full_vin)
         c.drawString(72, height - 520, "Outgoing Sale Price:")
         c.drawString(170, height - 520, outgoing_sale_price)
-    
+
         # Incoming Unit
         c.setFillColorRGB(0.7, 0.7, 0.7)
         c.rect(70, height - 550, 475, 20, fill=1)
         c.setFillColorRGB(0, 0, 0)
         c.drawString(72, height - 545, "Incoming Unit")
-    
+
         c.drawString(72, height - 570, "Incoming Year Make Model:")
         c.drawString(170, height - 570, incoming_year_make_model)
         c.drawString(72, height - 590, "Incoming Full VIN #:")
         c.drawString(170, height - 590, incoming_full_vin)
         c.drawString(72, height - 610, "Incoming Purchase Price:")
         c.drawString(170, height - 610, incoming_purchase_price)
-    
+
         c.showPage()
         c.save()
-    
+
         pdf_buffer.seek(0)
         pdf_data = pdf_buffer.getvalue()
-    
-        st.download_button(label="Download Trade PDF", data=pdf_data, file_name="dealer_trade.pdf", mime="application/pdf")
 
-    
-        st.download_button(label="Download Trade PDF", data=pdf_data, file_name="dealer_trade.pdf", mime="application/pdf")
+        st.download_button(label="Download Trade PDF", data=pdf_data, file_name="dealer_trade.pdf", mime="application/pdf", key="download_trade_pdf_button")
