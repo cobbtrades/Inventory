@@ -89,6 +89,7 @@ else:
 def load_incoming_data(file_path):
     if os.path.exists(file_path):
         df = pd.read_excel(file_path, header=4, usecols='B:O')
+        df.rename(columns=new_column_names, inplace=True)
         df['Year'] = df['Year'].astype(str).str.replace(',', '')
         df.fillna('', inplace=True)
         del df['Deal \nNo.']
