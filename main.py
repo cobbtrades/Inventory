@@ -28,6 +28,21 @@ ext_mapping = {
     'XKJ': 'EVEREST/BLACK', 'RCF': 'BLUESTONE PEARL', 'XHQ': 'DEEP OCEAN/BLACK', 'XJR': 'SEIRAN BLUE/BLACK'
 }
 
+mdl_mapping = {
+    'ALTIMA': 'ALT',
+    'ARMADA': 'ARM',
+    'FRONTIER': '720',
+    'KICKS': 'KIX',
+    'LEAF ELECTRIC': 'LEF',
+    'MURANO': 'MUR',
+    'PATHFINDER': 'PTH',
+    'ROGUE': 'RGE',
+    'SENTRA': 'SEN',
+    'TITAN': 'TTN',
+    'VERSA': 'VSD',
+    'Z PROTO': 'Z'
+}
+
 # Function to load data and handle columns dynamically
 @st.cache_data
 def load_data(file_paths):
@@ -99,6 +114,7 @@ def load_incoming_data(file_path):
         df['YEAR'] = df['YEAR'].astype(str).str.replace(',', '')
         df['COLOR'] = df['COLOR'].apply(lambda x: ext_mapping.get(x[:3], x))
         df['MCODE'] = df['MCODE'].astype(str).str.replace(',', '')
+        df['MDL'] = df['MDL'].replace(mdl_mapping)
         df.sort_values(by='COMPANY', inplace=True)
         df.reset_index(drop=True, inplace=True)
         df.fillna('', inplace=True)
