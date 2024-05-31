@@ -6,6 +6,7 @@ import base64
 from datetime import datetime
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
+from io import BytesIO
 
 # Set page configuration for wide layout
 st.set_page_config(layout="wide")
@@ -146,34 +147,6 @@ st.write(
 # Create tabs for "All Stores" and "Current"
 tab1, tab2, tab3 = st.tabs(["All Stores", "Current", "Dealer Trade"])
 
-# Function to save edited data back to GitHub
-def save_to_github(file_path, data_frame, token):
-    html_data = base64.b64encode(data_frame.to_html(index=False).encode('utf-8')).decode('utf-8')
-    headers = {
-        "Authorization": f"token {token}",
-        "Content-Type": "application/json"
-    }
-    url = f"https://api.github.com/repos/cobbtrades/Inventory/contents/{file_path}"
-    
-    # Get the SHA of the file to update
-    response = requests.get(url, headers=headers)
-    response_data = response.json()
-    sha = response_data.get("sha")
-
-    # Prepare the payload
-    payload = {
-        "message": "Update data",
-        "content": html_data,
-        "sha": sha
-    }
-    
-    # Update the file on GitHub
-    update_response = requests.put(url, headers=headers, json=payload)
-    if update_response.status_code == 200:
-        st.success(f"Successfully updated {file_path} on GitHub.")
-    else:
-        st.error(f"Failed to update {file_path} on GitHub: {update_response.text}")
-
 # Function to filter data based on selectbox inputs
 @st.cache_data
 def filter_data(df, model, trim, package, color):
@@ -218,9 +191,6 @@ if not combined_data.empty:
             original_index = combined_data[combined_data['VIN'] == row['VIN']].index[0]
             combined_data.loc[original_index] = row
         
-        token = os.getenv('GITHUB_TOKEN')
-        if token:
-            save_to_github('combined_inventory.html', combined_data, token)
 else:
     st.error("No data to display.")
 
@@ -327,8 +297,8 @@ with tab3:
         st.text_input("Incoming Purchase Price", key="incoming_purchase_price_input")
         if st.form_submit_button("Submit Trade"):
             # Generate PDF
-            pdf_path = 'dealer_trade.pdf'
-            c = canvas.Canvas(pdf_path, pagesize=letter)
+            pdf_buffer = BytesIO()
+            c = canvas.Canvas(pdf_buffer, pagesize=letter)
             width, height = letter
             
             c.drawString(72, height - 72, f"Dealer Trade Form")
@@ -366,42 +336,6 @@ with tab3:
             c.showPage()
             c.save()
 
-            token = os.getenv('GITHUB_TOKEN')
-            if token:
-                pdf_to_github('dealer_trade.pdf', pdf_path, token, is_binary=True)
+            pdf_buffer.seek(0)
+            st.download_button(label="Download Trade PDF", data=pdf_buffer, file_name="dealer_trade.pdf", mime="application/pdf")
 
-            st.success("Trade Submitted and PDF saved.")
-
-# Update save_to_github function to support PDFs
-def pdf_to_github(file_path, data, token, is_binary=False):
-    if is_binary:
-        with open(data, "rb") as f:
-            content = f.read()
-        encoded_data = base64.b64encode(content).decode('utf-8')
-    else:
-        encoded_data = base64.b64encode(data.encode('utf-8')).decode('utf-8')
-
-    headers = {
-        "Authorization": f"token {token}",
-        "Content-Type": "application/json"
-    }
-    url = f"https://api.github.com/repos/cobbtrades/Inventory/contents/{file_path}"
-    
-    # Get the SHA of the file to update
-    response = requests.get(url, headers=headers)
-    response_data = response.json()
-    sha = response_data.get("sha")
-
-    # Prepare the payload
-    payload = {
-        "message": "Update data",
-        "content": encoded_data,
-        "sha": sha
-    }
-    
-    # Update the file on GitHub
-    update_response = requests.put(url, headers=headers, json=payload)
-    if update_response.status_code == 200:
-        st.success(f"Successfully updated {file_path} on GitHub.")
-    else:
-        st.error(f"Failed to update {file_path} on GitHub: {update_response.text}")
