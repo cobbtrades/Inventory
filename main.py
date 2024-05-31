@@ -295,8 +295,8 @@ with tab3:
             st.text_input("Full VIN #", key="full_vin_input")
         with col9:
             st.number_input("Key Charge", value=0, key="key_charge_input")
-            st.number_input("Projected Cost", key="pack_ppm_input")
-            st.number_input("Transfer Amount", value="33,728.00", key="transfer_amount_input")
+            st.number_input("Projected Cost", key=0)
+            st.number_input("Transfer Amount", value=0, key="transfer_amount_input")
         st.text("Dealership Information")
         st.text_input("Dealership Name", key="dealership_name_input")
         st.text_input("Address", key="address_input")
