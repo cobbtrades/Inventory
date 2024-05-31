@@ -101,9 +101,9 @@ if data_frames:
 else:
     combined_data = pd.DataFrame()
 
-# Load Incoming Inventory data from Excel file
+# Load Current Inventory data from Excel file
 @st.cache_data
-def load_incoming_data(file_path):
+def load_current_data(file_path):
     if os.path.exists(file_path):
         df = pd.read_excel(file_path, header=4, usecols='B:O')
         del df['Deal \nNo.']
@@ -124,7 +124,7 @@ def load_incoming_data(file_path):
         st.error(f"File {file_path} not found.")
         return pd.DataFrame()
 
-incoming_data = load_incoming_data('InventoryUpdate.xlsx')
+current_data = load_current_data('InventoryUpdate.xlsx')
 
 # Custom CSS for padding and container width
 st.write(
@@ -140,8 +140,8 @@ st.write(
     unsafe_allow_html=True
 )
 
-# Create tabs for "All Stores" and "Incoming"
-tab1, tab2 = st.tabs(["All Stores", "Incoming"])
+# Create tabs for "All Stores" and "Current"
+tab1, tab2 = st.tabs(["All Stores", "Current"])
 
 # Function to save edited data back to GitHub
 def save_to_github(file_path, data_frame, token):
@@ -221,10 +221,10 @@ if not combined_data.empty:
 else:
     st.error("No data to display.")
 
-# Display Incoming Inventory data in the Incoming tab
+# Display Current Inventory data in the Current tab
 with tab2:
     st.markdown("### Current CDK Inventory")
-    if not incoming_data.empty:
-        st.data_editor(incoming_data, use_container_width=True, height=780, hide_index=True)
+    if not current_data.empty:
+        st.data_editor(current_data, use_container_width=True, height=780, hide_index=True)
     else:
         st.error("No current inventory data to display.")
