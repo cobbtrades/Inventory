@@ -384,13 +384,13 @@ with tab3:
         c.setFillColorRGB(0, 0, 0)
         c.drawString(72, height - 435 - offset, "Outgoing Unit")
 
-        c.drawString(72, height - 460 - offset, "Outgoing Stock Number:")
+        c.drawString(72, height - 460 - offset, "Stock Number:")
         c.drawString(170, height - 460 - offset, outgoing_stock_number)
-        c.drawString(72, height - 480 - offset, "Outgoing Year Make Model:")
+        c.drawString(72, height - 480 - offset, "Year Make Model:")
         c.drawString(170, height - 480 - offset, outgoing_year_make_model)
-        c.drawString(72, height - 500 - offset, "Outgoing Full VIN #:")
+        c.drawString(72, height - 500 - offset, "Full VIN #:")
         c.drawString(170, height - 500 - offset, outgoing_full_vin)
-        c.drawString(72, height - 520 - offset, "Outgoing Sale Price:")
+        c.drawString(72, height - 520 - offset, "Sale Price:")
         c.drawString(170, height - 520 - offset, outgoing_sale_price)
 
         # Incoming Unit
@@ -399,11 +399,11 @@ with tab3:
         c.setFillColorRGB(0, 0, 0)
         c.drawString(72, height - 545 - offset, "Incoming Unit")
 
-        c.drawString(72, height - 570 - offset, "Incoming Year Make Model:")
+        c.drawString(72, height - 570 - offset, "Year Make Model:")
         c.drawString(170, height - 570 - offset, incoming_year_make_model)
-        c.drawString(72, height - 590 - offset, "Incoming Full VIN #:")
+        c.drawString(72, height - 590 - offset, "Full VIN #:")
         c.drawString(170, height - 590 - offset, incoming_full_vin)
-        c.drawString(72, height - 610 - offset, "Incoming Purchase Price:")
+        c.drawString(72, height - 610 - offset, "Purchase Price:")
         c.drawString(170, height - 610 - offset, incoming_purchase_price)
 
         c.showPage()
