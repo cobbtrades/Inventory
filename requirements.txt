@@ -3,4 +3,3 @@ pandas==1.5.2
 lxml
 openpyxl
 reportlab
-pycups
