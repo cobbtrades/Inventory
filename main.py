@@ -318,13 +318,13 @@ with tab3:
 
         # Our Trade / Their Trade / Sold / Floorplan
         c.drawString(col1_x, height - 108 - offset, "OUR TRADE")
-        c.drawString(col1_x, height - 120 - offset, f"{'       X' if our_trade else ''}")
+        c.drawString(col1_x, height - 120 - offset, f"{'         X' if our_trade else ''}")
         c.drawString(col2_x, height - 108 - offset, "THEIR TRADE")
-        c.drawString(col2_x, height - 120 - offset, f"{'        X' if their_trade else ''}")
+        c.drawString(col2_x, height - 120 - offset, f"{'           X' if their_trade else ''}")
         c.drawString(col1_x, height - 144 - offset, "SOLD")
         c.drawString(col1_x, height - 156 - offset, f"{'   X' if sold else ''}")
         c.drawString(col2_x, height - 144 - offset, "FLOORPLAN")
-        c.drawString(col2_x, height - 156 - offset, f"{'        X' if floorplan else ''}")
+        c.drawString(col2_x, height - 156 - offset, f"{'          X' if floorplan else ''}")
 
         # Address Information
         addr_x = 320  # Adjust as needed for positioning
