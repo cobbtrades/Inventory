@@ -341,9 +341,9 @@ with tab3:
         c.drawString(72, height - 175 - offset, "Intercompany DX")
 
         c.drawString(72, height - 200 - offset, "From:")
-        c.drawString(120, height - 200 - offset, from_location)
+        c.drawString(140, height - 200 - offset, from_location)
         c.drawString(330, height - 200 - offset, "To:")
-        c.drawString(360, height - 200 - offset, to_location)
+        c.drawString(380, height - 200 - offset, to_location)
 
         # Vehicle details
         c.drawString(72, height - 220 - offset, "Stock Number:")
@@ -366,17 +366,17 @@ with tab3:
         c.drawString(72, height - 285 - offset, "Non-Modern Dealership Information")
 
         c.drawString(72, height - 310 - offset, "Dealership Name:")
-        c.drawString(170, height - 310 - offset, dealership_name)
+        c.drawString(190, height - 310 - offset, dealership_name)
         c.drawString(72, height - 330 - offset, "Address:")
-        c.drawString(170, height - 330 - offset, address)
+        c.drawString(190, height - 330 - offset, address)
         c.drawString(72, height - 350 - offset, "City, State ZIP Code:")
-        c.drawString(170, height - 350 - offset, city_state_zip)
+        c.drawString(190, height - 350 - offset, city_state_zip)
         c.drawString(72, height - 370 - offset, "Phone Number:")
-        c.drawString(170, height - 370 - offset, phone_number)
+        c.drawString(190, height - 370 - offset, phone_number)
         c.drawString(72, height - 390 - offset, "Dealer Code:")
-        c.drawString(170, height - 390 - offset, dealer_code)
+        c.drawString(190, height - 390 - offset, dealer_code)
         c.drawString(72, height - 410 - offset, "Contact Name:")
-        c.drawString(170, height - 410 - offset, contact_name)
+        c.drawString(190, height - 410 - offset, contact_name)
 
         # Outgoing Unit
         c.setFillColorRGB(0.7, 0.7, 0.7)
@@ -385,13 +385,13 @@ with tab3:
         c.drawString(72, height - 435 - offset, "Outgoing Unit")
 
         c.drawString(72, height - 460 - offset, "Stock Number:")
-        c.drawString(170, height - 460 - offset, outgoing_stock_number)
+        c.drawString(190, height - 460 - offset, outgoing_stock_number)
         c.drawString(72, height - 480 - offset, "Year Make Model:")
-        c.drawString(170, height - 480 - offset, outgoing_year_make_model)
+        c.drawString(190, height - 480 - offset, outgoing_year_make_model)
         c.drawString(72, height - 500 - offset, "Full VIN #:")
-        c.drawString(170, height - 500 - offset, outgoing_full_vin)
+        c.drawString(190, height - 500 - offset, outgoing_full_vin)
         c.drawString(72, height - 520 - offset, "Sale Price:")
-        c.drawString(170, height - 520 - offset, outgoing_sale_price)
+        c.drawString(190, height - 520 - offset, format_currency(outgoing_sale_price))
 
         # Incoming Unit
         c.setFillColorRGB(0.7, 0.7, 0.7)
@@ -400,11 +400,11 @@ with tab3:
         c.drawString(72, height - 545 - offset, "Incoming Unit")
 
         c.drawString(72, height - 570 - offset, "Year Make Model:")
-        c.drawString(170, height - 570 - offset, incoming_year_make_model)
+        c.drawString(190, height - 570 - offset, incoming_year_make_model)
         c.drawString(72, height - 590 - offset, "Full VIN #:")
-        c.drawString(170, height - 590 - offset, incoming_full_vin)
+        c.drawString(190, height - 590 - offset, incoming_full_vin)
         c.drawString(72, height - 610 - offset, "Purchase Price:")
-        c.drawString(170, height - 610 - offset, incoming_purchase_price)
+        c.drawString(190, height - 610 - offset, format_currency(incoming_purchase_price))
 
         c.showPage()
         c.save()
