@@ -256,7 +256,9 @@ st.markdown("""
     """, unsafe_allow_html=True)
 def calculate_transfer_amount(key_charge, projected_cost):
     return projected_cost - key_charge
-
+def format_currency(value):
+    return "${:,.2f}".format(value)
+    
 with tab3:
     st.markdown("### Dealer Trade")
     with st.form(key="dealer_trade_form"):
