@@ -98,6 +98,7 @@ def load_incoming_data(file_path):
         ]
         df['YEAR'] = df['YEAR'].astype(str).str.replace(',', '')
         df['COLOR'] = df['COLOR'].apply(lambda x: ext_mapping.get(x[:3], x))
+        df['MCODE'] = df['MCODE'].astype(str).str.replace(',', '')
         df.sort_values(by='COMPANY', inplace=True)
         df.reset_index(drop=True, inplace=True)
         df.fillna('', inplace=True)
