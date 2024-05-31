@@ -251,6 +251,7 @@ with tab3:
     
     with st.form(key="dealer_trade_form"):
         st.markdown('<div class="form-container">', unsafe_allow_html=True)
+        
         col1, col2, col3 = st.columns(3)
         
         with col1:
@@ -331,3 +332,5 @@ with tab3:
         
         if st.form_submit_button("Submit Trade"):
             st.success("Trade Submitted")
+
+        st.markdown('</div>', unsafe_allow_html=True)
