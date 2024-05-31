@@ -261,7 +261,7 @@ with tab3:
         st.markdown('<div class="form-container">', unsafe_allow_html=True)
         col1, col2 = st.columns(2)
         with col1:
-            st.date_input("Date", value=datetime.today(), key="date_input")
+            st.date_input("Date", value=datetime.today().strftime("%B %d, %Y"), key="date_input")
         with col2:
             st.text_input("Manager", key="manager_input")
         st.markdown('<div class="small-spacing"><hr></div>', unsafe_allow_html=True)
