@@ -242,6 +242,9 @@ st.markdown("""
     .small-spacing {
         margin-top: -40px;
     }
+    .small-input-box .stTextInput > div > div > input {
+        width: 50px;
+    }
     .form-container {
         max-width: 600px;
         margin: auto;
@@ -278,7 +281,7 @@ with tab3:
             """)
         st.markdown("---")
         st.text("Intercompany DX")
-        st.text_input("# of Keys", value="2", key="keys_input")
+        st.text_input("# of Keys", value="2", key="keys_input", label_visibility='collapsed', disabled=False, max_chars=3, type="default", css_class="small-input-box")
         col6, col7 = st.columns(2)
         with col6:
             st.text_input("From:", key="from_input")
