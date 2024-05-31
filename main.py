@@ -316,13 +316,13 @@ with tab3:
 
         # Our Trade / Their Trade / Sold / Floorplan
         c.drawString(col1_x, height - 108, "OUR TRADE")
-        c.drawString(col1_x, height - 120, f"{'   X' if our_trade else ''}")
+        c.drawString(col1_x, height - 120, f"{'       X' if our_trade else ''}")
         c.drawString(col2_x, height - 108, "THEIR TRADE")
-        c.drawString(col2_x, height - 120, f"{'   X' if their_trade else ''}")
+        c.drawString(col2_x, height - 120, f"{'        X' if their_trade else ''}")
         c.drawString(col1_x, height - 144, "SOLD")
         c.drawString(col1_x, height - 156, f"{'   X' if sold else ''}")
         c.drawString(col2_x, height - 144, "FLOORPLAN")
-        c.drawString(col2_x, height - 156, f"{'   X' if floorplan else ''}")
+        c.drawString(col2_x, height - 156, f"{'        X' if floorplan else ''}")
 
         # Address Information
         addr_x = 320  # Adjust as needed for positioning
@@ -345,16 +345,16 @@ with tab3:
         # Vehicle details
         c.drawString(72, height - 220, "Stock Number:")
         c.drawString(150, height - 220, stock_number)
-        c.drawString(72, height - 240, "Year Make Model:")
-        c.drawString(150, height - 240, year_make_model)
+        c.drawString(72, height - 240, "Year/Make/Model:")
+        c.drawString(160, height - 240, year_make_model)
         c.drawString(72, height - 260, "Full VIN #:")
-        c.drawString(150, height - 260, full_vin)
+        c.drawString(130, height - 260, full_vin)
         c.drawString(320, height - 220, "Key Charge:")
-        c.drawString(400, height - 220, format_currency(key_charge))
+        c.drawString(410, height - 220, format_currency(key_charge))
         c.drawString(320, height - 240, "Projected Cost:")
-        c.drawString(400, height - 240, format_currency(projected_cost))
+        c.drawString(410, height - 240, format_currency(projected_cost))
         c.drawString(320, height - 260, "Transfer Amount:")
-        c.drawString(400, height - 260, formatted_transfer_amount)
+        c.drawString(410, height - 260, formatted_transfer_amount)
 
         # Non-Modern Dealership Information
         c.setFillColorRGB(0.7, 0.7, 0.7)
