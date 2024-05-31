@@ -233,15 +233,16 @@ with tab2:
 st.markdown("""
     <style>
     .short-input input {
-        max-width: 100px;
+        max-width: 200px;
         margin-bottom: 0px !important;
     }
     .form-spacing {
         margin-top: -10px;
     }
     .form-container {
-        max-width: 650px;
+        max-width: 800px;
         margin: auto;
+        padding: 20px;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -278,7 +279,7 @@ with tab3:
             st.text("WINSTON-SALEM, NC 27103")
         
         st.markdown("---")
-    
+        
         st.text("Intercompany DX")
         st.markdown('<div class="short-input">' + st.text_input("# of Keys", value="2", key="keys_input", help="e.g., 2", placeholder="Enter number of keys") + '</div>', unsafe_allow_html=True)
         
