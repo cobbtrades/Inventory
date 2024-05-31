@@ -303,7 +303,7 @@ with tab3:
         title = "MODERN NISSAN OF CONCORD STORE #3"
         c.setFont("Helvetica-Bold", 16)
         c.drawCentredString(width / 2.0, height - 72, title)
-
+        c.line(70, height - 76, width - 70, height - 76)
         c.setFont("Helvetica", 10)
 
         # Column positions
