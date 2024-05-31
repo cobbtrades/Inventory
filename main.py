@@ -410,5 +410,5 @@ with tab3:
 
         pdf_buffer.seek(0)
         pdf_data = pdf_buffer.getvalue()
-
+        time.sleep(0.5)
         st.download_button(label="Download Trade PDF", data=pdf_data, file_name="dealer_trade.pdf", mime="application/pdf", key="download_trade_pdf_button")
