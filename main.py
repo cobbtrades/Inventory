@@ -195,7 +195,7 @@ else:
 # Display Incoming Inventory data in the Incoming tab
 with tab2:
     st.markdown("### Incoming Inventory")
-    st.write(incoming_data.columns)
+    st.text(incoming_data.columns)
     if not incoming_data.empty:
         st.data_editor(incoming_data, use_container_width=True, height=780, hide_index=True)
     else:
