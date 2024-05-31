@@ -284,7 +284,6 @@ with tab3:
             WINSTON-SALEM, NC 27103
             """)
         st.text("Intercompany DX")
-        st.text_input("# of Keys", value="2", key="keys_input")
         col6, col7 = st.columns(2)
         with col6:
             st.text_input("From:", key="from_input")
