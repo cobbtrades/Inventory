@@ -275,10 +275,12 @@ with tab3:
             st.checkbox("Floorplan", key="floorplan_checkbox")
         
         with col5:
-            st.text("PLEASE SEND MCO/CHECK TO:")
-            st.text("MODERN AUTOMOTIVE SUPPORT CENTER")
-            st.text("3901 WEST POINT BLVD.")
-            st.text("WINSTON-SALEM, NC 27103")
+            st.text("""
+            PLEASE SEND MCO/CHECK TO:
+            MODERN AUTOMOTIVE SUPPORT CENTER
+            3901 WEST POINT BLVD.
+            WINSTON-SALEM, NC 27103
+            """)
         
         st.markdown("---")
         
