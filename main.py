@@ -83,6 +83,18 @@ if data_frames:
 else:
     combined_data = pd.DataFrame()
 
+# Load Incoming Inventory data from Excel file
+@st.cache_data
+def load_incoming_data(file_path):
+    if os.path.exists(file_path):
+        df = pd.read_excel(file_path)
+        return df
+    else:
+        st.error(f"File {file_path} not found.")
+        return pd.DataFrame()
+
+incoming_data = load_incoming_data('InventoryUpdate.xlsx')
+
 # Custom CSS for padding and container width
 st.write(
     """
@@ -178,7 +190,10 @@ if not combined_data.empty:
 else:
     st.error("No data to display.")
 
-# Display placeholder text for Incoming tab
+# Display Incoming Inventory data in the Incoming tab
 with tab2:
     st.markdown("### Incoming Inventory")
-    st.write("This tab will display incoming inventory data. Placeholder text for now.")
+    if not incoming_data.empty:
+        st.data_editor(incoming_data, use_container_width=True, height=780, hide_index=True)
+    else:
+        st.error("No incoming inventory data to display.")
