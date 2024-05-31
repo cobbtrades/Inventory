@@ -368,12 +368,12 @@ with tab3:
 
             token = os.getenv('GITHUB_TOKEN')
             if token:
-                save_to_github('dealer_trade.pdf', pdf_path, token, is_binary=True)
+                pdf_to_github('dealer_trade.pdf', pdf_path, token, is_binary=True)
 
             st.success("Trade Submitted and PDF saved.")
 
 # Update save_to_github function to support PDFs
-def save_to_github(file_path, data, token, is_binary=False):
+def pdf_to_github(file_path, data, token, is_binary=False):
     if is_binary:
         with open(data, "rb") as f:
             content = f.read()
