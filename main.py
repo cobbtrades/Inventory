@@ -40,6 +40,7 @@ mdl_mapping = {
     'SENTRA': 'SEN',
     'TITAN': 'TTN',
     'VERSA': 'VSD',
+    'Z NISMO': 'Z',
     'Z PROTO': 'Z'
 }
 
