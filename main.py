@@ -323,4 +323,11 @@ with tab3:
         st.text_input("Incoming Purchase Price", key="incoming_purchase_price_input")
         if st.form_submit_button("Submit Trade"):
             st.success("Trade Submitted")
+            # JavaScript to trigger print dialog
+            print_js = """
+            <script>
+            window.print();
+            </script>
+            """
+            st.markdown(print_js, unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
