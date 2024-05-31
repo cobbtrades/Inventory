@@ -3,6 +3,7 @@ import streamlit as st
 import os
 import requests
 import base64
+import time
 from datetime import datetime
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
