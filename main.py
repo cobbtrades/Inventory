@@ -239,6 +239,9 @@ st.markdown("""
     .form-spacing {
         margin-top: -10px;
     }
+    .small-spacing {
+        margin-top: -10px;
+    }
     .form-container {
         max-width: 600px;
         margin: auto;
@@ -251,29 +254,21 @@ st.markdown("""
 
 with tab3:
     st.markdown("### Dealer Trade")
-    
     with st.form(key="dealer_trade_form"):
         st.markdown('<div class="form-container">', unsafe_allow_html=True)
-        
         col1, col2 = st.columns(2)
-        
         with col1:
             st.date_input("Date", value=datetime.today(), key="date_input")
-        
         with col2:
             st.text_input("Manager", key="manager_input")
-        
-        st.markdown("---")
-        
+        st.markdown('<div class="small-spacing"><hr></div>', unsafe_allow_html=True)
         col3, col4, col5 = st.columns([1, 1, 2])
         with col3:
             st.checkbox("Our Trade", key="our_trade_checkbox")
             st.checkbox("Sold", key="sold_checkbox")
-        
         with col4:
             st.checkbox("Their Trade", key="their_trade_checkbox")
             st.checkbox("Floorplan", key="floorplan_checkbox")
-        
         with col5:
             st.text("""
             PLEASE SEND MCO/CHECK TO:
@@ -281,32 +276,24 @@ with tab3:
             3901 WEST POINT BLVD.
             WINSTON-SALEM, NC 27103
             """)
-        
         st.markdown("---")
-        
         st.text("Intercompany DX")
         st.text_input("# of Keys", value="2", key="keys_input")
-        
         col6, col7 = st.columns(2)
         with col6:
             st.text_input("From:", key="from_input")
-        
         with col7:
             st.text_input("To:", key="to_input")
-        
         col8, col9 = st.columns(2)
         with col8:
             st.text_input("Stock Number", key="stock_number_input")
             st.text_input("Year Make Model", key="year_make_model_input")
             st.text_input("Full VIN #", key="full_vin_input")
-        
         with col9:
             st.text_input("Key Charge", value="-400", key="key_charge_input")
             st.text_input("Pack + PPM", key="pack_ppm_input")
             st.text_input("Transfer Amount", value="33,728.00", key="transfer_amount_input")
-        
         st.markdown("---")
-        
         st.text("Dealership Information")
         st.text_input("Dealership Name", key="dealership_name_input")
         st.text_input("Address", key="address_input")
@@ -314,28 +301,20 @@ with tab3:
         st.text_input("Phone Number", key="phone_number_input")
         st.text_input("Dealer Code", key="dealer_code_input")
         st.text_input("Contact Name", key="contact_name_input")
-        
         st.markdown("---")
-        
         st.text("Outgoing Unit")
         st.text_input("Outgoing Stock Number", key="outgoing_stock_number_input")
         st.text_input("Outgoing Year Make Model", key="outgoing_year_make_model_input")
         st.text_input("Outgoing Full VIN #", key="outgoing_full_vin_input")
         st.text_input("Outgoing Sale Price", key="outgoing_sale_price_input")
-        
         st.markdown("---")
-        
         st.text("Incoming Unit")
         st.text_input("Incoming Year Make Model", key="incoming_year_make_model_input")
         st.text_input("Incoming Full VIN #", key="incoming_full_vin_input")
         st.text_input("Incoming Purchase Price", key="incoming_purchase_price_input")
-        
         st.markdown("---")
-        
         st.text("Notes")
         st.text_area("", key="notes_input")
-        
         if st.form_submit_button("Submit Trade"):
             st.success("Trade Submitted")
-
         st.markdown('</div>', unsafe_allow_html=True)
