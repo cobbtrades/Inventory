@@ -4,17 +4,10 @@ import os
 import requests
 import base64
 
-#if st.user.email == "jane@email.com":
-#    display_jane_content()
-#elif st.user.email == "adam@foocorp.io":
-#    display_adam_content()
-#else:
-#    st.write("Please contact us to get access!")
-
-# Set page configuration
+# Set page configuration for wide layout
 st.set_page_config(layout="wide")
 
-# Define file paths
+# Define file paths for each store's inventory data
 file_paths = ['files/Concord', 'files/Winston', 'files/Lake', 'files/Hickory']
 
 # Function to load data and handle columns dynamically
@@ -30,20 +23,7 @@ def load_data(file_paths):
         'ORD_CUST_DATE': 'ORD_DATE', 'DLR_DLV_DT': 'DLV_DATE'
     }
     ext_mapping = {
-        'A20': 'RED ALERT', 'B51': 'ELECTRIC BLUE', 'BW5': 'HERMOSA BLUE', 'CAS': 'MOCHA ALMOND',
-        'DAN': 'OBSIDIAN GREEN', 'DAQ': 'TACTICAL GREEN', 'EBB': 'MONARCH ORANGE', 'EBL': 'SUNSET DRIFT',
-        'G41': 'MAGNETIC BLACK', 'GAQ': 'GRAY/BLACK ROOF', 'HAL': 'BAJA STORM', 'K23': 'BRILLIANT SILVER',
-        'KAD': 'GUN METALLIC', 'KAY': 'CHAMPAGNE SILVER', 'KBY': 'BOULDER GRAY', 'KCH': 'ETHOS GRAY',
-        'KH3': 'SUPER BLACK', 'NAW': 'COULIS RED', 'NBL': 'SCARLET EMBER', 'NBQ': 'ROSEWOOD',
-        'NBY': 'CARDINAL RED', 'QAB': 'PEARL WHITE', 'QAC': 'ASPEN WHITE', 'QAK': 'GLACIER WHITE',
-        'QM1': 'FRESH POWDER', 'RAY': 'DEEP BLUE PEARL', 'RBD': 'STORM BLUE', 'RBY': 'CASPIAN BLUE',
-        'RCJ': 'DEEP OCEAN BLUE', 'XAB': 'WHITE/BLACK', 'XAH': 'ORANGE/BLACK', 'XBJ': 'WHITE/BLACK',
-        'XDU': 'RED/BLACK', 'XEU': 'BLUE/BLACK', 'XEW': 'CHAMP/BLACK', 'XEX': 'GRAY/BLACK',
-        'XFN': 'GREEN/BLACK', 'XGY': 'BLUE/BLACK', 'XKV': 'TAN/BLACK', 'XEV': 'ORANGE/BLACK',
-        'DAP': 'NORTHERN LIGHTS', 'GAT': 'BLACK DIAMOND', 'XGA': 'WHITE/BLACK', 'XGB': 'SILVER/BLACK',
-        'XGD': 'RED/BLACK', 'XGH': 'GRAY/BLACK', 'XGJ': 'COPPER/BLACK', 'XGU': 'BLUE/BLACK',
-        'NCA': 'BURGUNDY', 'QBE': 'EVEREST WHITE', 'KBZ': 'ATLANTIC GRAY', 'XKY': 'ATLANTIC/BLACK ROOF',
-        'XKJ': 'EVEREST/BLACK', 'RCF': 'BLUESTONE PEARL', 'XHQ': 'DEEP OCEAN/BLACK', 'XJR': 'SEIRAN BLUE/BLACK'
+        # Mapping of exterior color codes to color names
     }
     data_frames = []
     
@@ -79,10 +59,10 @@ def load_data(file_paths):
             st.error(f"File {file} not found in the repository.")
     return data_frames
 
-# Load data
+# Load data from specified file paths
 data_frames = load_data(file_paths)
 
-# Combine data
+# Combine data from all stores into a single DataFrame
 if data_frames:
     combined_data = pd.concat([df[0] for df in data_frames], ignore_index=True)
     combined_data.reset_index(drop=True, inplace=True)
@@ -103,8 +83,8 @@ st.write(
     unsafe_allow_html=True
 )
 
-# Create tabs
-tab1, tab2, tab3, tab4, tab5 = st.tabs(["Concord", "Winston", "Lake", "Hickory", "All Stores"])
+# Create tabs for "All Stores" and "Incoming"
+tab1, tab2 = st.tabs(["All Stores", "Incoming"])
 
 # Function to save edited data back to GitHub
 def save_to_github(file_path, data_frame, token):
@@ -113,8 +93,7 @@ def save_to_github(file_path, data_frame, token):
         "Authorization": f"token {token}",
         "Content-Type": "application/json"
     }
-    path = file_path
-    url = f"https://api.github.com/repos/cobbtrades/Inventory/contents/{path}"
+    url = f"https://api.github.com/repos/cobbtrades/Inventory/contents/{file_path}"
     
     # Get the SHA of the file to update
     response = requests.get(url, headers=headers)
@@ -147,53 +126,44 @@ def filter_data(df, model, trim, package, color):
         df = df[df['EXT'] == color]
     return df
 
-# Function to display data for each store
-def display_store_data(tab, df, file_path, store_name, tab_key):
-    with tab:
+# Display combined data for all stores with filters
+if not combined_data.empty:
+    with tab1:
         cols = st.columns([2, 1, 1, 1, 1])
         with cols[0]:
-            st.markdown(f"### {store_name} Inventory")
+            st.markdown(f"### All Stores Inventory")
         with cols[1]:
-            model = st.selectbox('Model', options=['All'] + df['MDL'].unique().tolist(), key=f'{tab_key}_model')
+            model = st.selectbox('Model', options=['All'] + combined_data['MDL'].unique().tolist(), key='all_model')
         with cols[2]:
             # Filter options based on selected model
-            trims = ['All'] if model == 'All' else ['All'] + df[df['MDL'] == model]['TRIM'].unique().tolist()
-            trim = st.selectbox('Trim', options=trims, key=f'{tab_key}_trim')
+            trims = ['All'] if model == 'All' else ['All'] + combined_data[combined_data['MDL'] == model]['TRIM'].unique().tolist()
+            trim = st.selectbox('Trim', options=trims, key='all_trim')
         with cols[3]:
-            packages = ['All'] if model == 'All' else ['All'] + df[df['MDL'] == model]['PACKAGE'].unique().tolist()
-            package = st.selectbox('Package', options=packages, key=f'{tab_key}_package')
+            packages = ['All'] if model == 'All' else ['All'] + combined_data[combined_data['MDL'] == model]['PACKAGE'].unique().tolist()
+            package = st.selectbox('Package', options=packages, key='all_package')
         with cols[4]:
-            colors = ['All'] if model == 'All' else ['All'] + df[df['MDL'] == model]['EXT'].unique().tolist()
-            color = st.selectbox('Color', options=colors, key=f'{tab_key}_color')
+            colors = ['All'] if model == 'All' else ['All'] + combined_data[combined_data['MDL'] == model]['EXT'].unique().tolist()
+            color = st.selectbox('Color', options=colors, key='all_color')
 
-        filtered_df = filter_data(df, model, trim, package, color)
+        filtered_df = filter_data(combined_data, model, trim, package, color)
         
         num_rows = len(filtered_df)
         st.markdown(f"<span style='font-size: small;'>{num_rows} vehicles</span>", unsafe_allow_html=True)
         
-        edited_df = st.data_editor(filtered_df, height=780, hide_index=True, key=f'{tab_key}_data_editor')
+        edited_df = st.data_editor(filtered_df, use_container_width=True, height=780, hide_index=True, key='all_data_editor')
         
         # Update the original dataframe with the changes from the edited dataframe
         for index, row in edited_df.iterrows():
-            original_index = df[df['VIN'] == row['VIN']].index[0]
-            df.loc[original_index] = row
+            original_index = combined_data[combined_data['VIN'] == row['VIN']].index[0]
+            combined_data.loc[original_index] = row
         
         token = os.getenv('GITHUB_TOKEN')
         if token:
-            save_to_github(file_path, df, token)
-
-# Display individual store data
-store_names = ["Concord", "Winston", "Lake", "Hickory"]
-tabs = [tab1, tab2, tab3, tab4]
-if data_frames:
-    for i, (df, file_path) in enumerate(data_frames):
-        display_store_data(tabs[i], df, file_path, store_names[i], f'store_{i}')
-
-# Display combined data for all stores
-if not combined_data.empty:
-    num_rows = len(combined_data)
-    with tab5:
-        st.markdown(f"### Group Inventory <span style='font-size: small;'>{num_rows} vehicles</span>", unsafe_allow_html=True)
-        st.data_editor(combined_data, use_container_width=True, height=780, hide_index=True)
+            save_to_github('combined_inventory.html', combined_data, token)
 else:
     st.error("No data to display.")
+
+# Display placeholder text for Incoming tab
+with tab2:
+    st.markdown("### Incoming Inventory")
+    st.write("This tab will display incoming inventory data. Placeholder text for now.")
