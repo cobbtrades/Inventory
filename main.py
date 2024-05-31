@@ -302,94 +302,111 @@ with tab3:
     
         c.setFont("Helvetica", 10)
     
-        c.drawString(72, height - 72, "MODERN NISSAN OF CONCORD STORE #3")
-        c.drawString(72, height - 84, f"Date: {formatted_date}")
-        c.drawString(400, height - 84, f"Manager: {manager}")
-        c.drawString(72, height - 108, "OUR TRADE")
-        c.drawString(72, height - 120, f"{'X' if our_trade else ''}")
-        c.drawString(150, height - 108, "THEIR TRADE")
-        c.drawString(150, height - 120, f"{'X' if their_trade else ''}")
-        c.drawString(72, height - 144, "SOLD")
-        c.drawString(72, height - 156, f"{'X' if sold else ''}")
-        c.drawString(150, height - 144, "FLOORPLAN")
-        c.drawString(150, height - 156, f"{'X' if floorplan else ''}")
-        
-        c.drawString(72, height - 180, "PLEASE SEND MCO/CHECK TO:")
-        c.drawString(72, height - 192, "MODERN AUTOMOTIVE SUPPORT CENTER")
-        c.drawString(72, height - 204, "3901 WEST POINT BLVD.")
-        c.drawString(72, height - 216, "WINSTON-SALEM, NC 27103")
-        
+        # Column positions
+        col1_x = 72
+        col2_x = 200
+    
+        # Top section
+        c.drawString(col1_x, height - 72, "MODERN NISSAN OF CONCORD STORE #3")
+        c.drawString(col1_x, height - 84, f"Date: {formatted_date}")
+        c.drawString(col2_x, height - 84, f"Manager: {manager}")
+    
+        # Our Trade / Their Trade / Sold / Floorplan
+        c.drawString(col1_x, height - 108, "OUR TRADE")
+        c.drawString(col1_x, height - 120, f"{'X' if our_trade else ''}")
+        c.drawString(col2_x, height - 108, "THEIR TRADE")
+        c.drawString(col2_x, height - 120, f"{'X' if their_trade else ''}")
+        c.drawString(col1_x, height - 144, "SOLD")
+        c.drawString(col1_x, height - 156, f"{'X' if sold else ''}")
+        c.drawString(col2_x, height - 144, "FLOORPLAN")
+        c.drawString(col2_x, height - 156, f"{'X' if floorplan else ''}")
+    
+        # Address Information
+        addr_x = 320  # Adjust as needed for positioning
+        c.drawString(addr_x, height - 108, "PLEASE SEND MCO/CHECK TO:")
+        c.drawString(addr_x, height - 120, "MODERN AUTOMOTIVE SUPPORT CENTER")
+        c.drawString(addr_x, height - 132, "3901 WEST POINT BLVD.")
+        c.drawString(addr_x, height - 144, "WINSTON-SALEM, NC 27103")
+    
+        # Intercompany DX
         c.setFillColorRGB(0.7, 0.7, 0.7)
-        c.rect(70, height - 260, 475, 20, fill=1)
+        c.rect(70, height - 180, 475, 20, fill=1)
         c.setFillColorRGB(0, 0, 0)
-        c.drawString(72, height - 255, "Intercompany DX")
-        
-        c.drawString(72, height - 280, "From:")
-        c.drawString(120, height - 280, from_location)
-        c.drawString(320, height - 280, "To:")
-        c.drawString(350, height - 280, to_location)
-        
-        c.drawString(72, height - 300, "Stock Number:")
-        c.drawString(150, height - 300, stock_number)
-        c.drawString(72, height - 320, "Year Make Model:")
-        c.drawString(150, height - 320, year_make_model)
-        c.drawString(72, height - 340, "Full VIN #:")
-        c.drawString(150, height - 340, full_vin)
-        c.drawString(320, height - 300, "Key Charge:")
-        c.drawString(400, height - 300, format_currency(key_charge))
-        c.drawString(320, height - 320, "Projected Cost:")
-        c.drawString(400, height - 320, format_currency(projected_cost))
-        c.drawString(320, height - 340, "Transfer Amount:")
-        c.drawString(400, height - 340, formatted_transfer_amount)
-        
+        c.drawString(72, height - 175, "Intercompany DX")
+    
+        c.drawString(72, height - 200, "From:")
+        c.drawString(120, height - 200, from_location)
+        c.drawString(320, height - 200, "To:")
+        c.drawString(350, height - 200, to_location)
+    
+        # Vehicle details
+        c.drawString(72, height - 220, "Stock Number:")
+        c.drawString(150, height - 220, stock_number)
+        c.drawString(72, height - 240, "Year Make Model:")
+        c.drawString(150, height - 240, year_make_model)
+        c.drawString(72, height - 260, "Full VIN #:")
+        c.drawString(150, height - 260, full_vin)
+        c.drawString(320, height - 220, "Key Charge:")
+        c.drawString(400, height - 220, format_currency(key_charge))
+        c.drawString(320, height - 240, "Projected Cost:")
+        c.drawString(400, height - 240, format_currency(projected_cost))
+        c.drawString(320, height - 260, "Transfer Amount:")
+        c.drawString(400, height - 260, formatted_transfer_amount)
+    
+        # Non-Modern Dealership Information
         c.setFillColorRGB(0.7, 0.7, 0.7)
-        c.rect(70, height - 370, 475, 20, fill=1)
+        c.rect(70, height - 290, 475, 20, fill=1)
         c.setFillColorRGB(0, 0, 0)
-        c.drawString(72, height - 365, "Non-Modern Dealership Information")
-        
-        c.drawString(72, height - 390, "Dealership Name:")
-        c.drawString(170, height - 390, dealership_name)
-        c.drawString(72, height - 410, "Address:")
-        c.drawString(170, height - 410, address)
-        c.drawString(72, height - 430, "City, State ZIP Code:")
-        c.drawString(170, height - 430, city_state_zip)
-        c.drawString(72, height - 450, "Phone Number:")
-        c.drawString(170, height - 450, phone_number)
-        c.drawString(72, height - 470, "Dealer Code:")
-        c.drawString(170, height - 470, dealer_code)
-        c.drawString(72, height - 490, "Contact Name:")
-        c.drawString(170, height - 490, contact_name)
-        
+        c.drawString(72, height - 285, "Non-Modern Dealership Information")
+    
+        c.drawString(72, height - 310, "Dealership Name:")
+        c.drawString(170, height - 310, dealership_name)
+        c.drawString(72, height - 330, "Address:")
+        c.drawString(170, height - 330, address)
+        c.drawString(72, height - 350, "City, State ZIP Code:")
+        c.drawString(170, height - 350, city_state_zip)
+        c.drawString(72, height - 370, "Phone Number:")
+        c.drawString(170, height - 370, phone_number)
+        c.drawString(72, height - 390, "Dealer Code:")
+        c.drawString(170, height - 390, dealer_code)
+        c.drawString(72, height - 410, "Contact Name:")
+        c.drawString(170, height - 410, contact_name)
+    
+        # Outgoing Unit
         c.setFillColorRGB(0.7, 0.7, 0.7)
-        c.rect(70, height - 520, 475, 20, fill=1)
+        c.rect(70, height - 440, 475, 20, fill=1)
         c.setFillColorRGB(0, 0, 0)
-        c.drawString(72, height - 515, "Outgoing Unit")
-        
-        c.drawString(72, height - 540, "Outgoing Stock Number:")
-        c.drawString(170, height - 540, outgoing_stock_number)
-        c.drawString(72, height - 560, "Outgoing Year Make Model:")
-        c.drawString(170, height - 560, outgoing_year_make_model)
-        c.drawString(72, height - 580, "Outgoing Full VIN #:")
-        c.drawString(170, height - 580, outgoing_full_vin)
-        c.drawString(72, height - 600, "Outgoing Sale Price:")
-        c.drawString(170, height - 600, outgoing_sale_price)
-        
+        c.drawString(72, height - 435, "Outgoing Unit")
+    
+        c.drawString(72, height - 460, "Outgoing Stock Number:")
+        c.drawString(170, height - 460, outgoing_stock_number)
+        c.drawString(72, height - 480, "Outgoing Year Make Model:")
+        c.drawString(170, height - 480, outgoing_year_make_model)
+        c.drawString(72, height - 500, "Outgoing Full VIN #:")
+        c.drawString(170, height - 500, outgoing_full_vin)
+        c.drawString(72, height - 520, "Outgoing Sale Price:")
+        c.drawString(170, height - 520, outgoing_sale_price)
+    
+        # Incoming Unit
         c.setFillColorRGB(0.7, 0.7, 0.7)
-        c.rect(70, height - 630, 475, 20, fill=1)
+        c.rect(70, height - 550, 475, 20, fill=1)
         c.setFillColorRGB(0, 0, 0)
-        c.drawString(72, height - 625, "Incoming Unit")
-        
-        c.drawString(72, height - 650, "Incoming Year Make Model:")
-        c.drawString(170, height - 650, incoming_year_make_model)
-        c.drawString(72, height - 670, "Incoming Full VIN #:")
-        c.drawString(170, height - 670, incoming_full_vin)
-        c.drawString(72, height - 690, "Incoming Purchase Price:")
-        c.drawString(170, height - 690, incoming_purchase_price)
-        
+        c.drawString(72, height - 545, "Incoming Unit")
+    
+        c.drawString(72, height - 570, "Incoming Year Make Model:")
+        c.drawString(170, height - 570, incoming_year_make_model)
+        c.drawString(72, height - 590, "Incoming Full VIN #:")
+        c.drawString(170, height - 590, incoming_full_vin)
+        c.drawString(72, height - 610, "Incoming Purchase Price:")
+        c.drawString(170, height - 610, incoming_purchase_price)
+    
         c.showPage()
         c.save()
     
         pdf_buffer.seek(0)
         pdf_data = pdf_buffer.getvalue()
+    
+        st.download_button(label="Download Trade PDF", data=pdf_data, file_name="dealer_trade.pdf", mime="application/pdf")
+
     
         st.download_button(label="Download Trade PDF", data=pdf_data, file_name="dealer_trade.pdf", mime="application/pdf")
