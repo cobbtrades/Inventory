@@ -391,7 +391,7 @@ with tab3:
         c.drawString(72, height - 500 - offset, "Full VIN #:")
         c.drawString(190, height - 500 - offset, outgoing_full_vin)
         c.drawString(72, height - 520 - offset, "Sale Price:")
-        c.drawString(190, height - 520 - offset, format_currency(outgoing_sale_price))
+        c.drawString(190, height - 520 - offset, outgoing_sale_price)
 
         # Incoming Unit
         c.setFillColorRGB(0.7, 0.7, 0.7)
@@ -404,7 +404,7 @@ with tab3:
         c.drawString(72, height - 590 - offset, "Full VIN #:")
         c.drawString(190, height - 590 - offset, incoming_full_vin)
         c.drawString(72, height - 610 - offset, "Purchase Price:")
-        c.drawString(190, height - 610 - offset, format_currency(incoming_purchase_price))
+        c.drawString(190, height - 610 - offset, incoming_purchase_price)
 
         c.showPage()
         c.save()
