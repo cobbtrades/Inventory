@@ -235,108 +235,107 @@ def format_currency(value):
     
 with tab3:
     st.markdown("### Dealer Trade")
-    with st.form(key="dealer_trade_form"):
-        st.markdown('<div class="form-container">', unsafe_allow_html=True)
-        col1, col2 = st.columns(2)
-        with col1:
-            current_date = datetime.today()
-            formatted_date = current_date.strftime("%B %d, %Y")
-            st.write(f"Date: {formatted_date}")
-        with col2:
-            st.text_input("Manager", key="manager_input")
-        st.markdown('<div class="small-spacing"><hr></div>', unsafe_allow_html=True)
-        col3, col4, col5 = st.columns([1, 1, 2])
-        with col3:
-            st.checkbox("Our Trade", key="our_trade_checkbox")
-            st.checkbox("Sold", key="sold_checkbox")
-        with col4:
-            st.checkbox("Their Trade", key="their_trade_checkbox")
-            st.checkbox("Floorplan", key="floorplan_checkbox")
-        with col5:
-            st.text("""
-            PLEASE SEND MCO/CHECK TO:
-            MODERN AUTOMOTIVE SUPPORT CENTER
-            3901 WEST POINT BLVD.
-            WINSTON-SALEM, NC 27103
-            """)
-        st.text("Intercompany DX")
-        col6, col7 = st.columns(2)
-        with col6:
-            st.text_input("From:", key="from_input")
-        with col7:
-            st.text_input("To:", key="to_input")
-        col8, col9 = st.columns(2)
-        with col8:
-            st.text_input("Stock Number", key="stock_number_input")
-            st.text_input("Year Make Model", key="year_make_model_input")
-            st.text_input("Full VIN #", key="full_vin_input")
-        with col9:
-            key_charge = st.number_input("Key Charge ($)", value=0.00, format="%.2f", key="key_charge_input")
-            projected_cost = st.number_input("Projected Cost ($)", value=0.00, format="%.2f", key="projected_cost_input")
-            transfer_amount = calculate_transfer_amount(key_charge, projected_cost)
-            formatted_transfer_amount = format_currency(transfer_amount)
-            st.text_input("Transfer Amount", value=formatted_transfer_amount, key="transfer_amount_input", disabled=True)
-            
-        st.text("Non-Modern Dealership Information")
-        st.text_input("Dealership Name", key="dealership_name_input")
-        st.text_input("Address", key="address_input")
-        st.text_input("City, State ZIP Code", key="city_state_zip_input")
-        st.text_input("Phone Number", key="phone_number_input")
-        st.text_input("Dealer Code", key="dealer_code_input")
-        st.text_input("Contact Name", key="contact_name_input")
-        st.markdown('<div class="small-spacing"><hr></div>', unsafe_allow_html=True)
-        st.text("Outgoing Unit")
-        st.text_input("Outgoing Stock Number", key="outgoing_stock_number_input")
-        st.text_input("Outgoing Year Make Model", key="outgoing_year_make_model_input")
-        st.text_input("Outgoing Full VIN #", key="outgoing_full_vin_input")
-        st.text_input("Outgoing Sale Price", key="outgoing_sale_price_input")
-        st.markdown('<div class="small-spacing"><hr></div>', unsafe_allow_html=True)
-        st.text("Incoming Unit")
-        st.text_input("Incoming Year Make Model", key="incoming_year_make_model_input")
-        st.text_input("Incoming Full VIN #", key="incoming_full_vin_input")
-        st.text_input("Incoming Purchase Price", key="incoming_purchase_price_input")
-        if st.form_submit_button("Submit Trade"):
-            # Generate PDF
-            pdf_buffer = BytesIO()
-            c = canvas.Canvas(pdf_buffer, pagesize=letter)
-            width, height = letter
-            
-            c.drawString(72, height - 72, f"Dealer Trade Form")
-            c.drawString(72, height - 100, f"Date: {formatted_date}")
-            c.drawString(72, height - 120, f"Manager: {st.session_state.manager_input}")
-            c.drawString(72, height - 140, f"Our Trade: {'Yes' if st.session_state.our_trade_checkbox else 'No'}")
-            c.drawString(72, height - 160, f"Sold: {'Yes' if st.session_state.sold_checkbox else 'No'}")
-            c.drawString(72, height - 180, f"Their Trade: {'Yes' if st.session_state.their_trade_checkbox else 'No'}")
-            c.drawString(72, height - 200, f"Floorplan: {'Yes' if st.session_state.floorplan_checkbox else 'No'}")
-            c.drawString(72, height - 220, f"From: {st.session_state.from_input}")
-            c.drawString(72, height - 240, f"To: {st.session_state.to_input}")
-            c.drawString(72, height - 260, f"Stock Number: {st.session_state.stock_number_input}")
-            c.drawString(72, height - 280, f"Year Make Model: {st.session_state.year_make_model_input}")
-            c.drawString(72, height - 300, f"Full VIN #: {st.session_state.full_vin_input}")
-            c.drawString(72, height - 320, f"Key Charge: {format_currency(st.session_state.key_charge_input)}")
-            c.drawString(72, height - 340, f"Projected Cost: {format_currency(st.session_state.projected_cost_input)}")
-            c.drawString(72, height - 360, f"Transfer Amount: {formatted_transfer_amount}")
-            
-            c.drawString(72, height - 400, f"Dealership Name: {st.session_state.dealership_name_input}")
-            c.drawString(72, height - 420, f"Address: {st.session_state.address_input}")
-            c.drawString(72, height - 440, f"City, State ZIP Code: {st.session_state.city_state_zip_input}")
-            c.drawString(72, height - 460, f"Phone Number: {st.session_state.phone_number_input}")
-            c.drawString(72, height - 480, f"Dealer Code: {st.session_state.dealer_code_input}")
-            c.drawString(72, height - 500, f"Contact Name: {st.session_state.contact_name_input}")
-            
-            c.drawString(72, height - 540, f"Outgoing Stock Number: {st.session_state.outgoing_stock_number_input}")
-            c.drawString(72, height - 560, f"Outgoing Year Make Model: {st.session_state.outgoing_year_make_model_input}")
-            c.drawString(72, height - 580, f"Outgoing Full VIN #: {st.session_state.outgoing_full_vin_input}")
-            c.drawString(72, height - 600, f"Outgoing Sale Price: {st.session_state.outgoing_sale_price_input}")
-            
-            c.drawString(72, height - 640, f"Incoming Year Make Model: {st.session_state.incoming_year_make_model_input}")
-            c.drawString(72, height - 660, f"Incoming Full VIN #: {st.session_state.incoming_full_vin_input}")
-            c.drawString(72, height - 680, f"Incoming Purchase Price: {st.session_state.incoming_purchase_price_input}")
-            
-            c.showPage()
-            c.save()
+    col1, col2 = st.columns(2)
+    with col1:
+        current_date = datetime.today()
+        formatted_date = current_date.strftime("%B %d, %Y")
+        st.write(f"Date: {formatted_date}")
+    with col2:
+        manager = st.text_input("Manager", key="manager_input")
+    st.markdown('<div class="small-spacing"><hr></div>', unsafe_allow_html=True)
+    col3, col4, col5 = st.columns([1, 1, 2])
+    with col3:
+        our_trade = st.checkbox("Our Trade", key="our_trade_checkbox")
+        sold = st.checkbox("Sold", key="sold_checkbox")
+    with col4:
+        their_trade = st.checkbox("Their Trade", key="their_trade_checkbox")
+        floorplan = st.checkbox("Floorplan", key="floorplan_checkbox")
+    with col5:
+        st.text("""
+        PLEASE SEND MCO/CHECK TO:
+        MODERN AUTOMOTIVE SUPPORT CENTER
+        3901 WEST POINT BLVD.
+        WINSTON-SALEM, NC 27103
+        """)
+    st.text("Intercompany DX")
+    col6, col7 = st.columns(2)
+    with col6:
+        from_location = st.text_input("From:", key="from_input")
+    with col7:
+        to_location = st.text_input("To:", key="to_input")
+    col8, col9 = st.columns(2)
+    with col8:
+        stock_number = st.text_input("Stock Number", key="stock_number_input")
+        year_make_model = st.text_input("Year Make Model", key="year_make_model_input")
+        full_vin = st.text_input("Full VIN #", key="full_vin_input")
+    with col9:
+        key_charge = st.number_input("Key Charge ($)", value=0.00, format="%.2f", key="key_charge_input")
+        projected_cost = st.number_input("Projected Cost ($)", value=0.00, format="%.2f", key="projected_cost_input")
+        transfer_amount = calculate_transfer_amount(key_charge, projected_cost)
+        formatted_transfer_amount = format_currency(transfer_amount)
+        st.text_input("Transfer Amount", value=formatted_transfer_amount, key="transfer_amount_input", disabled=True)
+        
+    st.text("Non-Modern Dealership Information")
+    dealership_name = st.text_input("Dealership Name", key="dealership_name_input")
+    address = st.text_input("Address", key="address_input")
+    city_state_zip = st.text_input("City, State ZIP Code", key="city_state_zip_input")
+    phone_number = st.text_input("Phone Number", key="phone_number_input")
+    dealer_code = st.text_input("Dealer Code", key="dealer_code_input")
+    contact_name = st.text_input("Contact Name", key="contact_name_input")
+    st.markdown('<div class="small-spacing"><hr></div>', unsafe_allow_html=True)
+    st.text("Outgoing Unit")
+    outgoing_stock_number = st.text_input("Outgoing Stock Number", key="outgoing_stock_number_input")
+    outgoing_year_make_model = st.text_input("Outgoing Year Make Model", key="outgoing_year_make_model_input")
+    outgoing_full_vin = st.text_input("Outgoing Full VIN #", key="outgoing_full_vin_input")
+    outgoing_sale_price = st.text_input("Outgoing Sale Price", key="outgoing_sale_price_input")
+    st.markdown('<div class="small-spacing"><hr></div>', unsafe_allow_html=True)
+    st.text("Incoming Unit")
+    incoming_year_make_model = st.text_input("Incoming Year Make Model", key="incoming_year_make_model_input")
+    incoming_full_vin = st.text_input("Incoming Full VIN #", key="incoming_full_vin_input")
+    incoming_purchase_price = st.text_input("Incoming Purchase Price", key="incoming_purchase_price_input")
 
-            pdf_buffer.seek(0)
-            pdf_data = pdf_buffer.getvalue()
+    if st.button("Generate and Download Trade PDF"):
+        # Generate PDF
+        pdf_buffer = BytesIO()
+        c = canvas.Canvas(pdf_buffer, pagesize=letter)
+        width, height = letter
+        
+        c.drawString(72, height - 72, f"Dealer Trade Form")
+        c.drawString(72, height - 100, f"Date: {formatted_date}")
+        c.drawString(72, height - 120, f"Manager: {manager}")
+        c.drawString(72, height - 140, f"Our Trade: {'Yes' if our_trade else 'No'}")
+        c.drawString(72, height - 160, f"Sold: {'Yes' if sold else 'No'}")
+        c.drawString(72, height - 180, f"Their Trade: {'Yes' if their_trade else 'No'}")
+        c.drawString(72, height - 200, f"Floorplan: {'Yes' if floorplan else 'No'}")
+        c.drawString(72, height - 220, f"From: {from_location}")
+        c.drawString(72, height - 240, f"To: {to_location}")
+        c.drawString(72, height - 260, f"Stock Number: {stock_number}")
+        c.drawString(72, height - 280, f"Year Make Model: {year_make_model}")
+        c.drawString(72, height - 300, f"Full VIN #: {full_vin}")
+        c.drawString(72, height - 320, f"Key Charge: {format_currency(key_charge)}")
+        c.drawString(72, height - 340, f"Projected Cost: {format_currency(projected_cost)}")
+        c.drawString(72, height - 360, f"Transfer Amount: {formatted_transfer_amount}")
+        
+        c.drawString(72, height - 400, f"Dealership Name: {dealership_name}")
+        c.drawString(72, height - 420, f"Address: {address}")
+        c.drawString(72, height - 440, f"City, State ZIP Code: {city_state_zip}")
+        c.drawString(72, height - 460, f"Phone Number: {phone_number}")
+        c.drawString(72, height - 480, f"Dealer Code: {dealer_code}")
+        c.drawString(72, height - 500, f"Contact Name: {contact_name}")
+        
+        c.drawString(72, height - 540, f"Outgoing Stock Number: {outgoing_stock_number}")
+        c.drawString(72, height - 560, f"Outgoing Year Make Model: {outgoing_year_make_model}")
+        c.drawString(72, height - 580, f"Outgoing Full VIN #: {outgoing_full_vin}")
+        c.drawString(72, height - 600, f"Outgoing Sale Price: {outgoing_sale_price}")
+        
+        c.drawString(72, height - 640, f"Incoming Year Make Model: {incoming_year_make_model}")
+        c.drawString(72, height - 660, f"Incoming Full VIN #: {incoming_full_vin}")
+        c.drawString(72, height - 680, f"Incoming Purchase Price: {incoming_purchase_price}")
+        
+        c.showPage()
+        c.save()
 
-            st.download_button(label="Download Trade PDF", data=pdf_data, file_name="dealer_trade.pdf", mime="application/pdf")
+        pdf_buffer.seek(0)
+        pdf_data = pdf_buffer.getvalue()
+
+        st.download_button(label="Download Trade PDF", data=pdf_data, file_name="dealer_trade.pdf", mime="application/pdf")
