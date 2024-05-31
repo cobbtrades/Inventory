@@ -237,14 +237,14 @@ with tab3:
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.text_input("Date", value=datetime.today())
+        st.date_input("Date", value=datetime.today())
     
     with col2:
         st.text_input("Manager")
     
     st.markdown("---")
     
-  col4, col5, col6 = st.columns([1, 1, 2])
+    col4, col5, col6 = st.columns([1, 1, 2])
     with col4:
         st.checkbox("Our Trade")
         st.checkbox("Sold")
@@ -311,6 +311,9 @@ with tab3:
     
     st.text("Notes")
     st.text_area("")
+    
+    if st.button("Submit Trade"):
+        st.success("Trade Submitted")
 
     if st.button("Submit Trade"):
         st.success("Trade Submitted")
