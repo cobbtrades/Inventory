@@ -234,6 +234,14 @@ st.markdown("""
     <style>
     .short-input input {
         max-width: 200px;
+        margin-bottom: 0px !important;
+    }
+    .form-spacing {
+        margin-top: -10px;
+    }
+    .form-container {
+        max-width: 800px;
+        margin: auto;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -242,6 +250,7 @@ with tab3:
     st.markdown("### Dealer Trade")
     
     with st.form(key="dealer_trade_form"):
+        st.markdown('<div class="form-container">', unsafe_allow_html=True)
         col1, col2, col3 = st.columns(3)
         
         with col1:
