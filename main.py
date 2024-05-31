@@ -221,7 +221,7 @@ st.markdown("""
         max-width: 600px;
         margin: auto;
     }
-    .form-container .stTextInput, .form-container .stNumberInput, .form-container .stDateInput {
+    .form-container .stTextInput, .stNumberInput, .stDateInput {
         max-width: 100% !important;
     }
     </style>
@@ -337,5 +337,4 @@ with tab3:
             c.save()
 
             pdf_buffer.seek(0)
-            st.download_button(label="Download Trade PDF", data=pdf_buffer, file_name="dealer_trade.pdf", mime="application/pdf")
-
+            st.download_button(label="Download Trade PDF", data=pdf_buffer.getvalue(), file_name="dealer_trade.pdf", mime="application/pdf")
