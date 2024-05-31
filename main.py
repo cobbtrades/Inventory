@@ -4,9 +4,6 @@ import os
 import requests
 import base64
 from datetime import datetime
-from fpdf import FPDF
-import win32print
-import win32api
 
 # Set page configuration for wide layout
 st.set_page_config(layout="wide")
@@ -262,22 +259,6 @@ def calculate_transfer_amount(key_charge, projected_cost):
 def format_currency(value):
     return "${:,.2f}".format(value)
     
-def generate_pdf(data):
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_font("Arial", size=12)
-    
-    for key, value in data.items():
-        pdf.cell(200, 10, txt=f"{key}: {value}", ln=True)
-    
-    file_path = "trade_form.pdf"
-    pdf.output(file_path)
-    return file_path
-
-def print_pdf(file_path):
-    printer_name = win32print.GetDefaultPrinter()
-    win32api.ShellExecute(0, "print", file_path, f'/d:"{printer_name}"', ".", 0)
-
 with tab3:
     st.markdown("### Dealer Trade")
     with st.form(key="dealer_trade_form"):
@@ -288,15 +269,15 @@ with tab3:
             formatted_date = current_date.strftime("%B %d, %Y")
             st.write(f"Date: {formatted_date}")
         with col2:
-            manager = st.text_input("Manager", key="manager_input")
+            st.text_input("Manager", key="manager_input")
         st.markdown('<div class="small-spacing"><hr></div>', unsafe_allow_html=True)
         col3, col4, col5 = st.columns([1, 1, 2])
         with col3:
-            our_trade = st.checkbox("Our Trade", key="our_trade_checkbox")
-            sold = st.checkbox("Sold", key="sold_checkbox")
+            st.checkbox("Our Trade", key="our_trade_checkbox")
+            st.checkbox("Sold", key="sold_checkbox")
         with col4:
-            their_trade = st.checkbox("Their Trade", key="their_trade_checkbox")
-            floorplan = st.checkbox("Floorplan", key="floorplan_checkbox")
+            st.checkbox("Their Trade", key="their_trade_checkbox")
+            st.checkbox("Floorplan", key="floorplan_checkbox")
         with col5:
             st.text("""
             PLEASE SEND MCO/CHECK TO:
@@ -307,14 +288,14 @@ with tab3:
         st.text("Intercompany DX")
         col6, col7 = st.columns(2)
         with col6:
-            from_input = st.text_input("From:", key="from_input")
+            st.text_input("From:", key="from_input")
         with col7:
-            to_input = st.text_input("To:", key="to_input")
+            st.text_input("To:", key="to_input")
         col8, col9 = st.columns(2)
         with col8:
-            stock_number = st.text_input("Stock Number", key="stock_number_input")
-            year_make_model = st.text_input("Year Make Model", key="year_make_model_input")
-            full_vin = st.text_input("Full VIN #", key="full_vin_input")
+            st.text_input("Stock Number", key="stock_number_input")
+            st.text_input("Year Make Model", key="year_make_model_input")
+            st.text_input("Full VIN #", key="full_vin_input")
         with col9:
             key_charge = st.number_input("Key Charge ($)", value=0.00, format="%.2f", key="key_charge_input")
             projected_cost = st.number_input("Projected Cost ($)", value=0.00, format="%.2f", key="projected_cost_input")
@@ -323,54 +304,23 @@ with tab3:
             st.text_input("Transfer Amount", value=formatted_transfer_amount, key="transfer_amount_input", disabled=True)
             
         st.text("Non-Modern Dealership Information")
-        dealership_name = st.text_input("Dealership Name", key="dealership_name_input")
-        address = st.text_input("Address", key="address_input")
-        city_state_zip = st.text_input("City, State ZIP Code", key="city_state_zip_input")
-        phone_number = st.text_input("Phone Number", key="phone_number_input")
-        dealer_code = st.text_input("Dealer Code", key="dealer_code_input")
-        contact_name = st.text_input("Contact Name", key="contact_name_input")
+        st.text_input("Dealership Name", key="dealership_name_input")
+        st.text_input("Address", key="address_input")
+        st.text_input("City, State ZIP Code", key="city_state_zip_input")
+        st.text_input("Phone Number", key="phone_number_input")
+        st.text_input("Dealer Code", key="dealer_code_input")
+        st.text_input("Contact Name", key="contact_name_input")
         st.markdown('<div class="small-spacing"><hr></div>', unsafe_allow_html=True)
         st.text("Outgoing Unit")
-        outgoing_stock_number = st.text_input("Outgoing Stock Number", key="outgoing_stock_number_input")
-        outgoing_year_make_model = st.text_input("Outgoing Year Make Model", key="outgoing_year_make_model_input")
-        outgoing_full_vin = st.text_input("Outgoing Full VIN #", key="outgoing_full_vin_input")
-        outgoing_sale_price = st.text_input("Outgoing Sale Price", key="outgoing_sale_price_input")
+        st.text_input("Outgoing Stock Number", key="outgoing_stock_number_input")
+        st.text_input("Outgoing Year Make Model", key="outgoing_year_make_model_input")
+        st.text_input("Outgoing Full VIN #", key="outgoing_full_vin_input")
+        st.text_input("Outgoing Sale Price", key="outgoing_sale_price_input")
         st.markdown('<div class="small-spacing"><hr></div>', unsafe_allow_html=True)
         st.text("Incoming Unit")
-        incoming_year_make_model = st.text_input("Incoming Year Make Model", key="incoming_year_make_model_input")
-        incoming_full_vin = st.text_input("Incoming Full VIN #", key="incoming_full_vin_input")
-        incoming_purchase_price = st.text_input("Incoming Purchase Price", key="incoming_purchase_price_input")
+        st.text_input("Incoming Year Make Model", key="incoming_year_make_model_input")
+        st.text_input("Incoming Full VIN #", key="incoming_full_vin_input")
+        st.text_input("Incoming Purchase Price", key="incoming_purchase_price_input")
         if st.form_submit_button("Submit Trade"):
-            data = {
-                "Date": formatted_date,
-                "Manager": manager,
-                "Our Trade": our_trade,
-                "Sold": sold,
-                "Their Trade": their_trade,
-                "Floorplan": floorplan,
-                "From": from_input,
-                "To": to_input,
-                "Stock Number": stock_number,
-                "Year Make Model": year_make_model,
-                "Full VIN #": full_vin,
-                "Key Charge": key_charge,
-                "Projected Cost": projected_cost,
-                "Transfer Amount": formatted_transfer_amount,
-                "Dealership Name": dealership_name,
-                "Address": address,
-                "City, State ZIP Code": city_state_zip,
-                "Phone Number": phone_number,
-                "Dealer Code": dealer_code,
-                "Contact Name": contact_name,
-                "Outgoing Stock Number": outgoing_stock_number,
-                "Outgoing Year Make Model": outgoing_year_make_model,
-                "Outgoing Full VIN #": outgoing_full_vin,
-                "Outgoing Sale Price": outgoing_sale_price,
-                "Incoming Year Make Model": incoming_year_make_model,
-                "Incoming Full VIN #": incoming_full_vin,
-                "Incoming Purchase Price": incoming_purchase_price,
-            }
-            file_path = generate_pdf(data)
-            print_pdf(file_path)
-            st.success("Trade Submitted and sent to the printer.")
+            st.success("Trade Submitted")
         st.markdown('</div>', unsafe_allow_html=True)
