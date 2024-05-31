@@ -228,7 +228,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 def calculate_transfer_amount(key_charge, projected_cost):
-    return projected_cost - key_charge
+    return projected_cost - key_charge - 400
 
 def format_currency(value):
     return "${:,.2f}".format(value)
