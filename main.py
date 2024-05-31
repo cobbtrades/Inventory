@@ -233,14 +233,14 @@ with tab2:
 st.markdown("""
     <style>
     .short-input input {
-        max-width: 200px;
+        max-width: 100px;
         margin-bottom: 0px !important;
     }
     .form-spacing {
         margin-top: -10px;
     }
     .form-container {
-        max-width: 800px;
+        max-width: 650px;
         margin: auto;
     }
     </style>
