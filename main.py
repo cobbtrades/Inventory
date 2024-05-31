@@ -203,8 +203,8 @@ else:
 
 # Display Incoming Inventory data in the Incoming tab
 with tab2:
-    st.markdown("### Incoming Inventory")
+    st.markdown("### Current CDK Inventory")
     if not incoming_data.empty:
         st.data_editor(incoming_data, use_container_width=True, height=780, hide_index=True)
     else:
-        st.error("No incoming inventory data to display.")
+        st.error("No current inventory data to display.")
