@@ -397,11 +397,11 @@ thead th {
     color: #fafafa;
     background-color: #383e53;
     text-align: center;
-    padding: 8px;
+    padding: 4px;
 }
 tbody td {
     text-align: center;
-    padding: 8px;
+    padding: 4px;
 }
 tbody tr:nth-child(even) {
     background-color: #1e2130;
