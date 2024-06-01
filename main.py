@@ -445,7 +445,10 @@ def create_horizontal_bar_chart(summary_df, title):
 with tab4:
     st.markdown("### Incoming Inventory")
     if not combined_data.empty:
-        st.write(combined_data.columns)
+        unique_dealer_names = combined_data['DEALER_NAME'].unique()
+        st.write("#### Unique Dealer Names")
+        st.write(unique_dealer_names)
+        
         today = datetime.today()
         start_of_month = today.replace(day=1)
         end_of_month = (start_of_month + timedelta(days=32)).replace(day=1) - timedelta(days=1)
