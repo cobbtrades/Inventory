@@ -402,7 +402,7 @@ with tab3:
 def summarize_incoming_data(df, start_date, end_date):
     df['ETA'] = pd.to_datetime(df['ETA'], errors='coerce')
     filtered_df = df[(df['ETA'] >= start_date) & (df['ETA'] <= end_date)]
-    filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].map(dealer_acronyms)
+    filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].map(inc_mapping)
     
     # Log unmatched dealer names
     unmatched_dealers = filtered_df['DEALER_NAME'].isna().sum()
