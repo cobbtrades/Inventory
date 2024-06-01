@@ -407,6 +407,7 @@ body {
 }
 h3 {
     color: #fafafa;
+    text-align: center;
 }
 table {
     color: #fafafa;
@@ -417,9 +418,12 @@ table {
 thead th {
     color: #fafafa;
     background-color: #383e53;
-    text-align: center;
 }
 tbody td {
+    text-align: center;
+}
+thead th, tbody td {
+    padding: 10px;
     text-align: center;
 }
 tbody tr:nth-child(even) {
