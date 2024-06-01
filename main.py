@@ -402,6 +402,7 @@ thead th {
     text-align: center;
     padding: 8px;
     white-space: nowrap;
+    font-size: 12px;
 }
 tbody td {
     text-align: center;
