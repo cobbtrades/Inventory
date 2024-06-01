@@ -447,6 +447,10 @@ with tab4:
     if not combined_data.empty:
         unique_dealer_names = combined_data['DEALER_NAME'].unique()
         st.write("#### Unique Dealer Names")
+        st.write(unique_dealer_names.tolist())  # Ensure it's displayed as a list
+        
+        # Debug statement to check the unique dealer names
+        st.write("Debug: Unique dealer names extracted from combined_data:")
         st.write(unique_dealer_names)
         
         today = datetime.today()
