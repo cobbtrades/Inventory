@@ -146,7 +146,7 @@ st.write(
 )
 
 # Create tabs for "All Stores" and "Current"
-tab1, tab2, tab3 = st.tabs(["All Stores", "Current", "Dealer Trade"])
+tab1, tab2, tab3 = st.tabs(["All Stores", "Current CDK", "Dealer Trade"])
 
 # Function to filter data based on selectbox inputs
 @st.cache_data
