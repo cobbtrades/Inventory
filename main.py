@@ -481,6 +481,24 @@ def summarize_retailed_data(df, start_date, end_date, all_models, all_dealers):
                                  aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
     return pivot_table
 
+# Function to summarize DLV INV data
+def summarize_dlv_inv_data(df, all_models, all_dealers):
+    filtered_df = df[(df['LOC'] == 'DLV INV') & (df['SOLD'].isna())]
+    filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].replace(dealer_acronyms)
+    
+    # Create a MultiIndex of all possible combinations of DEALER_NAME and MDL
+    all_combinations = pd.MultiIndex.from_product(
+        [all_dealers, all_models],
+        names=['DEALER_NAME', 'MDL']
+    )
+    
+    # Group the filtered DataFrame and reindex with all possible combinations
+    summary = filtered_df.groupby(['DEALER_NAME', 'MDL']).size().reindex(all_combinations, fill_value=0).reset_index(name='Count')
+    
+    pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', 
+                                 aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
+    return pivot_table
+
 # Assuming 'combined_data' and 'dealer_acronyms' are already defined elsewhere in the code
 # Display incoming data in the "Incoming" tab
 with tab4:
@@ -505,7 +523,7 @@ with tab4:
             current_month_summary = summarize_incoming_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
             st.markdown(dataframe_to_html(current_month_summary), unsafe_allow_html=True)
             
-            st.markdown(f"<h3 style='text-align: center;'>RETAILED</h3>", unsafe_allow_html=True)
+            st.markdown(f"<h3 style='text-align: center;'>RETAILED for {start_of_month.strftime('%B')}</h3>", unsafe_allow_html=True)
             retailed_summary = summarize_retailed_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
             st.markdown(dataframe_to_html(retailed_summary), unsafe_allow_html=True)
         
@@ -513,6 +531,10 @@ with tab4:
             st.markdown(f"<h3 style='text-align: center;'>Incoming for {next_month_start.strftime('%B')}</h3>", unsafe_allow_html=True)
             next_month_summary = summarize_incoming_data(combined_data, next_month_start, next_month_end, all_models, all_dealers)
             st.markdown(dataframe_to_html(next_month_summary), unsafe_allow_html=True)
+            
+            st.markdown(f"<h3 style='text-align: center;'>Current NNA Inventory(DLV INV)</h3>", unsafe_allow_html=True)
+            dlv_inv_summary = summarize_dlv_inv_data(combined_data, all_models, all_dealers)
+            st.markdown(dataframe_to_html(dlv_inv_summary), unsafe_allow_html=True)
         
         with col3:
             st.markdown(f"<h3 style='text-align: center;'>Incoming for {following_month_start.strftime('%B')}</h3>", unsafe_allow_html=True)
