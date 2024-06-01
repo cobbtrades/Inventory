@@ -293,7 +293,7 @@ with tab3:
         c.setFont("Helvetica", 13)
         c.drawString(col1_x, height - 84 - offset, f"Date: {formatted_date}")
         c.setFont("Helvetica", 10)
-        c.drawString(col2_x, height - 84 - offset, f"Manager: {manager}")
+        c.drawString(col2_x + 100, height - 84 - offset, f"Manager: {manager}")
 
         # Our Trade / Their Trade / Sold / Floorplan
         c.drawString(col1_x, height - 108 - offset, "OUR TRADE")
