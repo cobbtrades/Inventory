@@ -403,34 +403,8 @@ def summarize_incoming_data(df, start_date, end_date):
     df['ETA'] = pd.to_datetime(df['ETA'], errors='coerce')
     filtered_df = df[(df['ETA'] >= start_date) & (df['ETA'] <= end_date)]
     summary = filtered_df.groupby(['DEALER_NAME', 'MDL']).size().reset_index(name='Count')
-    return summary
-
-# Function to create a horizontal bar chart
-def create_horizontal_bar_chart(summary_df, title):
-    fig = px.bar(
-        summary_df, 
-        y='MDL', 
-        x='Count', 
-        color='DEALER_NAME', 
-        barmode='group',
-        labels={'MDL': 'Model', 'DEALER_NAME': 'Dealer Name', 'Count': 'Count'},
-        title=title, 
-        orientation='h',
-        hover_data={'Count': True, 'DEALER_NAME': True, 'MDL': True}
-    )
-    fig.update_layout(
-        xaxis_title='Count',
-        yaxis_title='Model',
-        legend_title='Dealer Name',
-        title={
-            'text': title,
-            'y':0.9,
-            'x':0.5,
-            'xanchor': 'center',
-            'yanchor': 'top'
-        }
-    )
-    return fig
+    pivot_table = summary.pivot(index='MDL', columns='DEALER_NAME', values='Count').fillna(0).astype(int)
+    return pivot_table
 
 # Display incoming data in the "Incoming" tab
 with tab4:
@@ -450,19 +424,16 @@ with tab4:
         with col1:
             st.write(f"### Current Month ({start_of_month.strftime('%B')}): {start_of_month.strftime('%Y-%m-%d')} to {end_of_month.strftime('%Y-%m-%d')}")
             current_month_summary = summarize_incoming_data(combined_data, start_of_month, end_of_month)
-            fig1 = create_horizontal_bar_chart(current_month_summary, f"Incoming Inventory for {start_of_month.strftime('%B %Y')}")
-            st.plotly_chart(fig1, use_container_width=True)
+            st.dataframe(current_month_summary)
         
         with col2:
             st.write(f"### Next Month ({next_month_start.strftime('%B')}): {next_month_start.strftime('%Y-%m-%d')} to {next_month_end.strftime('%Y-%m-%d')}")
             next_month_summary = summarize_incoming_data(combined_data, next_month_start, next_month_end)
-            fig2 = create_horizontal_bar_chart(next_month_summary, f"Incoming Inventory for {next_month_start.strftime('%B %Y')}")
-            st.plotly_chart(fig2, use_container_width=True)
+            st.dataframe(next_month_summary)
         
         with col3:
             st.write(f"### Following Month ({following_month_start.strftime('%B')}): {following_month_start.strftime('%Y-%m-%d')} to {following_month_end.strftime('%Y-%m-%d')}")
             following_month_summary = summarize_incoming_data(combined_data, following_month_start, following_month_end)
-            fig3 = create_horizontal_bar_chart(following_month_summary, f"Incoming Inventory for {following_month_start.strftime('%B %Y')}")
-            st.plotly_chart(fig3, use_container_width=True)
+            st.dataframe(following_month_summary)
     else:
         st.error("No data to display.")
