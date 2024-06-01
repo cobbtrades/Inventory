@@ -4,6 +4,8 @@ import os
 import requests
 import base64
 import time
+import matplotlib.pyplot as plt
+import seaborn as sns
 from datetime import datetime, timedelta
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
