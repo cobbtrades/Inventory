@@ -386,7 +386,7 @@ h3 {
     color: #fafafa;
 }
 .container {
-    padding: 80px; /* Adjust padding as needed */
+    padding: 40px; /* Adjust padding as needed */
 }
 .table-container {
     width: 100%;
@@ -398,7 +398,7 @@ table {
     background-color: #1e2130;
     border: 1px solid #383e53;
     text-align: center;
-    width: 100%;
+    width: 1000px; /* Fixed width for better layout */
     border-collapse: collapse;
     table-layout: fixed;
     word-wrap: break-word;
