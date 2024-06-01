@@ -462,6 +462,11 @@ def summarize_incoming_data(df, start_date, end_date, all_models, all_dealers):
                                  aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
     return pivot_table
 
+@st.cache_data
+def filter_by_loc_and_sold(df):
+    filtered_df = df[~df['LOC'].str.contains("RETAILED", na=False) & df['SOLD'].isna()]
+    return filtered_df
+    
 # Assuming 'combined_data' and 'dealer_acronyms' are already defined elsewhere in the code
 # Display incoming data in the "Incoming" tab
 with tab4:
@@ -485,6 +490,11 @@ with tab4:
             st.markdown(f"<h3 style='text-align: center;'>Incoming for {start_of_month.strftime('%B')}</h3>", unsafe_allow_html=True)
             current_month_summary = summarize_incoming_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
             st.markdown(dataframe_to_html(current_month_summary), unsafe_allow_html=True)
+            
+            st.markdown("<h3 style='text-align: center;'>RETAILED</h3>", unsafe_allow_html=True)
+            filtered_data = filter_by_loc_and_sold(combined_data)
+            filtered_summary = summarize_incoming_data(filtered_data, start_of_month, end_of_month, all_models, all_dealers)
+            st.markdown(dataframe_to_html(filtered_summary), unsafe_allow_html=True)
         
         with col2:
             st.markdown(f"<h3 style='text-align: center;'>Incoming for {next_month_start.strftime('%B')}</h3>", unsafe_allow_html=True)
