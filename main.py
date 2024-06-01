@@ -419,7 +419,6 @@ def summarize_incoming_data(df, start_date, end_date):
 
 # Display incoming data in the "Incoming" tab
 with tab4:
-    st.markdown("### Incoming Inventory")
     if not combined_data.empty:
         today = datetime.today()
         start_of_month = today.replace(day=1)
