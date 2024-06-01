@@ -53,7 +53,7 @@ mdl_mapping = {
 dealer_acronyms = {
     'MODERN NISSAN OF CONCORD': 'CN',
     'MODERN NISSAN OF HICKORY': 'HK',
-    'MODERN NISSAN,LLC': 'WS',
+    'MODERN NISSAN, LLC': 'WS',
     'MODERN NISSAN/LAKE NORMAN': 'LN'
 }
 
@@ -402,13 +402,7 @@ with tab3:
 def summarize_incoming_data(df, start_date, end_date):
     df['ETA'] = pd.to_datetime(df['ETA'], errors='coerce')
     filtered_df = df[(df['ETA'] >= start_date) & (df['ETA'] <= end_date)]
-    filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].map(dealer_acronyms)
-    
-    # Log unmatched dealer names
-    unmatched_dealers = filtered_df['DEALER_NAME'].isna().sum()
-    if unmatched_dealers > 0:
-        st.warning(f"Warning: There are {unmatched_dealers} unmatched dealer names.")
-    
+    filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].map(dealer_acronyms)    
     summary = filtered_df.groupby(['DEALER_NAME', 'MDL']).size().reset_index(name='Count')
     return summary
 
@@ -444,28 +438,7 @@ def create_horizontal_bar_chart(summary_df, title):
 # Display incoming data in the "Incoming" tab
 with tab4:
     st.markdown("### Incoming Inventory")
-    if not combined_data.empty:
-        # Debug: Check if combined_data is empty
-        st.write("Debug: combined_data is not empty")
-
-        # Debug: Display the first few rows of combined_data to verify contents
-        st.write("Debug: First few rows of combined_data")
-        st.dataframe(combined_data.head())
-
-        # Check for required columns in combined_data
-        if 'DEALER_NAME' in combined_data.columns and 'ETA' in combined_data.columns:
-            unique_dealer_names = combined_data['DEALER_NAME'].unique()
-            
-            # Debug: Check the unique dealer names
-            st.write("Debug: Unique dealer names extracted from combined_data:")
-            st.write(unique_dealer_names.tolist())  # Ensure it's displayed as a list
-            
-            # Display unique dealer names
-            st.write("#### Unique Dealer Names")
-            st.write(unique_dealer_names)
-        else:
-            st.error("Error: combined_data does not contain the required columns 'DEALER_NAME' and 'ETA'.")
-        
+    if not combined_data.empty:        
         today = datetime.today()
         start_of_month = today.replace(day=1)
         end_of_month = (start_of_month + timedelta(days=32)).replace(day=1) - timedelta(days=1)
