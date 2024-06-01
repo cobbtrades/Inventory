@@ -444,6 +444,7 @@ def create_horizontal_bar_chart(summary_df, title):
 # Display incoming data in the "Incoming" tab
 with tab4:
     st.markdown("### Incoming Inventory")
+    st.text(combined_data['DEALER_NAME'].unique())
     if not combined_data.empty:
         today = datetime.today()
         start_of_month = today.replace(day=1)
