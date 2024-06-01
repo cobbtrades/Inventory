@@ -4,5 +4,3 @@ lxml
 openpyxl
 reportlab
 plotly
-matplotlib
-seaborn
