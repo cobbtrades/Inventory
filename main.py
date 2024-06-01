@@ -403,7 +403,16 @@ def summarize_incoming_data(df, start_date, end_date):
     df['ETA'] = pd.to_datetime(df['ETA'], errors='coerce')
     filtered_df = df[(df['ETA'] >= start_date) & (df['ETA'] <= end_date)]
     filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].replace(dealer_acronyms)
-    summary = filtered_df.groupby(['DEALER_NAME', 'MDL']).size().reset_index(name='Count')
+    
+    # Create a MultiIndex of all possible combinations of DEALER_NAME and MDL
+    all_combinations = pd.MultiIndex.from_product(
+        [filtered_df['DEALER_NAME'].unique(), filtered_df['MDL'].unique()],
+        names=['DEALER_NAME', 'MDL']
+    )
+    
+    # Group the filtered DataFrame and reindex with all possible combinations
+    summary = filtered_df.groupby(['DEALER_NAME', 'MDL']).size().reindex(all_combinations, fill_value=0).reset_index(name='Count')
+    
     pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', 
                                  aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
     return pivot_table
