@@ -51,10 +51,10 @@ mdl_mapping = {
 }
 
 dealer_acronyms = {
-    'MODERN NISSAN OF CONCORD': 'CN',
-    'MODERN NISSAN OF HICKORY': 'HK',
-    'MODERN NISSAN, LLC': 'WS',
-    'MODERN NISSAN/LAKE NORMAN': 'LN'
+    'MODERN NISSAN OF CONCORD': 'CONCORD',
+    'MODERN NISSAN OF HICKORY': 'HICKORY',
+    'MODERN NISSAN, LLC': 'WINSTON',
+    'MODERN NISSAN/LAKE NORMAN': 'LAKE'
 }
 
 # Function to load data and handle columns dynamically
