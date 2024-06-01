@@ -412,10 +412,15 @@ table {
     color: #fafafa;
     background-color: #1e2130;
     border-color: #383e53;
+    text-align: center;
 }
 thead th {
     color: #fafafa;
     background-color: #383e53;
+    text-align: center;
+}
+tbody td {
+    text-align: center;
 }
 tbody tr:nth-child(even) {
     background-color: #1e2130;
