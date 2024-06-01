@@ -398,11 +398,31 @@ def summarize_incoming_data(df, start_date, end_date):
     summary = filtered_df.groupby(['DEALER_NAME', 'MDL']).size().reset_index(name='Count')
     return summary
 
-# Function to create horizontal bar chart
+# Function to create a horizontal bar chart
 def create_horizontal_bar_chart(summary_df, title):
-    fig = px.bar(summary_df, y='MDL', x='Count', color='DEALER_NAME', barmode='group',
-                 labels={'MDL': 'Model', 'DEALER_NAME': 'Dealer Name', 'Count': 'Count'},
-                 title=title, orientation='h')
+    fig = px.bar(
+        summary_df, 
+        y='MDL', 
+        x='Count', 
+        color='DEALER_NAME', 
+        barmode='group',
+        labels={'MDL': 'Model', 'DEALER_NAME': 'Dealer Name', 'Count': 'Count'},
+        title=title, 
+        orientation='h',
+        hover_data={'Count': True, 'DEALER_NAME': True, 'MDL': True}
+    )
+    fig.update_layout(
+        xaxis_title='Count',
+        yaxis_title='Model',
+        legend_title='Dealer Name',
+        title={
+            'text': title,
+            'y':0.9,
+            'x':0.5,
+            'xanchor': 'center',
+            'yanchor': 'top'
+        }
+    )
     return fig
 
 # Display incoming data in the "Incoming" tab
