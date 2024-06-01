@@ -514,10 +514,6 @@ with tab4:
             st.markdown(f"<h3 style='text-align: center;'>RETAILED for {start_of_month.strftime('%B')}</h3>", unsafe_allow_html=True)
             retailed_summary = summarize_filtered_data(combined_data, start_of_month, end_of_month, all_models, all_dealers, loc_value='RETAILED')
             st.markdown(dataframe_to_html(retailed_summary), unsafe_allow_html=True)
-            
-            st.markdown(f"<h3 style='text-align: center;'>SOLD for {start_of_month.strftime('%B')}</h3>", unsafe_allow_html=True)
-            sold_summary = summarize_filtered_data(combined_data, start_of_month, end_of_month, all_models, all_dealers, sold_not_blank=True)
-            st.markdown(dataframe_to_html(sold_summary), unsafe_allow_html=True)
         
         with col2:
             st.markdown(f"<h3 style='text-align: center;'>Incoming for {next_month_start.strftime('%B')}</h3>", unsafe_allow_html=True)
