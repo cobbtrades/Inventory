@@ -406,7 +406,6 @@ def create_horizontal_bar_chart(summary_df, title):
         x='Count', 
         color='DEALER_NAME', 
         barmode='group',
-        text='Count',  # Add this line to show the count labels inside each bar
         labels={'MDL': 'Model', 'DEALER_NAME': 'Dealer Name', 'Count': 'Count'},
         title=title, 
         orientation='h',
@@ -424,7 +423,6 @@ def create_horizontal_bar_chart(summary_df, title):
             'yanchor': 'top'
         }
     )
-    fig.update_traces(textposition='inside', textfont_size=12)  # Set text position and font size
     return fig
 
 # Display incoming data in the "Incoming" tab
