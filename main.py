@@ -50,11 +50,11 @@ mdl_mapping = {
     'Z PROTO': 'Z'
 }
 
-inc_mapping = {
+dealer_acronyms = {
     'MODERN NISSAN OF CONCORD': 'CN',
     'MODERN NISSAN OF HICKORY': 'HK',
     'MODERN NISSAN,LLC': 'WS',
-    'MODERN NISSAN/LAKE NORMAN': 'LN',
+    'MODERN NISSAN/LAKE NORMAN': 'LN'
 }
 
 # Function to load data and handle columns dynamically
@@ -402,7 +402,7 @@ with tab3:
 def summarize_incoming_data(df, start_date, end_date):
     df['ETA'] = pd.to_datetime(df['ETA'], errors='coerce')
     filtered_df = df[(df['ETA'] >= start_date) & (df['ETA'] <= end_date)]
-    filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].map(inc_mapping)
+    filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].replace(dealer_acronyms)
     
     # Log unmatched dealer names
     unmatched_dealers = filtered_df['DEALER_NAME'].isna().sum()
@@ -445,12 +445,18 @@ def create_horizontal_bar_chart(summary_df, title):
 with tab4:
     st.markdown("### Incoming Inventory")
     if not combined_data.empty:
+        # Debug: Display first few rows of combined_data to verify contents
+        st.write("Debug: First few rows of combined_data")
+        st.dataframe(combined_data.head())
+
         unique_dealer_names = combined_data['DEALER_NAME'].unique()
-        st.write("#### Unique Dealer Names")
+        
+        # Debug: Check the unique dealer names
+        st.write("Debug: Unique dealer names extracted from combined_data:")
         st.write(unique_dealer_names.tolist())  # Ensure it's displayed as a list
         
-        # Debug statement to check the unique dealer names
-        st.write("Debug: Unique dealer names extracted from combined_data:")
+        # Display unique dealer names
+        st.write("#### Unique Dealer Names")
         st.write(unique_dealer_names)
         
         today = datetime.today()
