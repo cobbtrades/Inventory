@@ -452,6 +452,12 @@ def summarize_incoming_data(df, start_date, end_date, all_models, all_dealers):
                                  aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
     return pivot_table
 
+def style_dataframe(df):
+    return df.style.set_table_styles(
+        {
+            '': {'selector': 'td, th', 'props': [('text-align', 'center')]}
+        }
+    )
 # Display incoming data in the "Incoming" tab
 with tab4:
     if not combined_data.empty:
@@ -473,16 +479,16 @@ with tab4:
         with col1:
             st.markdown(f"<h3 style='text-align: center;'>Incoming for {start_of_month.strftime('%B')}</h3>", unsafe_allow_html=True)
             current_month_summary = summarize_incoming_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
-            st.table(current_month_summary)
+            st.write(style_dataframe(current_month_summary).to_html(), unsafe_allow_html=True)
         
         with col2:
             st.markdown(f"<h3 style='text-align: center;'>Incoming for {next_month_start.strftime('%B')}</h3>", unsafe_allow_html=True)
             next_month_summary = summarize_incoming_data(combined_data, next_month_start, next_month_end, all_models, all_dealers)
-            st.table(next_month_summary)
+            st.write(style_dataframe(next_month_summary).to_html(), unsafe_allow_html=True)
         
         with col3:
             st.markdown(f"<h3 style='text-align: center;'>Incoming for {following_month_start.strftime('%B')}</h3>", unsafe_allow_html=True)
             following_month_summary = summarize_incoming_data(combined_data, following_month_start, following_month_end, all_models, all_dealers)
-            st.table(following_month_summary)
+            st.write(style_dataframe(following_month_summary).to_html(), unsafe_allow_html=True)
     else:
         st.error("No data to display.")
