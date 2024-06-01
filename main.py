@@ -398,6 +398,7 @@ with tab3:
         time.sleep(0.5)
         st.download_button(label="Download Trade PDF", data=pdf_data, file_name="dealer_trade.pdf", mime="application/pdf", key="download_trade_pdf_button")
 
+# Custom CSS for dark mode and centering table data
 dark_mode_css = """
 <style>
 body {
@@ -408,23 +409,20 @@ h3 {
     color: #fafafa;
     text-align: center;
 }
-table {
+.dataframe {
     color: #fafafa;
     background-color: #1e2130;
     border-color: #383e53;
-    width: 100%;
-    border-collapse: collapse;
 }
-thead th, tbody td {
-    color: #fafafa;
+.dataframe th, .dataframe td {
     text-align: center;
-    border: 1px solid #383e53;
     padding: 8px;
+    border: 1px solid #383e53;
 }
-tbody tr:nth-child(even) {
+.dataframe tbody tr:nth-child(even) {
     background-color: #1e2130;
 }
-tbody tr:nth-child(odd) {
+.dataframe tbody tr:nth-child(odd) {
     background-color: #2c2f40;
 }
 </style>
@@ -473,16 +471,16 @@ with tab4:
         with col1:
             st.markdown(f"<h3>Incoming for {start_of_month.strftime('%B')}</h3>", unsafe_allow_html=True)
             current_month_summary = summarize_incoming_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
-            st.table(current_month_summary)
+            st.write(current_month_summary)
         
         with col2:
             st.markdown(f"<h3>Incoming for {next_month_start.strftime('%B')}</h3>", unsafe_allow_html=True)
             next_month_summary = summarize_incoming_data(combined_data, next_month_start, next_month_end, all_models, all_dealers)
-            st.table(next_month_summary)
+            st.write(next_month_summary)
         
         with col3:
             st.markdown(f"<h3>Incoming for {following_month_start.strftime('%B')}</h3>", unsafe_allow_html=True)
             following_month_summary = summarize_incoming_data(combined_data, following_month_start, following_month_end, all_models, all_dealers)
-            st.table(following_month_summary)
+            st.write(following_month_summary)
     else:
         st.error("No data to display.")
