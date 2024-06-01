@@ -392,6 +392,8 @@ table {
     text-align: center;
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed;
+    word-wrap: break-word;
 }
 thead th {
     color: #fafafa;
@@ -402,6 +404,7 @@ thead th {
 tbody td {
     text-align: center;
     padding: 8px;
+    word-wrap: break-word;
 }
 tbody tr:nth-child(even) {
     background-color: #1e2130;
