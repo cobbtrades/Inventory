@@ -463,24 +463,58 @@ def summarize_dlv_date_data(df, start_date, end_date, all_models, all_dealers):
     pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
     return pivot_table
 
+# Fullscreen button
+fullscreen_button = st.button("Toggle Fullscreen")
+
+# Custom JavaScript for toggling fullscreen
+fullscreen_js = """
+<script>
+function toggleFullscreen() {
+    var elem = document.getElementById("fullscreenContainer");
+    if (!document.fullscreenElement) {
+        elem.requestFullscreen().catch(err => {
+            alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+        });
+    } else {
+        document.exitFullscreen();
+    }
+}
+</script>
+"""
+
+# Apply the custom JavaScript
+st.markdown(fullscreen_js, unsafe_allow_html=True)
+
 # Assuming 'combined_data' and 'dealer_acronyms' are already defined elsewhere in the code
 # Display incoming data in the "Incoming" tab
 with tab4:
     container = st.container()
-    if not combined_data.empty:
-        today = datetime.today()
-        start_of_month = today.replace(day=1)
-        end_of_month = (start_of_month + timedelta(days=32)).replace(day=1) - timedelta(days=1)
-        next_month_start = (start_of_month + timedelta(days=32)).replace(day=1)
-        next_month_end = (next_month_start + timedelta(days=32)).replace(day=1) - timedelta(days=1)
-        following_month_start = (next_month_start + timedelta(days=32)).replace(day=1)
-        following_month_end = (following_month_start + timedelta(days=32)).replace(day=1) - timedelta(days=1)
-        
-        # Get all unique models and dealers
-        all_models = combined_data['MDL'].unique()
-        all_dealers = combined_data['DEALER_NAME'].replace(dealer_acronyms).unique()
-        
-        with container:
+    if fullscreen_button:
+        st.components.v1.html(
+            """
+            <script>
+            toggleFullscreen();
+            </script>
+            """,
+            height=0,
+            width=0,
+        )
+    
+    with container:
+        st.markdown('<div id="fullscreenContainer">', unsafe_allow_html=True)
+        if not combined_data.empty:
+            today = datetime.today()
+            start_of_month = today.replace(day=1)
+            end_of_month = (start_of_month + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+            next_month_start = (start_of_month + timedelta(days=32)).replace(day=1)
+            next_month_end = (next_month_start + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+            following_month_start = (next_month_start + timedelta(days=32)).replace(day=1)
+            following_month_end = (following_month_start + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+            
+            # Get all unique models and dealers
+            all_models = combined_data['MDL'].unique()
+            all_dealers = combined_data['DEALER_NAME'].replace(dealer_acronyms).unique()
+            
             col1, col2, col3 = st.columns(3)
             with col1:
                 st.markdown(f"<h3 style='text-align: center;'>Incoming for {start_of_month.strftime('%B')}</h3>", unsafe_allow_html=True)
@@ -511,5 +545,6 @@ with tab4:
                 balance_to_arrive = current_month_summary.subtract(current_month_dlv_summary, fill_value=0)
                 st.markdown(f"<h3 style='text-align: center;'>Balance to Arrive for {start_of_month.strftime('%B')}</h3>", unsafe_allow_html=True)
                 st.markdown(dataframe_to_html(balance_to_arrive), unsafe_allow_html=True)
-    else:
-        st.error("No data to display.")
+        else:
+            st.error("No data to display.")
+        st.markdown('</div>', unsafe_allow_html=True)
