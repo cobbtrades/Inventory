@@ -439,7 +439,8 @@ st.markdown(dark_mode_css, unsafe_allow_html=True)
 
 # Function to convert dataframe to HTML table
 def dataframe_to_html(df):
-    return df.to_html(classes='dataframe', border=0)
+    html = df.to_html(classes='dataframe', border=0, index_names=False)
+    return html
 
 # Function to summarize incoming data
 @st.cache_data
