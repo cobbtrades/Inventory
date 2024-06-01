@@ -395,13 +395,13 @@ with tab3:
 def summarize_incoming_data(df, start_date, end_date):
     df['ETA'] = pd.to_datetime(df['ETA'], errors='coerce')
     filtered_df = df[(df['ETA'] >= start_date) & (df['ETA'] <= end_date)]
-    summary = filtered_df.groupby(['MDL', 'DEALER_NAME']).size().reset_index(name='Count')
+    summary = filtered_df.groupby(['DEALER_NAME', 'MDL']).size().reset_index(name='Count')
     return summary
 
 # Function to create horizontal bar chart
 def create_horizontal_bar_chart(summary_df, title):
-    fig = px.bar(summary_df, y='MDL', x='Count', color='LOC', barmode='group',
-                 labels={'MDL': 'Model', 'LOC': 'Dealer Name', 'Count': 'Count'},
+    fig = px.bar(summary_df, y='MDL', x='Count', color='DEALER_NAME', barmode='group',
+                 labels={'MDL': 'Model', 'DEALER_NAME': 'Dealer Name', 'Count': 'Count'},
                  title=title, orientation='h')
     return fig
 
