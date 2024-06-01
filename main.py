@@ -399,11 +399,11 @@ thead th {
     color: #fafafa;
     background-color: #383e53;
     text-align: center;
-    padding: 8px;
+    padding: 2px;
 }
 tbody td {
     text-align: center;
-    padding: 8px;
+    padding: 2px;
     word-wrap: break-word;
 }
 tbody tr:nth-child(even) {
