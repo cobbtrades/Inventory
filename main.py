@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from io import BytesIO
+import plotly.express as px
 
 # Set page configuration for wide layout
 st.set_page_config(layout="wide")
@@ -145,7 +146,7 @@ st.write(
     unsafe_allow_html=True
 )
 
-# Create tabs for "All Stores", "Current", and "Dealer Trade", "Incoming"
+# Create tabs for "All Stores", "Current", "Dealer Trade", and "Incoming"
 tab1, tab2, tab3, tab4 = st.tabs(["All Stores", "Current CDK", "Dealer Trade", "Incoming"])
 
 # Function to filter data based on selectbox inputs
@@ -290,10 +291,8 @@ with tab3:
         col2_x = 200
 
         # Top section
-        c.setFont("Helvetica", 13)
         c.drawString(col1_x, height - 84 - offset, f"Date: {formatted_date}")
-        c.setFont("Helvetica", 10)
-        c.drawString(col2_x + 120, height - 84 - offset, f"Manager: {manager}")
+        c.drawString(col2_x, height - 84 - offset, f"Manager: {manager}")
 
         # Our Trade / Their Trade / Sold / Floorplan
         c.drawString(col1_x, height - 108 - offset, "OUR TRADE")
@@ -400,6 +399,13 @@ def summarize_incoming_data(df, start_date, end_date):
     summary = filtered_df.groupby(['LOC', 'MDL']).size().reset_index(name='Count')
     return summary
 
+# Function to create bar chart
+def create_bar_chart(summary_df, title):
+    fig = px.bar(summary_df, x='MDL', y='Count', color='LOC', barmode='group',
+                 labels={'MDL': 'Model', 'LOC': 'Dealer Name', 'Count': 'Count'},
+                 title=title)
+    return fig
+
 # Display incoming data in the "Incoming" tab
 with tab4:
     st.markdown("### Incoming Inventory")
@@ -414,14 +420,17 @@ with tab4:
         
         st.write(f"### Current Month ({start_of_month.strftime('%B')}): {start_of_month.strftime('%Y-%m-%d')} to {end_of_month.strftime('%Y-%m-%d')}")
         current_month_summary = summarize_incoming_data(combined_data, start_of_month, end_of_month)
-        st.data_editor(current_month_summary, use_container_width=True, height=200, hide_index=True, key='current_month_summary')
+        fig1 = create_bar_chart(current_month_summary, f"Incoming Inventory for {start_of_month.strftime('%B %Y')}")
+        st.plotly_chart(fig1, use_container_width=True)
         
         st.write(f"### Next Month ({next_month_start.strftime('%B')}): {next_month_start.strftime('%Y-%m-%d')} to {next_month_end.strftime('%Y-%m-%d')}")
         next_month_summary = summarize_incoming_data(combined_data, next_month_start, next_month_end)
-        st.data_editor(next_month_summary, use_container_width=True, height=200, hide_index=True, key='next_month_summary')
+        fig2 = create_bar_chart(next_month_summary, f"Incoming Inventory for {next_month_start.strftime('%B %Y')}")
+        st.plotly_chart(fig2, use_container_width=True)
         
         st.write(f"### Following Month ({following_month_start.strftime('%B')}): {following_month_start.strftime('%Y-%m-%d')} to {following_month_end.strftime('%Y-%m-%d')}")
         following_month_summary = summarize_incoming_data(combined_data, following_month_start, following_month_end)
-        st.data_editor(following_month_summary, use_container_width=True, height=200, hide_index=True, key='following_month_summary')
+        fig3 = create_bar_chart(following_month_summary, f"Incoming Inventory for {following_month_start.strftime('%B %Y')}")
+        st.plotly_chart(fig3, use_container_width=True)
     else:
         st.error("No data to display.")
