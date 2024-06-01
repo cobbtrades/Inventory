@@ -386,7 +386,7 @@ h3 {
     color: #fafafa;
 }
 .container {
-    padding: 20px; /* Adjust padding as needed */
+    padding: 80px; /* Adjust padding as needed */
 }
 table {
     color: #fafafa;
