@@ -505,7 +505,7 @@ with tab4:
             current_month_summary = summarize_incoming_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
             st.markdown(dataframe_to_html(current_month_summary), unsafe_allow_html=True)
             
-            st.markdown(f"<h3 style='text-align: center;'>RETAILED for {start_of_month.strftime('%B')}</h3>", unsafe_allow_html=True)
+            st.markdown(f"<h3 style='text-align: center;'>RETAILED</h3>", unsafe_allow_html=True)
             retailed_summary = summarize_retailed_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
             st.markdown(dataframe_to_html(retailed_summary), unsafe_allow_html=True)
         
