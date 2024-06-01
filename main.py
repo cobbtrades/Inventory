@@ -423,17 +423,17 @@ with tab4:
         col1, col2, col3 = st.columns(3)
         
         with col1:
-            st.write(f"### Current Month ({start_of_month.strftime('%B')}): {start_of_month.strftime('%Y-%m-%d')} to {end_of_month.strftime('%Y-%m-%d')}")
+            st.write(f"### Incoming for {start_of_month.strftime('%B')}")
             current_month_summary = summarize_incoming_data(combined_data, start_of_month, end_of_month)
             st.dataframe(current_month_summary)
         
         with col2:
-            st.write(f"### Next Month ({next_month_start.strftime('%B')}): {next_month_start.strftime('%Y-%m-%d')} to {next_month_end.strftime('%Y-%m-%d')}")
+            st.write(f"### Incoming for {next_month_start.strftime('%B')}")
             next_month_summary = summarize_incoming_data(combined_data, next_month_start, next_month_end)
             st.dataframe(next_month_summary)
         
         with col3:
-            st.write(f"### Following Month ({following_month_start.strftime('%B')}): {following_month_start.strftime('%Y-%m-%d')} to {following_month_end.strftime('%Y-%m-%d')}")
+            st.write(f"### Incoming for {following_month_start.strftime('%B')}")
             following_month_summary = summarize_incoming_data(combined_data, following_month_start, following_month_end)
             st.dataframe(following_month_summary)
     else:
