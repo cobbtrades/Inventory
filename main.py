@@ -426,15 +426,9 @@ def summarize_incoming_data(df, start_date, end_date, all_models, all_dealers):
     df['ETA'] = pd.to_datetime(df['ETA'], errors='coerce')
     filtered_df = df[(df['ETA'] >= start_date) & (df['ETA'] <= end_date)]
     filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].replace(dealer_acronyms)
-    # Create a MultiIndex of all possible combinations of DEALER_NAME and MDL
-    all_combinations = pd.MultiIndex.from_product(
-        [all_dealers, all_models],
-        names=['DEALER_NAME', 'MDL']
-    )
-    # Group the filtered DataFrame and reindex with all possible combinations
+    all_combinations = pd.MultiIndex.from_product([all_dealers, all_models], names=['DEALER_NAME', 'MDL'])
     summary = filtered_df.groupby(['DEALER_NAME', 'MDL']).size().reindex(all_combinations, fill_value=0).reset_index(name='Count')
-    pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', 
-                                 aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
+    pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
     return pivot_table
 
 # Function to summarize retailed data
@@ -442,30 +436,28 @@ def summarize_retailed_data(df, start_date, end_date, all_models, all_dealers):
     df['SOLD'] = pd.to_datetime(df['SOLD'], errors='coerce')
     filtered_df = df[(df['LOC'] == 'RETAILED') & (df['SOLD'] >= start_date) & (df['SOLD'] <= end_date)]
     filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].replace(dealer_acronyms)
-    # Create a MultiIndex of all possible combinations of DEALER_NAME and MDL
-    all_combinations = pd.MultiIndex.from_product(
-        [all_dealers, all_models],
-        names=['DEALER_NAME', 'MDL']
-    )
-    # Group the filtered DataFrame and reindex with all possible combinations
+    all_combinations = pd.MultiIndex.from_product([all_dealers, all_models], names=['DEALER_NAME', 'MDL'])
     summary = filtered_df.groupby(['DEALER_NAME', 'MDL']).size().reindex(all_combinations, fill_value=0).reset_index(name='Count')
-    pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', 
-                                 aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
+    pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
     return pivot_table
 
 # Function to summarize DLV INV data
 def summarize_dlv_inv_data(df, all_models, all_dealers):
     filtered_df = df[(df['LOC'] == 'DLR INV') & (df['SOLD'].isna())]
     filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].replace(dealer_acronyms)
-    # Create a MultiIndex of all possible combinations of DEALER_NAME and MDL
-    all_combinations = pd.MultiIndex.from_product(
-        [all_dealers, all_models],
-        names=['DEALER_NAME', 'MDL']
-    )
-    # Group the filtered DataFrame and reindex with all possible combinations
+    all_combinations = pd.MultiIndex.from_product([all_dealers, all_models], names=['DEALER_NAME', 'MDL'])
     summary = filtered_df.groupby(['DEALER_NAME', 'MDL']).size().reindex(all_combinations, fill_value=0).reset_index(name='Count')
-    pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', 
-                                 aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
+    pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
+    return pivot_table
+
+# Function to summarize deliveries for current month
+def summarize_dlv_date_data(df, start_date, end_date, all_models, all_dealers):
+    df['DLV_DATE'] = pd.to_datetime(df['DLV_DATE'], errors='coerce')
+    filtered_df = df[(df['DLV_DATE'] >= start_date) & (df['DLV_DATE'] <= end_date)]
+    filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].replace(dealer_acronyms)
+    all_combinations = pd.MultiIndex.from_product([all_dealers, all_models], names=['DEALER_NAME', 'MDL'])
+    summary = filtered_df.groupby(['DEALER_NAME', 'MDL']).size().reindex(all_combinations, fill_value=0).reset_index(name='Count')
+    pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
     return pivot_table
 
 # Assuming 'combined_data' and 'dealer_acronyms' are already defined elsewhere in the code
@@ -479,9 +471,11 @@ with tab4:
         next_month_end = (next_month_start + timedelta(days=32)).replace(day=1) - timedelta(days=1)
         following_month_start = (next_month_start + timedelta(days=32)).replace(day=1)
         following_month_end = (following_month_start + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+        
         # Get all unique models and dealers
         all_models = combined_data['MDL'].unique()
         all_dealers = combined_data['DEALER_NAME'].replace(dealer_acronyms).unique()
+        
         # Create columns for each month's data
         col1, col2, col3 = st.columns(3)
         with col1:
@@ -506,5 +500,12 @@ with tab4:
             st.markdown(f"<h3 style='text-align: center;'>Incoming for {following_month_start.strftime('%B')}</h3>", unsafe_allow_html=True)
             following_month_summary = summarize_incoming_data(combined_data, following_month_start, following_month_end, all_models, all_dealers)
             st.markdown(dataframe_to_html(following_month_summary), unsafe_allow_html=True)
+            
+            # Summarize deliveries for the current month
+            current_month_dlv_summary = summarize_dlv_date_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
+            # Calculate 'BALANCE TO ARRIVE' for the current month
+            balance_to_arrive = current_month_summary.subtract(current_month_dlv_summary, fill_value=0)
+            st.markdown(f"<h3 style='text-align: center;'>Balance to Arrive for {start_of_month.strftime('%B')}</h3>", unsafe_allow_html=True)
+            st.markdown(dataframe_to_html(balance_to_arrive), unsafe_allow_html=True)
     else:
         st.error("No data to display.")
