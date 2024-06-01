@@ -290,7 +290,9 @@ with tab3:
         col2_x = 200
 
         # Top section
+        c.setFont("Helvetica", 13)
         c.drawString(col1_x, height - 84 - offset, f"Date: {formatted_date}")
+        c.setFont("Helvetica", 10)
         c.drawString(col2_x, height - 84 - offset, f"Manager: {manager}")
 
         # Our Trade / Their Trade / Sold / Floorplan
