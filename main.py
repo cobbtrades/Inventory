@@ -483,7 +483,7 @@ def summarize_retailed_data(df, start_date, end_date, all_models, all_dealers):
 
 # Function to summarize DLV INV data
 def summarize_dlv_inv_data(df, all_models, all_dealers):
-    filtered_df = df[(df['LOC'] == 'DLV INV') & (df['SOLD'].isna())]
+    filtered_df = df[(df['LOC'] == 'DLR INV') & (df['SOLD'].isna())]
     filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].replace(dealer_acronyms)
     
     # Create a MultiIndex of all possible combinations of DEALER_NAME and MDL
