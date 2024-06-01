@@ -54,7 +54,7 @@ inc_mapping = {
     'MODERN NISSAN OF CONCORD': 'CN',
     'MODERN NISSAN OF HICKORY': 'HK',
     'MODERN NISSAN,LLC': 'WS',
-    'MODERN NISSAN/LAKE NORMAN': 'LN'
+    'MODERN NISSAN/LAKE NORMAN': 'LN',
 }
 
 # Function to load data and handle columns dynamically
