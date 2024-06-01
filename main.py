@@ -523,7 +523,7 @@ with tab4:
             current_month_summary = summarize_incoming_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
             st.markdown(dataframe_to_html(current_month_summary), unsafe_allow_html=True)
             
-            st.markdown(f"<h3 style='text-align: center;'>RETAILED for {start_of_month.strftime('%B')}</h3>", unsafe_allow_html=True)
+            st.markdown(f"<h3 style='text-align: center;'>RETAILED</h3>", unsafe_allow_html=True)
             retailed_summary = summarize_retailed_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
             st.markdown(dataframe_to_html(retailed_summary), unsafe_allow_html=True)
         
@@ -532,7 +532,7 @@ with tab4:
             next_month_summary = summarize_incoming_data(combined_data, next_month_start, next_month_end, all_models, all_dealers)
             st.markdown(dataframe_to_html(next_month_summary), unsafe_allow_html=True)
             
-            st.markdown(f"<h3 style='text-align: center;'>Current NNA Inventory(DLV INV)</h3>", unsafe_allow_html=True)
+            st.markdown(f"<h3 style='text-align: center;'>Current NNA Inventory(DLR INV)</h3>", unsafe_allow_html=True)
             dlv_inv_summary = summarize_dlv_inv_data(combined_data, all_models, all_dealers)
             st.markdown(dataframe_to_html(dlv_inv_summary), unsafe_allow_html=True)
         
