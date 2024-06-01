@@ -402,6 +402,7 @@ with tab3:
 def summarize_incoming_data(df, start_date, end_date):
     df['ETA'] = pd.to_datetime(df['ETA'], errors='coerce')
     filtered_df = df[(df['ETA'] >= start_date) & (df['ETA'] <= end_date)]
+    filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].map(dealer_acronyms)
     summary = filtered_df.groupby(['DEALER_NAME', 'MDL']).size().reset_index(name='Count')
     pivot_table = summary.pivot(index='MDL', columns='DEALER_NAME', values='Count').fillna(0).astype(int)
     return pivot_table
