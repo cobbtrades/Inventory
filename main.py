@@ -402,7 +402,7 @@ with tab3:
 def summarize_incoming_data(df, start_date, end_date):
     df['ETA'] = pd.to_datetime(df['ETA'], errors='coerce')
     filtered_df = df[(df['ETA'] >= start_date) & (df['ETA'] <= end_date)]
-    filtered_df['MDL'] = filtered_df['MDL'].replace(inc_mapping)
+    filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].replace(inc_mapping)
     summary = filtered_df.groupby(['DEALER_NAME', 'MDL']).size().reset_index(name='Count')
     return summary
 
