@@ -85,7 +85,7 @@ def load_data(file_paths):
                     df['MCODE'] = df['MCODE'].astype(str).str.replace(',', '')
                 if 'MDL' in df.columns:
                     df['EXT'] = df['EXT'].replace(ext_mapping)
-                date_columns = ['ETA', 'DLV_DATE', 'ORD_DATE']
+                date_columns = ['ETA', 'DLV_DATE', 'ORD_DATE', 'SOLD']
                 df[date_columns] = df[date_columns].apply(lambda col: pd.to_datetime(col).dt.strftime('%m-%d-%Y'))
                 df['Premium'] = df['GOPTS'].apply(lambda x: 'PRM' if any(sub in x for sub in ['PRM', 'PR1', 'PR2', 'PR3']) else '')
                 df['Technology'] = df['GOPTS'].apply(lambda x: 'TECH' if any(sub in x for sub in ['TEC', 'TE1', 'TE2', 'TE3']) else '')
