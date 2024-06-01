@@ -398,7 +398,6 @@ with tab3:
         time.sleep(0.5)
         st.download_button(label="Download Trade PDF", data=pdf_data, file_name="dealer_trade.pdf", mime="application/pdf", key="download_trade_pdf_button")
 
-# Custom CSS for dark mode
 dark_mode_css = """
 <style>
 body {
@@ -413,18 +412,14 @@ table {
     color: #fafafa;
     background-color: #1e2130;
     border-color: #383e53;
-    text-align: center;
-}
-thead th {
-    color: #fafafa;
-    background-color: #383e53;
-}
-tbody td {
-    text-align: center;
+    width: 100%;
+    border-collapse: collapse;
 }
 thead th, tbody td {
-    padding: 10px;
+    color: #fafafa;
     text-align: center;
+    border: 1px solid #383e53;
+    padding: 8px;
 }
 tbody tr:nth-child(even) {
     background-color: #1e2130;
@@ -458,6 +453,7 @@ def summarize_incoming_data(df, start_date, end_date, all_models, all_dealers):
 
 # Display incoming data in the "Incoming" tab
 with tab4:
+    st.markdown("### Incoming Inventory")
     if not combined_data.empty:
         today = datetime.today()
         start_of_month = today.replace(day=1)
@@ -475,17 +471,17 @@ with tab4:
         col1, col2, col3 = st.columns(3)
         
         with col1:
-            st.markdown(f"<h3 style='text-align: center;'>Incoming for {start_of_month.strftime('%B')}</h3>", unsafe_allow_html=True)
+            st.markdown(f"<h3>Incoming for {start_of_month.strftime('%B')}</h3>", unsafe_allow_html=True)
             current_month_summary = summarize_incoming_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
             st.table(current_month_summary)
         
         with col2:
-            st.markdown(f"<h3 style='text-align: center;'>Incoming for {next_month_start.strftime('%B')}</h3>", unsafe_allow_html=True)
+            st.markdown(f"<h3>Incoming for {next_month_start.strftime('%B')}</h3>", unsafe_allow_html=True)
             next_month_summary = summarize_incoming_data(combined_data, next_month_start, next_month_end, all_models, all_dealers)
             st.table(next_month_summary)
         
         with col3:
-            st.markdown(f"<h3 style='text-align: center;'>Incoming for {following_month_start.strftime('%B')}</h3>", unsafe_allow_html=True)
+            st.markdown(f"<h3>Incoming for {following_month_start.strftime('%B')}</h3>", unsafe_allow_html=True)
             following_month_summary = summarize_incoming_data(combined_data, following_month_start, following_month_end, all_models, all_dealers)
             st.table(following_month_summary)
     else:
