@@ -441,7 +441,7 @@ with tab4:
         col1, col2, col3 = st.columns(3)
         
         with col1:
-            st.write(f"### Current Month ({start_of_month.strftime('%B')}): {start_of_month.strftime('%Y-%m-%d')} to {end_of_month.strftime('%Y-%m-%d')}")
+            st.write(f"### Incoming for June ({start_of_month.strftime('%B')})")#: {start_of_month.strftime('%Y-%m-%d')} to {end_of_month.strftime('%Y-%m-%d')}")
             current_month_summary = summarize_incoming_data(combined_data, start_of_month, end_of_month)
             fig1 = create_horizontal_bar_chart(current_month_summary, f"Incoming Inventory for {start_of_month.strftime('%B %Y')}")
             st.plotly_chart(fig1, use_container_width=True)
