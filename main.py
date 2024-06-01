@@ -413,6 +413,18 @@ tbody tr:nth-child(odd) {
     background-color: #2c2f40;
 }
 </style>
+<script>
+function toggleFullscreen() {
+    var elem = document.getElementById("fullscreenContainer");
+    if (!document.fullscreenElement) {
+        elem.requestFullscreen().catch(err => {
+            alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+        });
+    } else {
+        document.exitFullscreen();
+    }
+}
+</script>
 """
 
 # Apply the custom CSS
@@ -466,23 +478,7 @@ def summarize_dlv_date_data(df, start_date, end_date, all_models, all_dealers):
 # Fullscreen button
 fullscreen_button = st.button("Toggle Fullscreen")
 
-# Custom JavaScript for toggling fullscreen
-fullscreen_js = """
-<script>
-function toggleFullscreen() {
-    var elem = document.getElementById("fullscreenContainer");
-    if (!document.fullscreenElement) {
-        elem.requestFullscreen().catch(err => {
-            alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
-        });
-    } else {
-        document.exitFullscreen();
-    }
-}
-</script>
-"""
-
-# Apply the custom JavaScript
+# Inject the JavaScript for toggling fullscreen
 st.markdown(fullscreen_js, unsafe_allow_html=True)
 
 # Assuming 'combined_data' and 'dealer_acronyms' are already defined elsewhere in the code
