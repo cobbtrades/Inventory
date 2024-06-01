@@ -395,7 +395,7 @@ with tab3:
 def summarize_incoming_data(df, start_date, end_date):
     df['ETA'] = pd.to_datetime(df['ETA'], errors='coerce')
     filtered_df = df[(df['ETA'] >= start_date) & (df['ETA'] <= end_date)]
-    summary = filtered_df.groupby(['LOC', 'MDL']).size().reset_index(name='Count')
+    summary = filtered_df.groupby(['MDL', 'DEALER_NAME']).size().reset_index(name='Count')
     return summary
 
 # Function to create horizontal bar chart
