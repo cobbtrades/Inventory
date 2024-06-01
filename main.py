@@ -398,6 +398,36 @@ with tab3:
         time.sleep(0.5)
         st.download_button(label="Download Trade PDF", data=pdf_data, file_name="dealer_trade.pdf", mime="application/pdf", key="download_trade_pdf_button")
 
+# Custom CSS for dark mode
+dark_mode_css = """
+<style>
+body {
+    background-color: #0e1117;
+    color: #fafafa;
+}
+h3 {
+    color: #fafafa;
+}
+table {
+    color: #fafafa;
+    background-color: #1e2130;
+    border-color: #383e53;
+}
+thead th {
+    color: #fafafa;
+    background-color: #383e53;
+}
+tbody tr:nth-child(even) {
+    background-color: #1e2130;
+}
+tbody tr:nth-child(odd) {
+    background-color: #2c2f40;
+}
+</style>
+"""
+
+st.markdown(dark_mode_css, unsafe_allow_html=True)
+
 @st.cache_data
 def summarize_incoming_data(df, start_date, end_date, all_models, all_dealers):
     df['ETA'] = pd.to_datetime(df['ETA'], errors='coerce')
@@ -419,6 +449,7 @@ def summarize_incoming_data(df, start_date, end_date, all_models, all_dealers):
 
 # Display incoming data in the "Incoming" tab
 with tab4:
+    st.markdown("### Incoming Inventory")
     if not combined_data.empty:
         today = datetime.today()
         start_of_month = today.replace(day=1)
