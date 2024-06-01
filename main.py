@@ -187,19 +187,14 @@ if not combined_data.empty:
         with cols[4]:
             colors = ['All'] if model == 'All' else ['All'] + combined_data[combined_data['MDL'] == model]['EXT'].unique().tolist()
             color = st.selectbox('Color', options=colors, key='all_color')
-
         filtered_df = filter_data(combined_data, model, trim, package, color)
-        
         num_rows = len(filtered_df)
         st.markdown(f"<span style='font-size: small;'>{num_rows} vehicles</span>", unsafe_allow_html=True)
-        
         edited_df = st.data_editor(filtered_df, use_container_width=True, height=780, hide_index=True, key='all_data_editor')
-        
         # Update the original dataframe with the changes from the edited dataframe
         for index, row in edited_df.iterrows():
             original_index = combined_data[combined_data['VIN'] == row['VIN']].index[0]
             combined_data.loc[original_index] = row
-        
 else:
     st.error("No data to display.")
 
@@ -285,22 +280,17 @@ with tab3:
         pdf_buffer = BytesIO()
         c = canvas.Canvas(pdf_buffer, pagesize=letter)
         width, height = letter
-
         offset = 20
-
         title = "MODERN NISSAN OF CONCORD STORE #3"
         c.setFont("Helvetica-Bold", 16)
         c.drawCentredString(width / 2.0, height - 52 - offset, title)
         c.setFont("Helvetica", 10)
-
         # Column positions
         col1_x = 72
         col2_x = 200
-
         # Top section
         c.drawString(col1_x, height - 84 - offset, f"Date: {formatted_date}")
         c.drawString(col2_x, height - 84 - offset, f"Manager: {manager}")
-
         # Our Trade / Their Trade / Sold / Floorplan
         c.drawString(col1_x, height - 108 - offset, "OUR TRADE")
         c.drawString(col1_x, height - 120 - offset, f"{'         X' if our_trade else ''}")
@@ -310,25 +300,21 @@ with tab3:
         c.drawString(col1_x, height - 156 - offset, f"{'   X' if sold else ''}")
         c.drawString(col2_x, height - 144 - offset, "FLOORPLAN")
         c.drawString(col2_x, height - 156 - offset, f"{'          X' if floorplan else ''}")
-
         # Address Information
         addr_x = 320  # Adjust as needed for positioning
         c.drawString(addr_x, height - 108 - offset, "PLEASE SEND MCO/CHECK TO:")
         c.drawString(addr_x, height - 120 - offset, "MODERN AUTOMOTIVE SUPPORT CENTER")
         c.drawString(addr_x, height - 132 - offset, "3901 WEST POINT BLVD.")
         c.drawString(addr_x, height - 144 - offset, "WINSTON-SALEM, NC 27103")
-
         # Intercompany DX
         c.setFillColorRGB(0.7, 0.7, 0.7)
         c.rect(70, height - 180 - offset, 475, 20, fill=1)
         c.setFillColorRGB(0, 0, 0)
         c.drawString(72, height - 175 - offset, "Intercompany DX")
-
         c.drawString(72, height - 200 - offset, "From:")
         c.drawString(140, height - 200 - offset, from_location)
         c.drawString(330, height - 200 - offset, "To:")
         c.drawString(380, height - 200 - offset, to_location)
-
         # Vehicle details
         c.drawString(72, height - 220 - offset, "Stock Number:")
         c.drawString(160, height - 220 - offset, stock_number)
@@ -342,13 +328,11 @@ with tab3:
         c.drawString(420, height - 240 - offset, format_currency(projected_cost))
         c.drawString(330, height - 260 - offset, "Transfer Amount:")
         c.drawString(420, height - 260 - offset, formatted_transfer_amount)
-
         # Non-Modern Dealership Information
         c.setFillColorRGB(0.7, 0.7, 0.7)
         c.rect(70, height - 290 - offset, 475, 20, fill=1)
         c.setFillColorRGB(0, 0, 0)
         c.drawString(72, height - 285 - offset, "Non-Modern Dealership Information")
-
         c.drawString(72, height - 310 - offset, "Dealership Name:")
         c.drawString(190, height - 310 - offset, dealership_name)
         c.drawString(72, height - 330 - offset, "Address:")
@@ -361,13 +345,11 @@ with tab3:
         c.drawString(190, height - 390 - offset, dealer_code)
         c.drawString(72, height - 410 - offset, "Contact Name:")
         c.drawString(190, height - 410 - offset, contact_name)
-
         # Outgoing Unit
         c.setFillColorRGB(0.7, 0.7, 0.7)
         c.rect(70, height - 440 - offset, 475, 20, fill=1)
         c.setFillColorRGB(0, 0, 0)
         c.drawString(72, height - 435 - offset, "Outgoing Unit")
-
         c.drawString(72, height - 460 - offset, "Stock Number:")
         c.drawString(190, height - 460 - offset, outgoing_stock_number)
         c.drawString(72, height - 480 - offset, "Year Make Model:")
@@ -376,23 +358,19 @@ with tab3:
         c.drawString(190, height - 500 - offset, outgoing_full_vin)
         c.drawString(72, height - 520 - offset, "Sale Price:")
         c.drawString(190, height - 520 - offset, outgoing_sale_price)
-
         # Incoming Unit
         c.setFillColorRGB(0.7, 0.7, 0.7)
         c.rect(70, height - 550 - offset, 475, 20, fill=1)
         c.setFillColorRGB(0, 0, 0)
         c.drawString(72, height - 545 - offset, "Incoming Unit")
-
         c.drawString(72, height - 570 - offset, "Year Make Model:")
         c.drawString(190, height - 570 - offset, incoming_year_make_model)
         c.drawString(72, height - 590 - offset, "Full VIN #:")
         c.drawString(190, height - 590 - offset, incoming_full_vin)
         c.drawString(72, height - 610 - offset, "Purchase Price:")
         c.drawString(190, height - 610 - offset, incoming_purchase_price)
-
         c.showPage()
         c.save()
-
         pdf_buffer.seek(0)
         pdf_data = pdf_buffer.getvalue()
         time.sleep(0.5)
@@ -448,16 +426,13 @@ def summarize_incoming_data(df, start_date, end_date, all_models, all_dealers):
     df['ETA'] = pd.to_datetime(df['ETA'], errors='coerce')
     filtered_df = df[(df['ETA'] >= start_date) & (df['ETA'] <= end_date)]
     filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].replace(dealer_acronyms)
-    
     # Create a MultiIndex of all possible combinations of DEALER_NAME and MDL
     all_combinations = pd.MultiIndex.from_product(
         [all_dealers, all_models],
         names=['DEALER_NAME', 'MDL']
     )
-    
     # Group the filtered DataFrame and reindex with all possible combinations
     summary = filtered_df.groupby(['DEALER_NAME', 'MDL']).size().reindex(all_combinations, fill_value=0).reset_index(name='Count')
-    
     pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', 
                                  aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
     return pivot_table
@@ -467,16 +442,13 @@ def summarize_retailed_data(df, start_date, end_date, all_models, all_dealers):
     df['SOLD'] = pd.to_datetime(df['SOLD'], errors='coerce')
     filtered_df = df[(df['LOC'] == 'RETAILED') & (df['SOLD'] >= start_date) & (df['SOLD'] <= end_date)]
     filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].replace(dealer_acronyms)
-    
     # Create a MultiIndex of all possible combinations of DEALER_NAME and MDL
     all_combinations = pd.MultiIndex.from_product(
         [all_dealers, all_models],
         names=['DEALER_NAME', 'MDL']
     )
-    
     # Group the filtered DataFrame and reindex with all possible combinations
     summary = filtered_df.groupby(['DEALER_NAME', 'MDL']).size().reindex(all_combinations, fill_value=0).reset_index(name='Count')
-    
     pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', 
                                  aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
     return pivot_table
@@ -485,16 +457,13 @@ def summarize_retailed_data(df, start_date, end_date, all_models, all_dealers):
 def summarize_dlv_inv_data(df, all_models, all_dealers):
     filtered_df = df[(df['LOC'] == 'DLR INV') & (df['SOLD'].isna())]
     filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].replace(dealer_acronyms)
-    
     # Create a MultiIndex of all possible combinations of DEALER_NAME and MDL
     all_combinations = pd.MultiIndex.from_product(
         [all_dealers, all_models],
         names=['DEALER_NAME', 'MDL']
     )
-    
     # Group the filtered DataFrame and reindex with all possible combinations
     summary = filtered_df.groupby(['DEALER_NAME', 'MDL']).size().reindex(all_combinations, fill_value=0).reset_index(name='Count')
-    
     pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', 
                                  aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
     return pivot_table
@@ -510,14 +479,11 @@ with tab4:
         next_month_end = (next_month_start + timedelta(days=32)).replace(day=1) - timedelta(days=1)
         following_month_start = (next_month_start + timedelta(days=32)).replace(day=1)
         following_month_end = (following_month_start + timedelta(days=32)).replace(day=1) - timedelta(days=1)
-        
         # Get all unique models and dealers
         all_models = combined_data['MDL'].unique()
         all_dealers = combined_data['DEALER_NAME'].replace(dealer_acronyms).unique()
-        
         # Create columns for each month's data
         col1, col2, col3 = st.columns(3)
-        
         with col1:
             st.markdown(f"<h3 style='text-align: center;'>Incoming for {start_of_month.strftime('%B')}</h3>", unsafe_allow_html=True)
             current_month_summary = summarize_incoming_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
