@@ -397,11 +397,11 @@ thead th {
     color: #fafafa;
     background-color: #383e53;
     text-align: center;
-    padding: 4px;
+    padding: 8px;
 }
 tbody td {
     text-align: center;
-    padding: 4px;
+    padding: 8px;
 }
 tbody tr:nth-child(even) {
     background-color: #1e2130;
@@ -460,6 +460,16 @@ def summarize_dlv_date_data(df, start_date, end_date, all_models, all_dealers):
     pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
     return pivot_table
 
+# Function to plot tables as images
+def plot_tables_as_image(tables, titles):
+    fig, axes = plt.subplots(len(tables), 1, figsize=(10, 4 * len(tables)))
+    for ax, table, title in zip(axes, tables, titles):
+        ax.axis('off')
+        ax.table(cellText=table.values, colLabels=table.columns, rowLabels=table.index, cellLoc='center', loc='center')
+        ax.set_title(title)
+    fig.tight_layout()
+    return fig
+
 # Assuming 'combined_data' and 'dealer_acronyms' are already defined elsewhere in the code
 # Display incoming data in the "Incoming" tab
 with tab4:
@@ -507,5 +517,33 @@ with tab4:
             balance_to_arrive = current_month_summary.subtract(current_month_dlv_summary, fill_value=0)
             st.markdown(f"<h3 style='text-align: center;'>Balance to Arrive for {start_of_month.strftime('%B')}</h3>", unsafe_allow_html=True)
             st.markdown(dataframe_to_html(balance_to_arrive), unsafe_allow_html=True)
+        
+        # Prepare tables for plotting
+        tables = [current_month_summary, retailed_summary, next_month_summary, dlv_inv_summary, following_month_summary, balance_to_arrive]
+        titles = [
+            f"Incoming for {start_of_month.strftime('%B')}",
+            "RETAILED",
+            f"Incoming for {next_month_start.strftime('%B')}",
+            "Current NNA Inventory(DLR INV)",
+            f"Incoming for {following_month_start.strftime('%B')}",
+            f"Balance to Arrive for {start_of_month.strftime('%B')}"
+        ]
+        
+        # Plot and save the image
+        fig = plot_tables_as_image(tables, titles)
+        st.pyplot(fig)
+        
+        # Save the image to a file
+        img_file = "tables_overview.png"
+        fig.savefig(img_file, bbox_inches='tight')
+        
+        # Provide a download button for the image
+        with open(img_file, "rb") as file:
+            btn = st.download_button(
+                label="Download Tables Overview as Image",
+                data=file,
+                file_name=img_file,
+                mime="image/png"
+            )
     else:
         st.error("No data to display.")
