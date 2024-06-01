@@ -385,6 +385,9 @@ body {
 h3 {
     color: #fafafa;
 }
+.container {
+    padding: 20px; /* Adjust padding as needed */
+}
 table {
     color: #fafafa;
     background-color: #1e2130;
