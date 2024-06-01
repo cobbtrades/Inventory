@@ -402,11 +402,11 @@ thead th {
     color: #fafafa;
     background-color: #383e53;
     text-align: center;
-    padding: 8px;
+    padding: 1px;
 }
 tbody td {
     text-align: center;
-    padding: 8px;
+    padding: 1px;
     word-wrap: break-word;
 }
 tbody tr:nth-child(even) {
