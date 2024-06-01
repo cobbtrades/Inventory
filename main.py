@@ -462,30 +462,11 @@ def summarize_incoming_data(df, start_date, end_date, all_models, all_dealers):
                                  aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
     return pivot_table
 
-# Function to summarize filtered data based on LOC and SOLD conditions
-@st.cache_data
-def summarize_filtered_data(df, start_date, end_date, all_models, all_dealers, loc_value=None, sold_not_blank=False):
-    df['ETA'] = pd.to_datetime(df['ETA'], errors='coerce')
-    filtered_df = df[(df['ETA'] >= start_date) & (df['ETA'] <= end_date)]
-    
-    if loc_value:
-        filtered_df = filtered_df[filtered_df['LOC'] == loc_value]
-    
-    if sold_not_blank:
-        filtered_df = filtered_df[filtered_df['SOLD'].notna()]
-    
-    filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].replace(dealer_acronyms)
-    
-    all_combinations = pd.MultiIndex.from_product(
-        [all_dealers, all_models],
-        names=['DEALER_NAME', 'MDL']
-    )
-    
-    summary = filtered_df.groupby(['DEALER_NAME', 'MDL']).size().reindex(all_combinations, fill_value=0).reset_index(name='Count')
-    
-    pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', 
-                                 aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
-    return pivot_table
+# Function to filter and display RETAILED data for the current month
+def filter_retailed_data(df, start_of_month, end_of_month):
+    df['SOLD'] = pd.to_datetime(df['SOLD'], errors='coerce')
+    filtered_df = df[(df['LOC'] == 'RETAILED') & (df['SOLD'] >= start_of_month) & (df['SOLD'] <= end_of_month)]
+    return filtered_df
 
 # Assuming 'combined_data' and 'dealer_acronyms' are already defined elsewhere in the code
 # Display incoming data in the "Incoming" tab
@@ -512,8 +493,8 @@ with tab4:
             st.markdown(dataframe_to_html(current_month_summary), unsafe_allow_html=True)
             
             st.markdown(f"<h3 style='text-align: center;'>RETAILED for {start_of_month.strftime('%B')}</h3>", unsafe_allow_html=True)
-            retailed_summary = summarize_filtered_data(combined_data, start_of_month, end_of_month, all_models, all_dealers, loc_value='RETAILED')
-            st.markdown(dataframe_to_html(retailed_summary), unsafe_allow_html=True)
+            retailed_data = filter_retailed_data(combined_data, start_of_month, end_of_month)
+            st.markdown(dataframe_to_html(retailed_data), unsafe_allow_html=True)
         
         with col2:
             st.markdown(f"<h3 style='text-align: center;'>Incoming for {next_month_start.strftime('%B')}</h3>", unsafe_allow_html=True)
