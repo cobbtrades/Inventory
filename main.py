@@ -399,14 +399,14 @@ with tab3:
         st.download_button(label="Download Trade PDF", data=pdf_data, file_name="dealer_trade.pdf", mime="application/pdf", key="download_trade_pdf_button")
 
 @st.cache_data
-def summarize_incoming_data(df, start_date, end_date):
+def summarize_incoming_data(df, start_date, end_date, all_models, all_dealers):
     df['ETA'] = pd.to_datetime(df['ETA'], errors='coerce')
     filtered_df = df[(df['ETA'] >= start_date) & (df['ETA'] <= end_date)]
     filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].replace(dealer_acronyms)
     
     # Create a MultiIndex of all possible combinations of DEALER_NAME and MDL
     all_combinations = pd.MultiIndex.from_product(
-        [filtered_df['DEALER_NAME'].unique(), filtered_df['MDL'].unique()],
+        [all_dealers, all_models],
         names=['DEALER_NAME', 'MDL']
     )
     
@@ -419,6 +419,7 @@ def summarize_incoming_data(df, start_date, end_date):
 
 # Display incoming data in the "Incoming" tab
 with tab4:
+    st.markdown("### Incoming Inventory")
     if not combined_data.empty:
         today = datetime.today()
         start_of_month = today.replace(day=1)
@@ -428,22 +429,26 @@ with tab4:
         following_month_start = (next_month_start + timedelta(days=32)).replace(day=1)
         following_month_end = (following_month_start + timedelta(days=32)).replace(day=1) - timedelta(days=1)
         
+        # Get all unique models and dealers
+        all_models = combined_data['MDL'].unique()
+        all_dealers = combined_data['DEALER_NAME'].replace(dealer_acronyms).unique()
+        
         # Create columns for each month's data
         col1, col2, col3 = st.columns(3)
         
         with col1:
             st.write(f"### Incoming for {start_of_month.strftime('%B')}")
-            current_month_summary = summarize_incoming_data(combined_data, start_of_month, end_of_month)
+            current_month_summary = summarize_incoming_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
             st.dataframe(current_month_summary)
         
         with col2:
             st.write(f"### Incoming for {next_month_start.strftime('%B')}")
-            next_month_summary = summarize_incoming_data(combined_data, next_month_start, next_month_end)
+            next_month_summary = summarize_incoming_data(combined_data, next_month_start, next_month_end, all_models, all_dealers)
             st.dataframe(next_month_summary)
         
         with col3:
             st.write(f"### Incoming for {following_month_start.strftime('%B')}")
-            following_month_summary = summarize_incoming_data(combined_data, following_month_start, following_month_end)
+            following_month_summary = summarize_incoming_data(combined_data, following_month_start, following_month_end, all_models, all_dealers)
             st.dataframe(following_month_summary)
     else:
         st.error("No data to display.")
