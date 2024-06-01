@@ -413,6 +413,7 @@ table {
     background-color: #1e2130;
     border-color: #383e53;
     text-align: center;
+    width: 100%;
 }
 thead th {
     color: #fafafa;
