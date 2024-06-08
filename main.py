@@ -407,15 +407,17 @@ thead th {
 }
 tbody td {
     text-align: center;
-    padding: 8px;
+    padding: 1px;
     word-wrap: break-word;
     font-size: 12px;
 }
 tbody tr:nth-child(even) {
     background-color: #1e2130;
+    padding: 1px;
 }
 tbody tr:nth-child(odd) {
     background-color: #2c2f40;
+    padding: 1px;
 }
 </style>
 """
