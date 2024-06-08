@@ -9,6 +9,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from io import BytesIO
 import plotly.express as px
+from streamlit_extras.row import row
 
 # Set page configuration for wide layout
 st.set_page_config(layout="wide")
@@ -469,21 +470,21 @@ def summarize_dlv_date_data(df, start_date, end_date, all_models, all_dealers):
 # Assuming 'combined_data' and 'dealer_acronyms' are already defined elsewhere in the code
 # Display incoming data in the "Incoming" tab
 with tab4:
-    container = st.container()
-    if not combined_data.empty:
-        today = datetime.today()
-        start_of_month = today.replace(day=1)
-        end_of_month = (start_of_month + timedelta(days=32)).replace(day=1) - timedelta(days=1)
-        next_month_start = (start_of_month + timedelta(days=32)).replace(day=1)
-        next_month_end = (next_month_start + timedelta(days=32)).replace(day=1) - timedelta(days=1)
-        following_month_start = (next_month_start + timedelta(days=32)).replace(day=1)
-        following_month_end = (following_month_start + timedelta(days=32)).replace(day=1) - timedelta(days=1)
-        
-        # Get all unique models and dealers
-        all_models = combined_data['MDL'].unique()
-        all_dealers = combined_data['DEALER_NAME'].replace(dealer_acronyms).unique()
-        
-        with container:
+    def incoming():
+        if not combined_data.empty:
+            row1 = row(3, vertical_align="center")
+            today = datetime.today()
+            start_of_month = today.replace(day=1)
+            end_of_month = (start_of_month + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+            next_month_start = (start_of_month + timedelta(days=32)).replace(day=1)
+            next_month_end = (next_month_start + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+            following_month_start = (next_month_start + timedelta(days=32)).replace(day=1)
+            following_month_end = (following_month_start + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+            
+            # Get all unique models and dealers
+            all_models = combined_data['MDL'].unique()
+            all_dealers = combined_data['DEALER_NAME'].replace(dealer_acronyms).unique()
+            
             col1, col2, col3 = st.columns(3)
             with col1:
                 st.markdown(f"<h3>Incoming for {start_of_month.strftime('%B')}</h3>", unsafe_allow_html=True)
@@ -514,5 +515,6 @@ with tab4:
                 balance_to_arrive = current_month_summary.subtract(current_month_dlv_summary, fill_value=0)
                 st.markdown(f"<h3>Balance to Arrive for {start_of_month.strftime('%B')}</h3>", unsafe_allow_html=True)
                 st.markdown(dataframe_to_html(balance_to_arrive), unsafe_allow_html=True)
-    else:
-        st.error("No data to display.")
+        else:
+            st.error("No data to display.")
+    incoming()
