@@ -381,13 +381,14 @@ st.write(
     <style>
     .main .block-container {
         padding-top: 1rem;
-        padding-left: 2rem;
-        padding-right: 2rem;
+        padding-left: 200px;
+        padding-right: 200px;
     }
     table {
         width: auto !important;
         table-layout: fixed;
         word-wrap: break-word;
+        font-size: 10px;
     }
     </style>
     """,
