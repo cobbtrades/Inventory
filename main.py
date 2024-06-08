@@ -376,9 +376,6 @@ with tab3:
         time.sleep(0.5)
         st.download_button(label="Download Trade PDF", data=pdf_data, file_name="dealer_trade.pdf", mime="application/pdf", key="download_trade_pdf_button")
 
-# Apply the custom CSS
-st.markdown(dark_mode_css, unsafe_allow_html=True)
-
 # Function to convert dataframe to HTML table without the index name
 def dataframe_to_html(df):
     html = df.to_html(classes='dataframe', border=0, index_names=False)
