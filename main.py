@@ -396,12 +396,13 @@ table {
     word-wrap: break-word;
 }
 thead th {
-    color: #fafafa;
+    color: #000000;
     background-color: #383e53;
     text-align: center;
     padding: 8px;
 }
 tbody td {
+    color: #000000;
     text-align: center;
     padding: 8px;
     word-wrap: break-word;
