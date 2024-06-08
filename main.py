@@ -9,6 +9,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from io import BytesIO
 import plotly.express as px
+import openpyxl
 
 # Set page configuration for wide layout
 st.set_page_config(layout="wide")
@@ -114,6 +115,10 @@ if data_frames:
 else:
     combined_data = pd.DataFrame()
 
+def save_data_to_excel(df, file_path='InventoryUpdate.xlsx'):
+    with pd.ExcelWriter(file_path, engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
+        df.to_excel(writer, index=False, sheet_name='Sheet1')
+        
 # Load Current Inventory data from Excel file
 @st.cache_data
 def load_current_data(file_path):
