@@ -519,19 +519,21 @@ st.markdown(
     <button id="capture">Save Tables as Image</button>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
-    document.getElementById("capture").onclick = function() {
-        console.log("Button clicked");
-        html2canvas(document.body).then(function(canvas) {
-            console.log("Canvas created");
-            var link = document.createElement('a');
-            link.download = 'tables_screenshot.png';
-            link.href = canvas.toDataURL();
-            link.click();
-            console.log("Download triggered");
-        }).catch(function(error) {
-            console.error("Error capturing screenshot:", error);
-        });
-    };
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("capture").onclick = function() {
+            console.log("Button clicked");
+            html2canvas(document.body).then(function(canvas) {
+                console.log("Canvas created");
+                var link = document.createElement('a');
+                link.download = 'tables_screenshot.png';
+                link.href = canvas.toDataURL();
+                link.click();
+                console.log("Download triggered");
+            }).catch(function(error) {
+                console.error("Error capturing screenshot:", error);
+            });
+        };
+    });
     </script>
     """,
     unsafe_allow_html=True
