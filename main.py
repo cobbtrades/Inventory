@@ -377,7 +377,7 @@ with tab3:
         st.download_button(label="Download Trade PDF", data=pdf_data, file_name="dealer_trade.pdf", mime="application/pdf", key="download_trade_pdf_button")
 
 # Custom CSS for padding and container width
-st.write(
+st.markdown(
     """
     <style>
     .main .block-container {
