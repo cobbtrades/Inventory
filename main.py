@@ -516,17 +516,17 @@ with tab4:
 # Adding a button to capture the screenshot
 st.markdown(
     """
-    <button onclick="captureScreenshot()">Save Tables as Image</button>
+    <button id="capture">Save Tables as Image</button>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
-    function captureScreenshot() {
-        html2canvas(document.querySelector('body')).then(canvas => {
+    document.getElementById("capture").onclick = function() {
+        html2canvas(document.querySelector('body')).then(function(canvas) {
             var link = document.createElement('a');
             link.download = 'tables_screenshot.png';
             link.href = canvas.toDataURL();
             link.click();
         });
-    }
+    };
     </script>
     """,
     unsafe_allow_html=True
