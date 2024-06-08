@@ -381,7 +381,6 @@ st.write(
     """
     <style>
     .main .block-container {
-        padding-top: 1rem;
         padding-left: 2rem;
         padding-right: 2rem;
     }
