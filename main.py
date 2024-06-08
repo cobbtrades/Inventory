@@ -408,9 +408,11 @@ tbody td {
     word-wrap: break-word;
 }
 tbody tr:nth-child(even) {
+    color: #FFFFFF;
     background-color: #1e2130;
 }
 tbody tr:nth-child(odd) {
+    color: #FFFFFF;
     background-color: #2c2f40;
 }
 </style>
