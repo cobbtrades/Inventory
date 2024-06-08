@@ -376,35 +376,52 @@ with tab3:
         time.sleep(0.5)
         st.download_button(label="Download Trade PDF", data=pdf_data, file_name="dealer_trade.pdf", mime="application/pdf", key="download_trade_pdf_button")
 
-# Custom CSS for padding, table size, and fixed height table container
-st.write(
-    """
-    <style>
-    .main .block-container {
-        padding-left: 2rem;
-        padding-right: 2rem;
-    }
-    .element-container {
-        margin-bottom: 0 !important;
-    }
-    .fixed-height-table {
-        height: 400px;
-        overflow: hidden;
-        padding: 0;
-        margin: 0 !important;
-    }
-    .fixed-height-table table {
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-    h3 {
-        margin: 0 0 0 0;
-        padding: 0;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+dark_mode_css = """
+<style>
+body {
+    background-color: #0e1117;
+    color: #fafafa;
+}
+h3 {
+    color: #fafafa;
+}
+table {
+    color: #fafafa;
+    background-color: #1e2130;
+    border: 1px solid #383e53;
+    text-align: center;
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    word-wrap: break-word;
+}
+thead th {
+    color: #fafafa;
+    background-color: #383e53;
+    text-align: center;
+    padding: 8px;
+}
+tbody td {
+    text-align: center;
+    padding: 8px;
+    word-wrap: break-word;
+}
+tbody tr:nth-child(even) {
+    background-color: #1e2130;
+}
+tbody tr:nth-child(odd) {
+    background-color: #2c2f40;
+}
+</style>
+"""
+
+# Apply the custom CSS
+st.markdown(dark_mode_css, unsafe_allow_html=True)
+
+# Function to convert dataframe to HTML table without the index name
+def dataframe_to_html(df):
+    html = df.to_html(classes='dataframe', border=0, index_names=False)
+    return html
 
 # Function to summarize incoming data
 @st.cache_data
@@ -466,44 +483,33 @@ with tab4:
         with container:
             col1, col2, col3 = st.columns(3)
             with col1:
+                st.markdown(f"<h3 style='text-align: center;'>Incoming for {start_of_month.strftime('%B')}</h3>", unsafe_allow_html=True)
                 current_month_summary = summarize_incoming_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
-                st.markdown('<div class="fixed-height-table">', unsafe_allow_html=True)
-                st.write(f"<h3 style='text-align: center;'>Incoming for {start_of_month.strftime('%B')}</h3>", unsafe_allow_html=True)
-                st.table(current_month_summary)
-                st.markdown('</div>', unsafe_allow_html=True)
+                st.markdown(dataframe_to_html(current_month_summary), unsafe_allow_html=True)
+                
+                st.markdown(f"<h3 style='text-align: center;'>RETAILED</h3>", unsafe_allow_html=True)
                 retailed_summary = summarize_retailed_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
-                st.markdown('<div class="fixed-height-table">', unsafe_allow_html=True)
-                st.write(f"<h3 style='text-align: center;'>RETAILED</h3>", unsafe_allow_html=True)
-                st.table(retailed_summary)
-                st.markdown('</div>', unsafe_allow_html=True)
+                st.markdown(dataframe_to_html(retailed_summary), unsafe_allow_html=True)
             
             with col2:
+                st.markdown(f"<h3 style='text-align: center;'>Incoming for {next_month_start.strftime('%B')}</h3>", unsafe_allow_html=True)
                 next_month_summary = summarize_incoming_data(combined_data, next_month_start, next_month_end, all_models, all_dealers)
-                st.markdown('<div class="fixed-height-table">', unsafe_allow_html=True)
-                st.write(f"<h3 style='text-align: center;'>Incoming for {next_month_start.strftime('%B')}</h3>", unsafe_allow_html=True)
-                st.table(next_month_summary)
-                st.markdown('</div>', unsafe_allow_html=True)
+                st.markdown(dataframe_to_html(next_month_summary), unsafe_allow_html=True)
+                
+                st.markdown(f"<h3 style='text-align: center;'>Current NNA Inventory(DLR INV)</h3>", unsafe_allow_html=True)
                 dlv_inv_summary = summarize_dlv_inv_data(combined_data, all_models, all_dealers)
-                st.markdown('<div class="fixed-height-table">', unsafe_allow_html=True)
-                st.write(f"<h3 style='text-align: center;'>Current NNA Inventory(DLR INV)</h3>", unsafe_allow_html=True)
-                st.table(dlv_inv_summary)
-                st.markdown('</div>', unsafe_allow_html=True)
+                st.markdown(dataframe_to_html(dlv_inv_summary), unsafe_allow_html=True)
             
             with col3:
+                st.markdown(f"<h3 style='text-align: center;'>Incoming for {following_month_start.strftime('%B')}</h3>", unsafe_allow_html=True)
                 following_month_summary = summarize_incoming_data(combined_data, following_month_start, following_month_end, all_models, all_dealers)
-                st.markdown('<div class="fixed-height-table">', unsafe_allow_html=True)
-                st.write(f"<h3 style='text-align: center;'>Incoming for {following_month_start.strftime('%B')}</h3>", unsafe_allow_html=True)
-                st.table(following_month_summary)
-                st.markdown('</div>', unsafe_allow_html=True)
+                st.markdown(dataframe_to_html(following_month_summary), unsafe_allow_html=True)
+                
                 # Summarize deliveries for the current month
                 current_month_dlv_summary = summarize_dlv_date_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
                 # Calculate 'BALANCE TO ARRIVE' for the current month
                 balance_to_arrive = current_month_summary.subtract(current_month_dlv_summary, fill_value=0)
-                st.markdown('<div class="fixed-height-table">', unsafe_allow_html=True)
-                st.write(f"<h3 style='text-align: center;'>Balance to Arrive for {start_of_month.strftime('%B')}</h3>", unsafe_allow_html=True)
-                st.table(balance_to_arrive)
-                st.markdown('</div>', unsafe_allow_html=True)
+                st.markdown(f"<h3 style='text-align: center;'>Balance to Arrive for {start_of_month.strftime('%B')}</h3>", unsafe_allow_html=True)
+                st.markdown(dataframe_to_html(balance_to_arrive), unsafe_allow_html=True)
     else:
         st.error("No data to display.")
-
-
