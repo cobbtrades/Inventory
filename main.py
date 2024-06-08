@@ -392,7 +392,6 @@ table {
     background-color: #1e2130;
     border: 1px solid #383e53;
     text-align: center;
-    width: 100%;
     border-collapse: collapse;
     table-layout: fixed;
     word-wrap: break-word;
