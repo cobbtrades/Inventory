@@ -9,7 +9,6 @@ from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from io import BytesIO
 import plotly.express as px
-from streamlit_extras.grid import grid
 
 # Set page configuration for wide layout
 st.set_page_config(layout="wide")
