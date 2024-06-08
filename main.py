@@ -9,7 +9,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from io import BytesIO
 import plotly.express as px
-from streamlit_extras.row import row
+from streamlit_extras.grid import grid
 
 # Set page configuration for wide layout
 st.set_page_config(layout="wide")
@@ -419,15 +419,12 @@ tbody tr:nth-child(odd) {
 </style>
 """
 
-# Apply the custom CSS
 st.markdown(dark_mode_css, unsafe_allow_html=True)
 
-# Function to convert dataframe to HTML table without the index name
 def dataframe_to_html(df):
     html = df.to_html(classes='dataframe', border=0, index_names=False)
     return html
 
-# Function to summarize incoming data
 @st.cache_data
 def summarize_incoming_data(df, start_date, end_date, all_models, all_dealers):
     df['ETA'] = pd.to_datetime(df['ETA'], errors='coerce')
@@ -438,7 +435,6 @@ def summarize_incoming_data(df, start_date, end_date, all_models, all_dealers):
     pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
     return pivot_table
 
-# Function to summarize retailed data
 def summarize_retailed_data(df, start_date, end_date, all_models, all_dealers):
     df['SOLD'] = pd.to_datetime(df['SOLD'], errors='coerce')
     filtered_df = df[(df['LOC'] == 'RETAILED') & (df['SOLD'] >= start_date) & (df['SOLD'] <= end_date)]
@@ -448,7 +444,6 @@ def summarize_retailed_data(df, start_date, end_date, all_models, all_dealers):
     pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
     return pivot_table
 
-# Function to summarize DLV INV data
 def summarize_dlv_inv_data(df, all_models, all_dealers):
     filtered_df = df[(df['LOC'] == 'DLR INV') & (df['SOLD'].isna())]
     filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].replace(dealer_acronyms)
@@ -457,7 +452,6 @@ def summarize_dlv_inv_data(df, all_models, all_dealers):
     pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
     return pivot_table
 
-# Function to summarize deliveries for current month
 def summarize_dlv_date_data(df, start_date, end_date, all_models, all_dealers):
     df['DLV_DATE'] = pd.to_datetime(df['DLV_DATE'], errors='coerce')
     filtered_df = df[(df['DLV_DATE'] >= start_date) & (df['DLV_DATE'] <= end_date)]
@@ -467,12 +461,9 @@ def summarize_dlv_date_data(df, start_date, end_date, all_models, all_dealers):
     pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
     return pivot_table
 
-# Assuming 'combined_data' and 'dealer_acronyms' are already defined elsewhere in the code
-# Display incoming data in the "Incoming" tab
 with tab4:
     def incoming():
         if not combined_data.empty:
-            row1 = row([1,1,1], vertical_align="center")
             today = datetime.today()
             start_of_month = today.replace(day=1)
             end_of_month = (start_of_month + timedelta(days=32)).replace(day=1) - timedelta(days=1)
@@ -480,41 +471,33 @@ with tab4:
             next_month_end = (next_month_start + timedelta(days=32)).replace(day=1) - timedelta(days=1)
             following_month_start = (next_month_start + timedelta(days=32)).replace(day=1)
             following_month_end = (following_month_start + timedelta(days=32)).replace(day=1) - timedelta(days=1)
-            
-            # Get all unique models and dealers
             all_models = combined_data['MDL'].unique()
             all_dealers = combined_data['DEALER_NAME'].replace(dealer_acronyms).unique()
-            
-            col1, col2, col3 = st.columns(3)
-            with col1:
-                st.markdown(f"<h3>Incoming for {start_of_month.strftime('%B')}</h3>", unsafe_allow_html=True)
-                current_month_summary = summarize_incoming_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
-                st.markdown(dataframe_to_html(current_month_summary), unsafe_allow_html=True)
-                
-                st.markdown(f"<h3>RETAILED</h3>", unsafe_allow_html=True)
-                retailed_summary = summarize_retailed_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
-                st.markdown(dataframe_to_html(retailed_summary), unsafe_allow_html=True)
-            
-            with col2:
-                st.markdown(f"<h3>Incoming for {next_month_start.strftime('%B')}</h3>", unsafe_allow_html=True)
-                next_month_summary = summarize_incoming_data(combined_data, next_month_start, next_month_end, all_models, all_dealers)
-                st.markdown(dataframe_to_html(next_month_summary), unsafe_allow_html=True)
-                
-                st.markdown(f"<h3>Current NNA Inventory(DLR INV)</h3>", unsafe_allow_html=True)
-                dlv_inv_summary = summarize_dlv_inv_data(combined_data, all_models, all_dealers)
-                st.markdown(dataframe_to_html(dlv_inv_summary), unsafe_allow_html=True)
-            
-            with col3:
-                st.markdown(f"<h3>Incoming for {following_month_start.strftime('%B')}</h3>", unsafe_allow_html=True)
-                following_month_summary = summarize_incoming_data(combined_data, following_month_start, following_month_end, all_models, all_dealers)
-                st.markdown(dataframe_to_html(following_month_summary), unsafe_allow_html=True)
-                
-                # Summarize deliveries for the current month
-                current_month_dlv_summary = summarize_dlv_date_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
-                # Calculate 'BALANCE TO ARRIVE' for the current month
-                balance_to_arrive = current_month_summary.subtract(current_month_dlv_summary, fill_value=0)
-                st.markdown(f"<h3>Balance to Arrive for {start_of_month.strftime('%B')}</h3>", unsafe_allow_html=True)
-                st.markdown(dataframe_to_html(balance_to_arrive), unsafe_allow_html=True)
+            current_month_summary = summarize_incoming_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
+            retailed_summary = summarize_retailed_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
+            next_month_summary = summarize_incoming_data(combined_data, next_month_start, next_month_end, all_models, all_dealers)
+            dlv_inv_summary = summarize_dlv_inv_data(combined_data, all_models, all_dealers)
+            following_month_summary = summarize_incoming_data(combined_data, following_month_start, following_month_end, all_models, all_dealers)
+            current_month_dlv_summary = summarize_dlv_date_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
+            balance_to_arrive = current_month_summary.subtract(current_month_dlv_summary, fill_value=0)
+
+            my_grid = grid([1,1,1],[1,1,1],[1,1,1],[1,1,1], vertical_align="center")
+            #Row 1
+            my_grid.markdown(f"<h3>Incoming for {start_of_month.strftime('%B')}</h3>", unsafe_allow_html=True)
+            my_grid.markdown(f"<h3>Incoming for {next_month_start.strftime('%B')}</h3>", unsafe_allow_html=True)
+            my_grid.markdown(f"<h3>Incoming for {following_month_start.strftime('%B')}</h3>", unsafe_allow_html=True)
+            #Row 2
+            my_grid.markdown(dataframe_to_html(current_month_summary), unsafe_allow_html=True)
+            my_grid.markdown(dataframe_to_html(next_month_summary), unsafe_allow_html=True)
+            my_grid.markdown(dataframe_to_html(following_month_summary), unsafe_allow_html=True)
+            #Row 3
+            my_grid.markdown(f"<h3>RETAILED</h3>", unsafe_allow_html=True)
+            my_grid.markdown(f"<h3>Current NNA Inventory(DLR INV)</h3>", unsafe_allow_html=True)
+            my_grid.markdown(f"<h3>Balance to Arrive for {start_of_month.strftime('%B')}</h3>", unsafe_allow_html=True)
+            #Row 4
+            my_grid.markdown(dataframe_to_html(retailed_summary), unsafe_allow_html=True)
+            my_grid.markdown(dataframe_to_html(dlv_inv_summary), unsafe_allow_html=True)
+            my_grid.markdown(dataframe_to_html(balance_to_arrive), unsafe_allow_html=True)     
         else:
             st.error("No data to display.")
     incoming()
