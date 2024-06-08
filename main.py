@@ -376,6 +376,24 @@ with tab3:
         time.sleep(0.5)
         st.download_button(label="Download Trade PDF", data=pdf_data, file_name="dealer_trade.pdf", mime="application/pdf", key="download_trade_pdf_button")
 
+st.write(
+    """
+    <style>
+    .main .block-container {
+        padding-top: 1rem;
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+    table {
+        width: auto !important;
+        table-layout: fixed;
+        word-wrap: break-word;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 # Function to summarize incoming data
 @st.cache_data
 def summarize_incoming_data(df, start_date, end_date, all_models, all_dealers):
