@@ -376,50 +376,6 @@ with tab3:
         time.sleep(0.5)
         st.download_button(label="Download Trade PDF", data=pdf_data, file_name="dealer_trade.pdf", mime="application/pdf", key="download_trade_pdf_button")
 
-dark_mode_css = """
-<style>
-body {
-    background-color: #0e1117;
-    color: #FFFFFF;
-}
-h3 {
-    color: #FFFFFF;
-}
-table {
-    color: #FFFFFF;
-    background-color: #1e2130;
-    border: 1px solid #383e53;
-    text-align: center;
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed;
-    word-wrap: break-word;
-}
-thead th {
-    color: #FFFFFF;
-    background-color: #383e53;
-    text-align: center;
-    padding: 8px;
-}
-tbody td {
-    color: #FFFFFF;
-    text-align: center;
-    padding: 8px;
-    word-wrap: break-word;
-}
-tbody tr:nth-child(even) {
-    text-align: center;
-    color: #FFFFFF;
-    background-color: #1e2130;
-}
-tbody tr:nth-child(odd) {
-    text-align: center;
-    color: #FFFFFF;
-    background-color: #2c2f40;
-}
-</style>
-"""
-
 # Apply the custom CSS
 st.markdown(dark_mode_css, unsafe_allow_html=True)
 
