@@ -396,6 +396,7 @@ table {
     border-collapse: collapse;
     table-layout: fixed;
     word-wrap: break-word;
+    margin: 0 auto;
 }
 thead th {
     color: #fafafa;
