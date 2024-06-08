@@ -399,7 +399,7 @@ st.write(
         padding: 0 !important;
     }
     h3 {
-        margin: 0.5rem 0 0.5rem 0;
+        margin: 0 0 0 0;
         padding: 0;
     }
     </style>
