@@ -513,3 +513,19 @@ with tab4:
                 st.markdown(dataframe_to_html(balance_to_arrive), unsafe_allow_html=True)
     else:
         st.error("No data to display.")
+
+# Add JavaScript to capture the tab content as an image and download it
+st.markdown("""
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+function downloadImage() {
+    html2canvas(document.querySelector('.tabs-content')).then(canvas => {
+        let link = document.createElement('a');
+        link.href = canvas.toDataURL('image/png');
+        link.download = 'incoming_data.png';
+        link.click();
+    });
+}
+</script>
+<button onclick="downloadImage()">Download Tab as Image</button>
+""", unsafe_allow_html=True)
