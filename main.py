@@ -380,10 +380,10 @@ dark_mode_css = """
 <style>
 body {
     background-color: #0e1117;
-    color: #fafafa;
+    color: #FFFFFF;
 }
 h3 {
-    color: #fafafa;
+    color: #FFFFFF;
 }
 table {
     color: #FFFFFF;
