@@ -381,8 +381,8 @@ st.write(
     <style>
     .main .block-container {
         padding-top: 1rem;
-        padding-left: 2rem;
-        padding-right: 2rem;
+        padding-left: 150px;
+        padding-right: 150px;
     }
     .element-container {
         margin-bottom: 0 !important;
