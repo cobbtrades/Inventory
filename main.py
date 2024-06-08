@@ -10,6 +10,7 @@ from reportlab.pdfgen import canvas
 from io import BytesIO
 import plotly.express as px
 from streamlit_extras.grid import grid
+import streamlit.components.v1 as components
 
 # Set page configuration for wide layout
 st.set_page_config(layout="wide")
@@ -504,4 +505,30 @@ with tab4:
             my_grid.markdown(dataframe_to_html(balance_to_arrive), unsafe_allow_html=True)     
         else:
             st.error("No data to display.")
-    incoming()
+    
+    with st.expander("View all tables"):
+        incoming()
+
+    # Create an iframe button to view all tables in full screen
+    components.html("""
+    <style>
+        .iframe-container {
+            width: 100%;
+            height: 100vh;
+        }
+    </style>
+    <div>
+        <button onclick="toggleIframe()">View Full Screen</button>
+        <iframe id="full-screen-iframe" class="iframe-container" src="data:text/html;base64,{base64_html}" style="display:none;"></iframe>
+    </div>
+    <script>
+        function toggleIframe() {
+            var iframe = document.getElementById("full-screen-iframe");
+            if (iframe.style.display === "none") {
+                iframe.style.display = "block";
+            } else {
+                iframe.style.display = "none";
+            }
+        }
+    </script>
+    """.format(base64_html=base64.b64encode(dataframe_to_html(current_month_summary + next_month_summary + following_month_summary + retailed_summary + dlv_inv_summary + balance_to_arrive).encode()).decode()), height=800)
