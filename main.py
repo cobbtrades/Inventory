@@ -386,7 +386,7 @@ h3 {
     color: #fafafa;
 }
 table {
-    color: #fafafa;
+    color: #FFFFFF;
     background-color: #1e2130;
     border: 1px solid #383e53;
     text-align: center;
@@ -396,13 +396,13 @@ table {
     word-wrap: break-word;
 }
 thead th {
-    color: #000000;
+    color: #FFFFFF;
     background-color: #383e53;
     text-align: center;
     padding: 8px;
 }
 tbody td {
-    color: #000000;
+    color: #FFFFFF;
     text-align: center;
     padding: 8px;
     word-wrap: break-word;
