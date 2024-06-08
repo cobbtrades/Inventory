@@ -398,6 +398,9 @@ st.write(
         table-layout: fixed;
         word-wrap: break-word;
     }
+    h3 {
+        margin-bottom: 0.5rem;
+    }
     </style>
     """,
     unsafe_allow_html=True
