@@ -376,10 +376,19 @@ with tab3:
         time.sleep(0.5)
         st.download_button(label="Download Trade PDF", data=pdf_data, file_name="dealer_trade.pdf", mime="application/pdf", key="download_trade_pdf_button")
 
-# Function to convert dataframe to HTML table without the index name
-def dataframe_to_html(df):
-    html = df.to_html(classes='dataframe', border=0, index_names=False)
-    return html
+# Custom CSS for padding and container width
+st.write(
+    """
+    <style>
+    .main .block-container {
+        padding-top: 1rem;
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 # Function to summarize incoming data
 @st.cache_data
@@ -444,29 +453,24 @@ with tab4:
                 st.markdown(f"<h3 style='text-align: center;'>Incoming for {start_of_month.strftime('%B')}</h3>", unsafe_allow_html=True)
                 current_month_summary = summarize_incoming_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
                 st.table(current_month_summary)
-                #st.markdown(dataframe_to_html(current_month_summary), unsafe_allow_html=True)
                 
                 st.markdown(f"<h3 style='text-align: center;'>RETAILED</h3>", unsafe_allow_html=True)
                 retailed_summary = summarize_retailed_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
                 st.table(retailed_summary)
-                #st.markdown(dataframe_to_html(retailed_summary), unsafe_allow_html=True)
             
             with col2:
                 st.markdown(f"<h3 style='text-align: center;'>Incoming for {next_month_start.strftime('%B')}</h3>", unsafe_allow_html=True)
                 next_month_summary = summarize_incoming_data(combined_data, next_month_start, next_month_end, all_models, all_dealers)
                 st.table(next_month_summary)
-                #st.markdown(dataframe_to_html(next_month_summary), unsafe_allow_html=True)
                 
                 st.markdown(f"<h3 style='text-align: center;'>Current NNA Inventory(DLR INV)</h3>", unsafe_allow_html=True)
                 dlv_inv_summary = summarize_dlv_inv_data(combined_data, all_models, all_dealers)
                 st.table(dlv_inv_summary)
-                #st.markdown(dataframe_to_html(dlv_inv_summary), unsafe_allow_html=True)
             
             with col3:
                 st.markdown(f"<h3 style='text-align: center;'>Incoming for {following_month_start.strftime('%B')}</h3>", unsafe_allow_html=True)
                 following_month_summary = summarize_incoming_data(combined_data, following_month_start, following_month_end, all_models, all_dealers)
                 st.table(following_month_summary)
-                #st.markdown(dataframe_to_html(following_month_summary), unsafe_allow_html=True)
                 
                 # Summarize deliveries for the current month
                 current_month_dlv_summary = summarize_dlv_date_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
@@ -474,6 +478,5 @@ with tab4:
                 balance_to_arrive = current_month_summary.subtract(current_month_dlv_summary, fill_value=0)
                 st.markdown(f"<h3 style='text-align: center;'>Balance to Arrive for {start_of_month.strftime('%B')}</h3>", unsafe_allow_html=True)
                 st.table(balance_to_arrive)
-                #st.markdown(dataframe_to_html(balance_to_arrive), unsafe_allow_html=True)
     else:
         st.error("No data to display.")
