@@ -392,6 +392,7 @@ st.write(
         overflow: hidden;
         display: block;
         padding: 0;
+        margin: 0 !important;
     }
     .fixed-height-table table {
         margin: 0 !important;
