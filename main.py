@@ -408,10 +408,12 @@ tbody td {
     word-wrap: break-word;
 }
 tbody tr:nth-child(even) {
+    text-align: center;
     color: #FFFFFF;
     background-color: #1e2130;
 }
 tbody tr:nth-child(odd) {
+    text-align: center;
     color: #FFFFFF;
     background-color: #2c2f40;
 }
