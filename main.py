@@ -392,14 +392,15 @@ st.write(
         height: 400px;
         overflow: hidden;
         display: block;
+        padding: 0;
     }
-    table {
-        width: 100% !important;
-        table-layout: fixed;
-        word-wrap: break-word;
+    .fixed-height-table table {
+        margin: 0 !important;
+        padding: 0 !important;
     }
     h3 {
-        margin-bottom: 0.5rem;
+        margin: 0.5rem 0 0.5rem 0;
+        padding: 0;
     }
     </style>
     """,
@@ -508,4 +509,5 @@ with tab4:
                 st.markdown('</div>', unsafe_allow_html=True)
     else:
         st.error("No data to display.")
+
 
