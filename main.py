@@ -391,6 +391,7 @@ st.write(
         width: 100% !important;
         table-layout: fixed;
         word-wrap: break-word;
+        height: 400px;
     }
     </style>
     """,
