@@ -409,6 +409,7 @@ tbody td {
     text-align: center;
     padding: 8px;
     word-wrap: break-word;
+    font-size: 12px;
 }
 tbody tr:nth-child(even) {
     background-color: #1e2130;
