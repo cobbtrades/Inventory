@@ -385,6 +385,7 @@ st.write(
         padding-right: 200px;
     }
     table {
+        align: center;
         width: auto !important;
         table-layout: fixed;
         word-wrap: break-word;
