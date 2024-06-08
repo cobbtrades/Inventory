@@ -472,7 +472,7 @@ def summarize_dlv_date_data(df, start_date, end_date, all_models, all_dealers):
 with tab4:
     def incoming():
         if not combined_data.empty:
-            row1 = row(3, vertical_align="center")
+            row1 = row([1,1,1], vertical_align="center")
             today = datetime.today()
             start_of_month = today.replace(day=1)
             end_of_month = (start_of_month + timedelta(days=32)).replace(day=1) - timedelta(days=1)
