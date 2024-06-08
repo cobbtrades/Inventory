@@ -851,7 +851,6 @@ body {
 }
 h3 {
     color: #fafafa;
-    text-align: center;
 }
 table {
     color: #fafafa;
@@ -868,22 +867,17 @@ thead th {
     background-color: #383e53;
     text-align: center;
     padding: 8px;
-    white-space: nowrap;
-    font-size: 12px;
 }
 tbody td {
     text-align: center;
-    padding: 1px;
+    padding: 8px;
     word-wrap: break-word;
-    font-size: 12px;
 }
 tbody tr:nth-child(even) {
     background-color: #1e2130;
-    padding: 1px;
 }
 tbody tr:nth-child(odd) {
     background-color: #2c2f40;
-    padding: 1px;
 }
 </style>
 """
