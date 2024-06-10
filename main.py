@@ -36,19 +36,9 @@ ext_mapping = {
 }
 
 mdl_mapping = {
-    'ALTIMA': 'ALT',
-    'ARMADA': 'ARM',
-    'FRONTIER': '720',
-    'KICKS': 'KIX',
-    'LEAF ELECTRIC': 'LEF',
-    'MURANO': 'MUR',
-    'PATHFINDER': 'PTH',
-    'ROGUE': 'RGE',
-    'SENTRA': 'SEN',
-    'TITAN': 'TTN',
-    'VERSA': 'VSD',
-    'Z NISMO': 'Z',
-    'Z PROTO': 'Z'
+    'ALTIMA': 'ALT', 'ARMADA': 'ARM', 'FRONTIER': '720', 'KICKS': 'KIX', 'LEAF ELECTRIC': 'LEF',
+    'MURANO': 'MUR', 'PATHFINDER': 'PTH', 'ROGUE': 'RGE', 'SENTRA': 'SEN', 'TITAN': 'TTN',
+    'VERSA': 'VSD', 'Z NISMO': 'Z', 'Z PROTO': 'Z'
 }
 
 dealer_acronyms = {
