@@ -490,7 +490,7 @@ with tab4:
         all_dealers = combined_data['DEALER_NAME'].replace(dealer_acronyms).unique()
         
         with container:
-            col1, col2, col3 = st.columns(3)
+            blank_col1, col1, col2, col3, blank_col2 = st.columns([0.1, 1, 1, 1, 0.1])
             with col1:
                 st.markdown(f"<h5 style='text-align: center;'>Incoming for {start_of_month.strftime('%B')}</h5>", unsafe_allow_html=True)
                 current_month_summary = summarize_incoming_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
