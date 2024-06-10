@@ -50,7 +50,6 @@ mdl_mapping = {
     'Z NISMO': 'Z',
     'Z PROTO': 'Z'
 }
-reverse_mdl_mapping = {v: k for k, v in mdl_mapping.items()}
 
 dealer_acronyms = {
     'MODERN NISSAN OF CONCORD': 'CONCORD',
@@ -435,7 +434,6 @@ def summarize_incoming_data(df, start_date, end_date, all_models, all_dealers):
     df['ETA'] = pd.to_datetime(df['ETA'], errors='coerce')
     filtered_df = df[(df['ETA'] >= start_date) & (df['ETA'] <= end_date)]
     filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].replace(dealer_acronyms)
-    filtered_df['MDL'] = filtered_df['MDL'].replace(reverse_mdl_mapping)
     all_combinations = pd.MultiIndex.from_product([all_dealers, all_models], names=['DEALER_NAME', 'MDL'])
     summary = filtered_df.groupby(['DEALER_NAME', 'MDL']).size().reindex(all_combinations, fill_value=0).reset_index(name='Count')
     pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
@@ -446,7 +444,6 @@ def summarize_retailed_data(df, start_date, end_date, all_models, all_dealers):
     df['SOLD'] = pd.to_datetime(df['SOLD'], errors='coerce')
     filtered_df = df[(df['LOC'] == 'RETAILED') & (df['SOLD'] >= start_date) & (df['SOLD'] <= end_date)]
     filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].replace(dealer_acronyms)
-    filtered_df['MDL'] = filtered_df['MDL'].replace(reverse_mdl_mapping)
     all_combinations = pd.MultiIndex.from_product([all_dealers, all_models], names=['DEALER_NAME', 'MDL'])
     summary = filtered_df.groupby(['DEALER_NAME', 'MDL']).size().reindex(all_combinations, fill_value=0).reset_index(name='Count')
     pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
@@ -456,7 +453,6 @@ def summarize_retailed_data(df, start_date, end_date, all_models, all_dealers):
 def summarize_dlv_inv_data(df, all_models, all_dealers):
     filtered_df = df[(df['LOC'] == 'DLR INV') & (df['SOLD'].isna())]
     filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].replace(dealer_acronyms)
-    filtered_df['MDL'] = filtered_df['MDL'].replace(reverse_mdl_mapping)
     all_combinations = pd.MultiIndex.from_product([all_dealers, all_models], names=['DEALER_NAME', 'MDL'])
     summary = filtered_df.groupby(['DEALER_NAME', 'MDL']).size().reindex(all_combinations, fill_value=0).reset_index(name='Count')
     pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
@@ -467,7 +463,6 @@ def summarize_dlv_date_data(df, start_date, end_date, all_models, all_dealers):
     df['DLV_DATE'] = pd.to_datetime(df['DLV_DATE'], errors='coerce')
     filtered_df = df[(df['DLV_DATE'] >= start_date) & (df['DLV_DATE'] <= end_date)]
     filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].replace(dealer_acronyms)
-    filtered_df['MDL'] = filtered_df['MDL'].replace(reverse_mdl_mapping)
     all_combinations = pd.MultiIndex.from_product([all_dealers, all_models], names=['DEALER_NAME', 'MDL'])
     summary = filtered_df.groupby(['DEALER_NAME', 'MDL']).size().reindex(all_combinations, fill_value=0).reset_index(name='Count')
     pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
