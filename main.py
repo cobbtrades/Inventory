@@ -413,16 +413,24 @@ tbody tr:nth-child(even) {
 tbody tr:nth-child(odd) {
     background-color: #2c2f40;
 }
+.dataframe-container {
+    font-size: 10px; /* Adjust font size as needed */
+    padding: 2px; /* Adjust padding as needed */
+}
+.dataframe-container table {
+    width: 100%;
+}
+.dataframe-container th, .dataframe-container td {
+    padding: 4px; /* Adjust cell padding */
+}
+.dataframe-container th {
+    background-color: #f0f0f0; /* Adjust header background color */
+}
 </style>
 """
 
 # Apply the custom CSS
 st.markdown(dark_mode_css, unsafe_allow_html=True)
-
-# Function to convert dataframe to HTML table without the index name
-def dataframe_to_html(df):
-    html = df.to_html(classes='dataframe', border=0, index_names=False)
-    return html
 
 # Function to summarize incoming data
 @st.cache_data
@@ -464,6 +472,10 @@ def summarize_dlv_date_data(df, start_date, end_date, all_models, all_dealers):
     pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
     return pivot_table
 
+def dataframe_to_html(df):
+    html = df.to_html(classes='dataframe-container', border=0, index_names=False)
+    return html
+
 # Assuming 'combined_data' and 'dealer_acronyms' are already defined elsewhere in the code
 # Display incoming data in the "Incoming" tab
 with tab4:
@@ -486,31 +498,31 @@ with tab4:
             with col1:
                 st.markdown(f"<h3 style='text-align: center;'>Incoming for {start_of_month.strftime('%B')}</h3>", unsafe_allow_html=True)
                 current_month_summary = summarize_incoming_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
-                st.markdown(dataframe_to_html(current_month_summary), unsafe_allow_html=True)
+                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(current_month_summary)}</div>", unsafe_allow_html=True)
                 
                 st.markdown(f"<h3 style='text-align: center;'>RETAILED</h3>", unsafe_allow_html=True)
                 retailed_summary = summarize_retailed_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
-                st.markdown(dataframe_to_html(retailed_summary), unsafe_allow_html=True)
+                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(retailed_summary)}</div>", unsafe_allow_html=True)
             
             with col2:
                 st.markdown(f"<h3 style='text-align: center;'>Incoming for {next_month_start.strftime('%B')}</h3>", unsafe_allow_html=True)
                 next_month_summary = summarize_incoming_data(combined_data, next_month_start, next_month_end, all_models, all_dealers)
-                st.markdown(dataframe_to_html(next_month_summary), unsafe_allow_html=True)
+                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(next_month_summary)}</div>", unsafe_allow_html=True)
                 
                 st.markdown(f"<h3 style='text-align: center;'>Current NNA Inventory(DLR INV)</h3>", unsafe_allow_html=True)
                 dlv_inv_summary = summarize_dlv_inv_data(combined_data, all_models, all_dealers)
-                st.markdown(dataframe_to_html(dlv_inv_summary), unsafe_allow_html=True)
+                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(dlv_inv_summary)}</div>", unsafe_allow_html=True)
             
             with col3:
                 st.markdown(f"<h3 style='text-align: center;'>Incoming for {following_month_start.strftime('%B')}</h3>", unsafe_allow_html=True)
                 following_month_summary = summarize_incoming_data(combined_data, following_month_start, following_month_end, all_models, all_dealers)
-                st.markdown(dataframe_to_html(following_month_summary), unsafe_allow_html=True)
+                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(following_month_summary)}</div>", unsafe_allow_html=True)
                 
                 # Summarize deliveries for the current month
                 current_month_dlv_summary = summarize_dlv_date_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
                 # Calculate 'BALANCE TO ARRIVE' for the current month
                 balance_to_arrive = current_month_summary.subtract(current_month_dlv_summary, fill_value=0)
                 st.markdown(f"<h3 style='text-align: center;'>Balance to Arrive for {start_of_month.strftime('%B')}</h3>", unsafe_allow_html=True)
-                st.markdown(dataframe_to_html(balance_to_arrive), unsafe_allow_html=True)
+                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(balance_to_arrive)}</div>", unsafe_allow_html=True)
     else:
         st.error("No data to display.")
