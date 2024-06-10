@@ -195,7 +195,7 @@ if not combined_data.empty:
         filtered_df = filter_data(combined_data, model, trim, package, color)
         num_rows = len(filtered_df)
         st.markdown(f"<span style='font-size: small;'>{num_rows} vehicles</span>", unsafe_allow_html=True)
-        edited_df = st.data_editor(filtered_df, use_container_width=True, height=780, hide_index=True, key='all_data_editor')
+        edited_df = st.dataframe(filtered_df, use_container_width=True, height=780, hide_index=True, key='all_data_editor')
         # Update the original dataframe with the changes from the edited dataframe
         for index, row in edited_df.iterrows():
             original_index = combined_data[combined_data['VIN'] == row['VIN']].index[0]
@@ -207,7 +207,7 @@ else:
 with tab2:
     st.markdown("### Current CDK Inventory")
     if not current_data.empty:
-        st.data_editor(current_data, use_container_width=True, height=780, hide_index=True)
+        st.dataframe(current_data, use_container_width=True, height=780, hide_index=True)
     else:
         st.error("No current inventory data to display.")
 
