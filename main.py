@@ -432,9 +432,9 @@ def replace_mdl_with_full_name(df, reverse_mdl_mapping):
     df['MDL'] = df['MDL'].replace(reverse_mdl_mapping)
     return df
 
-reverse_mdl_mapping = {'ALT': 'ALTIMA', 'ARM': 'ARMADA', '720': 'FRONTIER', 'KIX': 'KICKS', 'LEF': 'LEAF ELECTRIC',
+reverse_mdl_mapping = {'ALT': 'ALTIMA', 'ARM': 'ARMADA', '720': 'FRONTIER', 'KIX': 'KICKS', 'LEF': 'LEAF',
     'MUR': 'MURANO', 'PTH': 'PATHFINDER', 'RGE': 'ROGUE', 'SEN': 'SENTRA', 'TTN': 'TITAN', 'VSD': 'VERSA',
-    'Z': 'Z NISMO', 'ARI': 'ARIYA',  'TXD': 'TITAN XD'}
+    'ARI': 'ARIYA',  'TXD': 'TITAN XD'}
 
 @st.cache_data
 def summarize_incoming_data(df, start_date, end_date, all_models, all_dealers):
