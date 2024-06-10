@@ -493,11 +493,8 @@ with tab4:
         next_month_end = (next_month_start + timedelta(days=32)).replace(day=1) - timedelta(days=1)
         following_month_start = (next_month_start + timedelta(days=32)).replace(day=1)
         following_month_end = (following_month_start + timedelta(days=32)).replace(day=1) - timedelta(days=1)
-        
-        # Get all unique models and dealers
         all_models = combined_data['MDL'].replace(reverse_mdl_mapping).unique()
         all_dealers = combined_data['DEALER_NAME'].replace(dealer_acronyms).unique()
-        
         with container:
             blank_col1, col1, col2, col3, blank_col2 = st.columns([0.1, 1, 1, 1, 0.1])
             with col1:
