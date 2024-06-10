@@ -488,11 +488,12 @@ with tab4:
     if not combined_data.empty:
         today = datetime.today()
         start_of_month = today.replace(day=1)
-        end_of_month = (start_of_month + timedelta(days=32)).replace(day=1) - timedelta(days=1)
-        next_month_start = (start_of_month + timedelta(days=32)).replace(day=1)
-        next_month_end = (next_month_start + timedelta(days=32)).replace(day=1) - timedelta(days=1)
-        following_month_start = (next_month_start + timedelta(days=32)).replace(day=1)
-        following_month_end = (following_month_start + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+        next_month_start = start_of_month.replace(month=start_of_month.month + 1).replace(day=1)
+        following_month_start = start_of_month.replace(month=start_of_month.month + 2).replace(day=1)
+        start_for_calc = start_of_month.replace(month=start_of_month.month + 3).replace(day=1)
+        end_of_month = next_month_start - timedelta(days=1)
+        next_month_end = following_month_start - timedelta(days=1)
+        following_month_end = start_for_calc - timedelta(days=1)
         all_models = combined_data['MDL'].replace(reverse_mdl_mapping).unique()
         all_dealers = combined_data['DEALER_NAME'].replace(dealer_acronyms).unique()
         with container:
