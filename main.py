@@ -144,20 +144,6 @@ def load_current_data(file_path):
 
 current_data = load_current_data('InventoryUpdate.xlsx')
 
-# Custom CSS for padding and container width
-st.write(
-    """
-    <style>
-    .main .block-container {
-        padding-top: 1rem;
-        padding-left: 2rem;
-        padding-right: 2rem;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
 # Create tabs for "All Stores", "Current", "Dealer Trade", and "Incoming"
 tab1, tab2, tab3, tab4 = st.tabs(["All Stores", "Current CDK", "Dealer Trade", "Incoming"])
 
@@ -379,43 +365,15 @@ with tab3:
 
 dark_mode_css = """
 <style>
-body {
-    background-color: #0e1117;
-    color: #fafafa;
-}
-h3 {
-    color: #fafafa;
-}
-table {
-    color: #fafafa;
-    background-color: #1e2130;
-    border: 1px solid #383e53;
-    text-align: center;
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed;
-    word-wrap: break-word;
-}
-thead th {
-    color: #fafafa;
-    background-color: #383e53;
-    text-align: center;
-    padding: 8px;
-}
-tbody td {
-    text-align: center;
-    padding: 8px;
-    word-wrap: break-word;
-}
-tbody tr:nth-child(even) {
-    background-color: #1e2130;
-}
-tbody tr:nth-child(odd) {
-    background-color: #2c2f40;
-}
+.main .block-container {
+        padding-top: 1rem;
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
 .dataframe-container {
     font-size: 10px; /* Adjust font size as needed */
     padding: 2px; /* Adjust padding as needed */
+    width: 100%; /* Adjust width to fit within container */
 }
 .dataframe-container table {
     width: 100%;
@@ -424,7 +382,7 @@ tbody tr:nth-child(odd) {
     padding: 4px; /* Adjust cell padding */
 }
 .dataframe-container th {
-    background-color: #2c2f40; /* Adjust header background color */
+    background-color: #f0f0f0; /* Adjust header background color */
 }
 </style>
 """
