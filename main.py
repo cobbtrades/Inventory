@@ -428,12 +428,18 @@ tbody tr:nth-child(odd) {
 # Apply the custom CSS
 st.markdown(dark_mode_css, unsafe_allow_html=True)
 
-# Function to summarize incoming data
+def replace_mdl_with_full_name(df, reverse_mdl_mapping):
+    df['MDL'] = df['MDL'].replace(reverse_mdl_mapping)
+    return df
+
+reverse_mdl_mapping = {v: k for k, v in mdl_mapping.items()}
+
 @st.cache_data
 def summarize_incoming_data(df, start_date, end_date, all_models, all_dealers):
     df['ETA'] = pd.to_datetime(df['ETA'], errors='coerce')
     filtered_df = df[(df['ETA'] >= start_date) & (df['ETA'] <= end_date)]
     filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].replace(dealer_acronyms)
+    filtered_df = replace_mdl_with_full_name(filtered_df, reverse_mdl_mapping)
     all_combinations = pd.MultiIndex.from_product([all_dealers, all_models], names=['DEALER_NAME', 'MDL'])
     summary = filtered_df.groupby(['DEALER_NAME', 'MDL']).size().reindex(all_combinations, fill_value=0).reset_index(name='Count')
     pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
@@ -444,6 +450,7 @@ def summarize_retailed_data(df, start_date, end_date, all_models, all_dealers):
     df['SOLD'] = pd.to_datetime(df['SOLD'], errors='coerce')
     filtered_df = df[(df['LOC'] == 'RETAILED') & (df['SOLD'] >= start_date) & (df['SOLD'] <= end_date)]
     filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].replace(dealer_acronyms)
+    filtered_df = replace_mdl_with_full_name(filtered_df, reverse_mdl_mapping)
     all_combinations = pd.MultiIndex.from_product([all_dealers, all_models], names=['DEALER_NAME', 'MDL'])
     summary = filtered_df.groupby(['DEALER_NAME', 'MDL']).size().reindex(all_combinations, fill_value=0).reset_index(name='Count')
     pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
@@ -453,6 +460,7 @@ def summarize_retailed_data(df, start_date, end_date, all_models, all_dealers):
 def summarize_dlv_inv_data(df, all_models, all_dealers):
     filtered_df = df[(df['LOC'] == 'DLR INV') & (df['SOLD'].isna())]
     filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].replace(dealer_acronyms)
+    filtered_df = replace_mdl_with_full_name(filtered_df, reverse_mdl_mapping)
     all_combinations = pd.MultiIndex.from_product([all_dealers, all_models], names=['DEALER_NAME', 'MDL'])
     summary = filtered_df.groupby(['DEALER_NAME', 'MDL']).size().reindex(all_combinations, fill_value=0).reset_index(name='Count')
     pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
@@ -463,6 +471,7 @@ def summarize_dlv_date_data(df, start_date, end_date, all_models, all_dealers):
     df['DLV_DATE'] = pd.to_datetime(df['DLV_DATE'], errors='coerce')
     filtered_df = df[(df['DLV_DATE'] >= start_date) & (df['DLV_DATE'] <= end_date)]
     filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].replace(dealer_acronyms)
+    filtered_df = replace_mdl_with_full_name(filtered_df, reverse_mdl_mapping)
     all_combinations = pd.MultiIndex.from_product([all_dealers, all_models], names=['DEALER_NAME', 'MDL'])
     summary = filtered_df.groupby(['DEALER_NAME', 'MDL']).size().reindex(all_combinations, fill_value=0).reset_index(name='Count')
     pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
@@ -472,8 +481,6 @@ def dataframe_to_html(df):
     html = df.to_html(classes='dataframe-container', border=0, index_names=False)
     return html
 
-# Assuming 'combined_data' and 'dealer_acronyms' are already defined elsewhere in the code
-# Display incoming data in the "Incoming" tab
 with tab4:
     container = st.container()
     if not combined_data.empty:
@@ -486,7 +493,7 @@ with tab4:
         following_month_end = (following_month_start + timedelta(days=32)).replace(day=1) - timedelta(days=1)
         
         # Get all unique models and dealers
-        all_models = combined_data['MDL'].unique()
+        all_models = combined_data['MDL'].replace(reverse_mdl_mapping).unique()
         all_dealers = combined_data['DEALER_NAME'].replace(dealer_acronyms).unique()
         
         with container:
