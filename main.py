@@ -12,7 +12,7 @@ import plotly.express as px
 import openpyxl
 
 # Set page configuration for wide layout
-st.set_page_config(layout="wide", page_title="Nissan Inventory")
+st.set_page_config(layout="wide", page_title="Nissan Inventory", page_icon="logo.png",)
 
 # Define file paths for each store's inventory data
 file_paths = ['files/Concord.xls', 'files/Winston.xls', 'files/Lake.xls', 'files/Hickory.xls']
