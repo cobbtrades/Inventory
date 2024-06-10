@@ -195,7 +195,7 @@ if not combined_data.empty:
         filtered_df = filter_data(combined_data, model, trim, package, color)
         num_rows = len(filtered_df)
         st.markdown(f"<span style='font-size: small;'>{num_rows} vehicles</span>", unsafe_allow_html=True)
-        st.dataframe(filtered_df, use_container_width=True, height=780)
+        st.dataframe(filtered_df, use_container_width=True, height=780, hide_index=True)
 else:
     st.error("No data to display.")
 
