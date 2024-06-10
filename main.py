@@ -424,7 +424,7 @@ tbody tr:nth-child(odd) {
     padding: 4px; /* Adjust cell padding */
 }
 .dataframe-container th {
-    background-color: #f0f0f0; /* Adjust header background color */
+    background-color: #2c2f40; /* Adjust header background color */
 }
 </style>
 """
