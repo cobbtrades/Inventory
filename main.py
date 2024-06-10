@@ -407,6 +407,12 @@ tbody td {
     padding: 8px;
     word-wrap: break-word;
 }
+tbody tr:nth-child(even) {
+    background-color: #1e2130;
+}
+tbody tr:nth-child(odd) {
+    background-color: #2c2f40;
+}
 .dataframe-container {
     font-size: 10px; /* Adjust font size as needed */
     padding: 2px; /* Adjust padding as needed */
@@ -418,13 +424,7 @@ tbody td {
     padding: 4px; /* Adjust cell padding */
 }
 .dataframe-container th {
-    background-color: #f0f0f0; /* Adjust header background color */
-}
-tbody tr:nth-child(even) {
-    background-color: #1e2130;
-}
-tbody tr:nth-child(odd) {
-    background-color: #2c2f40;
+    background-color: #2c2f40; /* Adjust header background color */
 }
 </style>
 """
