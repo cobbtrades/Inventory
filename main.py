@@ -410,14 +410,14 @@ tbody tr:nth-child(odd) {
     background-color: #2c2f40;
 }
 .dataframe-container {
-    font-size: 11px; /* Adjust font size as needed */
+    font-size: 10px; /* Adjust font size as needed */
     padding: 1px; /* Adjust padding as needed */
 }
 .dataframe-container table {
     width: 100%;
 }
 .dataframe-container th, .dataframe-container td {
-    padding: 4px; /* Adjust cell padding */
+    padding: 2px; /* Adjust cell padding */
 }
 .dataframe-container th {
     background-color: #2c2f40; /* Adjust header background color */
