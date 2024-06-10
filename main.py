@@ -203,7 +203,7 @@ else:
 with tab2:
     st.markdown("### Current CDK Inventory")
     if not current_data.empty:
-        st.dataframe(current_data, use_container_width=True, height=780)
+        st.dataframe(current_data, use_container_width=True, height=780, hide_index=True)
     else:
         st.error("No current inventory data to display.")
 
