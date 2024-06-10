@@ -36,9 +36,19 @@ ext_mapping = {
 }
 
 mdl_mapping = {
-    'ALTIMA': 'ALT', 'ARMADA': 'ARM', 'FRONTIER': '720', 'KICKS': 'KIX', 'LEAF ELECTRIC': 'LEF',
-    'MURANO': 'MUR', 'PATHFINDER': 'PTH', 'ROGUE': 'RGE', 'SENTRA': 'SEN', 'TITAN': 'TTN',
-    'VERSA': 'VSD', 'Z NISMO': 'Z', 'Z PROTO': 'Z'
+    'ALTIMA': 'ALT',
+    'ARMADA': 'ARM',
+    'FRONTIER': '720',
+    'KICKS': 'KIX',
+    'LEAF ELECTRIC': 'LEF',
+    'MURANO': 'MUR',
+    'PATHFINDER': 'PTH',
+    'ROGUE': 'RGE',
+    'SENTRA': 'SEN',
+    'TITAN': 'TTN',
+    'VERSA': 'VSD',
+    'Z NISMO': 'Z',
+    'Z PROTO': 'Z'
 }
 
 dealer_acronyms = {
@@ -185,11 +195,7 @@ if not combined_data.empty:
         filtered_df = filter_data(combined_data, model, trim, package, color)
         num_rows = len(filtered_df)
         st.markdown(f"<span style='font-size: small;'>{num_rows} vehicles</span>", unsafe_allow_html=True)
-        edited_df = st.data_editor(filtered_df, use_container_width=True, height=780, hide_index=True, key='all_data_editor')
-        # Update the original dataframe with the changes from the edited dataframe
-        for index, row in edited_df.iterrows():
-            original_index = combined_data[combined_data['VIN'] == row['VIN']].index[0]
-            combined_data.loc[original_index] = row
+        st.dataframe(filtered_df, use_container_width=True, height=780)
 else:
     st.error("No data to display.")
 
@@ -197,7 +203,7 @@ else:
 with tab2:
     st.markdown("### Current CDK Inventory")
     if not current_data.empty:
-        st.data_editor(current_data, use_container_width=True, height=780, hide_index=True)
+        st.dataframe(current_data, use_container_width=True, height=780)
     else:
         st.error("No current inventory data to display.")
 
