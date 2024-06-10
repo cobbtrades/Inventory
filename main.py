@@ -15,7 +15,7 @@ import openpyxl
 st.set_page_config(layout="wide")
 
 # Define file paths for each store's inventory data
-file_paths = ['files/Concord', 'files/Winston', 'files/Lake', 'files/Hickory']
+file_paths = ['files/Concord.xls', 'files/Winston.xls', 'files/Lake.xls', 'files/Hickory.xls']
 
 # Define ext_mapping dictionary
 ext_mapping = {
