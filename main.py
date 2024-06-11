@@ -10,6 +10,9 @@ from reportlab.pdfgen import canvas
 from io import BytesIO
 import plotly.express as px
 import openpyxl
+import seaborn as sns
+import matplotlib.pyplot as plt
+from bs4 import BeautifulSoup
 
 # Set page configuration for wide layout
 st.set_page_config(layout="wide", page_title="Nissan Inventory", page_icon="logo.png",)
@@ -155,7 +158,7 @@ st.write(
 )
 
 # Create tabs for "All Stores", "Current", "Dealer Trade", and "Incoming"
-tab1, tab2, tab3, tab4 = st.tabs(["All Stores", "Current CDK", "Dealer Trade", "Incoming"])
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["All Stores", "Current CDK", "Dealer Trade", "Incoming", "Sales"])
 
 # Function to filter data based on selectbox inputs
 @st.cache_data
@@ -531,3 +534,79 @@ with tab4:
                 st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(balance_to_arrive)}</div>", unsafe_allow_html=True)
     else:
         st.error("No data to display.")
+
+with tab5:
+    # Function to extract table data and convert to DataFrame with manual adjustment of headers
+    def html_table_to_df_adjusted(table):
+        rows = table.find_all('tr')
+        headers = []
+        for header in rows[0].find_all('td'):
+            headers.append(header.get_text(strip=True))
+        sub_headers = [header.get_text(strip=True) for header in rows[1].find_all('td')]
+        headers.extend(sub_headers)
+        headers = list(dict.fromkeys(headers))  # Remove duplicates if any
+        
+        data = []
+        for row in rows[2:]:
+            cols = row.find_all('td')
+            data.append([col.get_text(strip=True) for col in cols])
+        return pd.DataFrame(data, columns=headers[:len(data[0])])  # Ensure columns match data
+
+    @st.cache_data
+    def load_html_file(file):
+        with open(file, 'r') as f:
+            html_content = f.read()
+        soup = BeautifulSoup(html_content, 'html.parser')
+        table = soup.find_all('table')[0]
+        return html_table_to_df_adjusted(table)
+
+    winston_df = load_html_file('files/Winston90.xls')
+    concord_df = load_html_file('files/Concord90.xls')
+    lake_df = load_html_file('files/Lake90.xls')
+    hickory_df = load_html_file('files/Hickory90.xls')
+
+    headers = ['Model Line', 'Units Sold (Rolling Days 90)', 'Units Sold (MTD)', 'Dlr Invoice', 
+               'Dlr Inventory', 'Dlr Days Supply', 'Wholesale to Retail (Dealer)', 
+               'Wholesale to Retail (District)', 'Wholesale to Retail (Region)', 
+               'Ranking (Dealer)', 'Ranking (District)', 'Ranking (Region)']
+    winston_df.columns = headers
+    concord_df.columns = headers
+    lake_df.columns = headers
+    hickory_df.columns = headers
+    numeric_columns = ['Units Sold (Rolling Days 90)', 'Units Sold (MTD)', 'Dlr Invoice', 
+                       'Dlr Inventory', 'Dlr Days Supply', 'Wholesale to Retail (Dealer)', 
+                       'Wholesale to Retail (District)', 'Wholesale to Retail (Region)', 
+                       'Ranking (Dealer)', 'Ranking (District)', 'Ranking (Region)']
+    
+    winston_df[numeric_columns] = winston_df[numeric_columns].apply(pd.to_numeric, errors='coerce')
+    concord_df[numeric_columns] = concord_df[numeric_columns].apply(pd.to_numeric, errors='coerce')
+    lake_df[numeric_columns] = lake_df[numeric_columns].apply(pd.to_numeric, errors='coerce')
+    hickory_df[numeric_columns] = hickory_df[numeric_columns].apply(pd.to_numeric, errors='coerce')
+    def create_plots(df, store_name):
+        st.header(f"{store_name} Store")
+    
+        # Plot 1: Units Sold (Rolling Days 90)
+        plt.figure(figsize=(12, 8))
+        sns.barplot(data=df, x='Model Line', y='Units Sold (Rolling Days 90)', palette='viridis')
+        plt.title(f'Units Sold (Rolling Days 90) - {store_name}')
+        plt.xticks(rotation=45)
+        st.pyplot(plt)
+    
+        # Plot 2: Dealer Inventory
+        plt.figure(figsize=(12, 8))
+        sns.barplot(data=df, x='Model Line', y='Dlr Inventory', palette='plasma')
+        plt.title(f'Dealer Inventory - {store_name}')
+        plt.xticks(rotation=45)
+        st.pyplot(plt)
+    
+        # Plot 3: Ranking (Dealer)
+        plt.figure(figsize=(12, 8))
+        sns.barplot(data=df, x='Model Line', y='Ranking (Dealer)', palette='inferno')
+        plt.title(f'Ranking (Dealer) - {store_name}')
+        plt.xticks(rotation=45)
+        st.pyplot(plt)
+    
+    create_plots(winston_df, 'Winston')
+    create_plots(concord_df, 'Concord')
+    create_plots(lake_df, 'Lake')
+    create_plots(hickory_df, 'Hickory')
