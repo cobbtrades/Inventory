@@ -572,10 +572,10 @@ with tab5:
     st.title('Sales and Inventory Analysis')
 
     dataframes = {}
-    dataframes['Concord'] = process_excel('Concord90.xls')
-    dataframes['Hickory'] = process_excel('Hickory90.xls')
-    dataframes['Lake'] = process_excel('Lake90.xls')
-    dataframes['Winston'] = process_excel('Winston.xls')
+    dataframes['Concord'] = process_excel('files/Concord90.xls')
+    dataframes['Hickory'] = process_excel('files/Hickory90.xls')
+    dataframes['Lake'] = process_excel('files/Lake90.xls')
+    dataframes['Winston'] = process_excel('files/Winston.xls')
 
     if dataframes:
         plot_metric(dataframes, 'Sold Roll 90', 'Sales Trends Over the Last 90 Days', 'Sold Roll 90')
