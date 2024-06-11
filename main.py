@@ -557,15 +557,17 @@ with tab5:
     ws_df = process_excel('files/Winston90.xls')
 
     def plot_metric(dataframes, metric, title, ylabel):
+        plt.style.use('dark_background')
         plt.figure(figsize=(14, 8))
         bar_width = 0.2
         positions = range(len(dataframes['Concord']['Model']))
         for i, (name, df) in enumerate(dataframes.items()):
             plt.bar([p + bar_width * i for p in positions], df[metric], width=bar_width, label=name)
-        plt.title(title)
-        plt.xlabel('Model')
-        plt.ylabel(ylabel)
-        plt.xticks([p + bar_width * 1.5 for p in positions], dataframes['Concord']['Model'], rotation=45, ha='right')
+        plt.title(title, color='white')
+        plt.xlabel('Model', color='white')
+        plt.ylabel(ylabel, color='white')
+        plt.xticks([p + bar_width * 1.5 for p in positions], dataframes['Concord']['Model'], rotation=45, ha='right', color='white')
+        plt.yticks(color='white')
         plt.legend()
         plt.tight_layout()
         st.pyplot(plt)
