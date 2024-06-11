@@ -576,7 +576,7 @@ with tab5:
         'Winston': ws_df
     }
     tl, tr = st.columns(2)
-    with t1:
+    with tl:
         plot_metric(dataframes, 'Sold Roll 90', 'Sales Trends Over the Last 90 Days', 'Sold Roll 90')
         plot_metric(dataframes, 'Sold-MTD', 'Month-to-Date Sales Performance', 'Sold-MTD')
     with tr:
