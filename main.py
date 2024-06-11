@@ -13,7 +13,7 @@ import openpyxl
 import matplotlib.pyplot as plt
 
 # Set page configuration for wide layout
-st.set_page_config(layout="wide", page_title="Nissan Inventory", page_icon="logo.png",)
+st.set_page_config(layout="wide", page_title="Nissan Inventory", page_icon="logo.png")
 
 # Define file paths for each store's inventory data
 file_paths = ['files/Concord.xls', 'files/Winston.xls', 'files/Lake.xls', 'files/Hickory.xls']
@@ -88,7 +88,7 @@ def load_data(file_paths):
                 if 'MDL' in df.columns:
                     df['EXT'] = df['EXT'].replace(ext_mapping)
                 date_columns = ['ETA', 'DLV_DATE', 'ORD_DATE', 'SOLD']
-                df[date_columns] = df[date_columns].apply(lambda col: pd.to_datetime(col).dt.strftime('%m-%d-%Y'))
+                df[date_columns] = df[date_columns].apply(lambda col: pd.to_datetime(col, errors='coerce').dt.strftime('%m-%d-%Y'))
                 df['Premium'] = df['GOPTS'].apply(lambda x: 'PRM' if any(sub in x for sub in ['PRM', 'PR1', 'PR2', 'PR3']) else '')
                 df['Technology'] = df['GOPTS'].apply(lambda x: 'TECH' if any(sub in x for sub in ['TEC', 'TE1', 'TE2', 'TE3']) else '')
                 df['Convenience'] = df['GOPTS'].apply(lambda x: 'CONV' if any(sub in x for sub in ['CN1', 'CN2', 'CN3', 'CN4', 'CN5']) else '')
@@ -546,6 +546,7 @@ with tab5:
         df[numeric_columns] = df[numeric_columns].apply(pd.to_numeric, errors='coerce')
         df = df.dropna(subset=['Model'])
         return df
+
     def plot_metric(dataframes, metric, title, ylabel):
         plt.figure(figsize=(14, 8))
         bar_width = 0.2
@@ -559,6 +560,7 @@ with tab5:
         plt.legend()
         plt.tight_layout()
         st.pyplot(plt)
+
     def plot_pie(dataframes, metric, title):
         total_values = sum([df[metric].sum() for df in dataframes.values()])
         labels = dataframes.keys()
