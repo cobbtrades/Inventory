@@ -11,6 +11,7 @@ from io import BytesIO
 import plotly.express as px
 import openpyxl
 import matplotlib.pyplot as plt
+from streamlit_extras.grid import grid
 
 # Set page configuration for wide layout
 st.set_page_config(layout="wide", page_title="Nissan Inventory", page_icon="logo.png")
@@ -575,10 +576,12 @@ with tab5:
         'Lake': ln_df,
         'Winston': ws_df
     }
-    tl, tr = st.columns(2)
-    with tl:
-        plot_metric(dataframes, 'Sold Roll 90', 'Sales Trends Over the Last 90 Days', 'Sold Roll 90')
-        plot_metric(dataframes, 'Sold-MTD', 'Month-to-Date Sales Performance', 'Sold-MTD')
-    with tr:
-        plot_metric(dataframes, 'Days Supply', 'Inventory Levels (Days Supply)', 'Days Supply')
-        plot_metric(dataframes, 'Dlr Inventory', 'Dealer Inventory Comparison', 'Dlr Inventory')
+    with st.container():
+        grid([plot_metric(dataframes, 'Sold Roll 90', 'Sales Trends Over the Last 90 Days', 'Sold Roll 90'),
+              plot_metric(dataframes, 'Sold-MTD', 'Month-to-Date Sales Performance', 'Sold-MTD')],
+             columns=2)
+    
+    with st.container():
+        grid([plot_metric(dataframes, 'Days Supply', 'Inventory Levels (Days Supply)', 'Days Supply'),
+              plot_metric(dataframes, 'Dlr Inventory', 'Dealer Inventory Comparison', 'Dlr Inventory')],
+             columns=2)
