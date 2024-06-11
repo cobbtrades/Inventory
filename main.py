@@ -532,3 +532,39 @@ with tab4:
                 st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(balance_to_arrive)}</div>", unsafe_allow_html=True)
     else:
         st.error("No data to display.")
+
+with tab5:
+    def process_excel(file):
+        df = pd.read_html(file)[0].iloc[:, :9]
+        df.columns = df.iloc[1]
+        df = df.drop([0, 1])
+        df.columns = ['Model', 'Sold Roll 90', 'Sold-MTD', 'Dlr Invoice', 'Dlr Inventory', 'Days Supply',
+                      'Wholesale to Retail Dealer(avg days)', 'Wholesale to Retail District(avg days)', 'Wholesale to Retail Region(avg days)']
+        # Ensure the 'Model' column is a string
+        df['Model'] = df['Model'].astype(str)
+        # Convert numeric columns to appropriate types and handle missing values
+        numeric_columns = ['Sold Roll 90', 'Sold-MTD', 'Dlr Invoice', 'Dlr Inventory', 'Days Supply',
+                           'Wholesale to Retail Dealer(avg days)', 'Wholesale to Retail District(avg days)', 'Wholesale to Retail Region(avg days)']
+        df[numeric_columns] = df[numeric_columns].apply(pd.to_numeric, errors='coerce')
+        df = df.dropna(subset=['Model'])  # Drop rows where 'Model' is NaN
+        return df
+    
+    # Process each file using the function
+    cn_df = process_excel('files/Concord90.xls')
+    hk_df = process_excel('files/Hickory90.xls')
+    ln_df = process_excel('files/Lake90.xls')
+    ws_df = process_excel('files/Winston90.xls')
+
+    def plot_metric(dataframes, metric, title, ylabel):
+        plt.figure(figsize=(14, 8))
+        bar_width = 0.2
+        positions = range(len(dataframes['Concord']['Model']))
+        for i, (name, df) in enumerate(dataframes.items()):
+            plt.bar([p + bar_width * i for p in positions], df[metric], width=bar_width, label=name)
+        plt.title(title)
+        plt.xlabel('Model')
+        plt.ylabel(ylabel)
+        plt.xticks([p + bar_width * 1.5 for p in positions], dataframes['Concord']['Model'], rotation=45, ha='right')
+        plt.legend()
+        plt.tight_layout()
+        st.pyplot(plt)
