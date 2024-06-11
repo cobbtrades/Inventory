@@ -579,7 +579,7 @@ with tab5:
         'Lake': ln_df,
         'Winston': ws_df
     }
-    col1, col2 = st.columns(2)
+    bl1, col1, col2, bl2 = st.columns([0.1, 1, 1, 0.1])
     with col1:
         plot_metric(dataframes, 'Sold Roll 90', 'Sales Trends Over the Last 90 Days', 'Sold Roll 90')
         plot_metric(dataframes, 'Sold-MTD', 'Month-to-Date Sales Performance', 'Sold-MTD')
