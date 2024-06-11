@@ -10,9 +10,7 @@ from reportlab.pdfgen import canvas
 from io import BytesIO
 import plotly.express as px
 import openpyxl
-import seaborn as sns
 import matplotlib.pyplot as plt
-from bs4 import BeautifulSoup
 
 # Set page configuration for wide layout
 st.set_page_config(layout="wide", page_title="Nissan Inventory", page_icon="logo.png",)
@@ -534,3 +532,56 @@ with tab4:
                 st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(balance_to_arrive)}</div>", unsafe_allow_html=True)
     else:
         st.error("No data to display.")
+
+with tab5:
+    def process_excel(file):
+        df = pd.read_html(file)[0].iloc[:, :9]
+        df.columns = df.iloc[1]
+        df = df.drop([0, 1])
+        df.columns = ['Model', 'Sold Roll 90', 'Sold-MTD', 'Dlr Invoice', 'Dlr Inventory', 'Days Supply',
+                      'Wholesale to Retail Dealer(avg days)', 'Wholesale to Retail District(avg days)', 'Wholesale to Retail Region(avg days)']
+        df['Model'] = df['Model'].astype(str)
+        numeric_columns = ['Sold Roll 90', 'Sold-MTD', 'Dlr Invoice', 'Dlr Inventory', 'Days Supply',
+                           'Wholesale to Retail Dealer(avg days)', 'Wholesale to Retail District(avg days)', 'Wholesale to Retail Region(avg days)']
+        df[numeric_columns] = df[numeric_columns].apply(pd.to_numeric, errors='coerce')
+        df = df.dropna(subset=['Model'])
+        return df
+    def plot_metric(dataframes, metric, title, ylabel):
+        plt.figure(figsize=(14, 8))
+        bar_width = 0.2
+        positions = range(len(dataframes['Concord']['Model']))
+        for i, (name, df) in enumerate(dataframes.items()):
+            plt.bar([p + bar_width * i for p in positions], df[metric], width=bar_width, label=name)
+        plt.title(title)
+        plt.xlabel('Model')
+        plt.ylabel(ylabel)
+        plt.xticks([p + bar_width * 1.5 for p in positions], dataframes['Concord']['Model'], rotation=45, ha='right')
+        plt.legend()
+        plt.tight_layout()
+        st.pyplot(plt)
+    def plot_pie(dataframes, metric, title):
+        total_values = sum([df[metric].sum() for df in dataframes.values()])
+        labels = dataframes.keys()
+        sizes = [df[metric].sum() / total_values for df in dataframes.values()]
+        plt.figure(figsize=(8, 8))
+        plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=140)
+        plt.title(title)
+        plt.axis('equal')
+        st.pyplot(plt)
+    
+    st.title('Sales and Inventory Analysis')
+
+    dataframes = {}
+    dataframes['Concord'] = process_excel('Concord90.xls')
+    dataframes['Hickory'] = process_excel('Hickory90.xls')
+    dataframes['Lake'] = process_excel('Lake90.xls')
+    dataframes['Winston'] = process_excel('Winston.xls')
+
+    if dataframes:
+        plot_metric(dataframes, 'Sold Roll 90', 'Sales Trends Over the Last 90 Days', 'Sold Roll 90')
+        plot_metric(dataframes, 'Sold-MTD', 'Month-to-Date Sales Performance', 'Sold-MTD')
+        plot_metric(dataframes, 'Days Supply', 'Inventory Levels (Days Supply)', 'Days Supply')
+        plot_metric(dataframes, 'Dlr Inventory', 'Dealer Inventory Comparison', 'Dlr Inventory')
+    
+        plot_pie(dataframes, 'Sold Roll 90', 'Overall Sales Distribution Over the Last 90 Days')
+        plot_pie(dataframes, 'Sold-MTD', 'Overall Month-to-Date Sales Distribution')
