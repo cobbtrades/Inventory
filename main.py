@@ -575,7 +575,10 @@ with tab5:
         'Lake': ln_df,
         'Winston': ws_df
     }
-    plot_metric(dataframes, 'Sold Roll 90', 'Sales Trends Over the Last 90 Days', 'Sold Roll 90')
-    plot_metric(dataframes, 'Sold-MTD', 'Month-to-Date Sales Performance', 'Sold-MTD')
-    plot_metric(dataframes, 'Days Supply', 'Inventory Levels (Days Supply)', 'Days Supply')
-    plot_metric(dataframes, 'Dlr Inventory', 'Dealer Inventory Comparison', 'Dlr Inventory')
+    tl, tr = st.columns(2)
+    with t1:
+        plot_metric(dataframes, 'Sold Roll 90', 'Sales Trends Over the Last 90 Days', 'Sold Roll 90')
+        plot_metric(dataframes, 'Sold-MTD', 'Month-to-Date Sales Performance', 'Sold-MTD')
+    with tr:
+        plot_metric(dataframes, 'Days Supply', 'Inventory Levels (Days Supply)', 'Days Supply')
+        plot_metric(dataframes, 'Dlr Inventory', 'Dealer Inventory Comparison', 'Dlr Inventory')
