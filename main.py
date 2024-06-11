@@ -541,38 +541,49 @@ with tab5:
         df = df.drop([0, 1])
         df.columns = ['Model', 'Sold Roll 90', 'Sold-MTD', 'Dlr Invoice', 'Dlr Inventory', 'Days Supply',
                       'Wholesale to Retail Dealer(avg days)', 'Wholesale to Retail District(avg days)', 'Wholesale to Retail Region(avg days)']
-        # Ensure the 'Model' column is a string
         df['Model'] = df['Model'].astype(str)
-        # Convert numeric columns to appropriate types and handle missing values
         numeric_columns = ['Sold Roll 90', 'Sold-MTD', 'Dlr Invoice', 'Dlr Inventory', 'Days Supply',
                            'Wholesale to Retail Dealer(avg days)', 'Wholesale to Retail District(avg days)', 'Wholesale to Retail Region(avg days)']
         df[numeric_columns] = df[numeric_columns].apply(pd.to_numeric, errors='coerce')
-        df = df.dropna(subset=['Model'])  # Drop rows where 'Model' is NaN
+        df = df.dropna(subset=['Model'])
         return df
     
-    # Process each file using the function
     cn_df = process_excel('files/Concord90.xls')
     hk_df = process_excel('files/Hickory90.xls')
     ln_df = process_excel('files/Lake90.xls')
     ws_df = process_excel('files/Winston90.xls')
-
+    
     def plot_metric(dataframes, metric, title, ylabel):
         plt.style.use('dark_background')
-        plt.figure(figsize=(14, 8))
+        fig, ax = plt.subplots(figsize=(14, 8))
         bar_width = 0.2
         positions = range(len(dataframes['Concord']['Model']))
-        colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728']  # Custom color palette for better contrast
+        colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728']
+        totals = {}
         for i, (name, df) in enumerate(dataframes.items()):
-            plt.bar([p + bar_width * i for p in positions], df[metric], width=bar_width, label=name, color=colors[i])
-        plt.title(title, color='#d0d0d0', fontsize=16)
-        plt.xlabel('Model', color='#d0d0d0', fontsize=14)
-        plt.ylabel(ylabel, color='#d0d0d0', fontsize=14)
-        plt.xticks([p + bar_width * 1.5 for p in positions], dataframes['Concord']['Model'], rotation=45, ha='right', color='#d0d0d0', fontsize=12)
-        plt.yticks(color='#d0d0d0', fontsize=12)
-        plt.legend(facecolor='black', edgecolor='white', fontsize=12)
+            ax.bar([p + bar_width * i for p in positions], df[metric], width=bar_width, label=name, color=colors[i])
+            totals[name] = df[metric].sum()
+        
+        ax.set_title(title, color='#d0d0d0', fontsize=16)
+        ax.set_xlabel('Model', color='#d0d0d0', fontsize=14)
+        ax.set_ylabel(ylabel, color='#d0d0d0', fontsize=14)
+        ax.set_xticks([p + bar_width * 1.5 for p in positions])
+        ax.set_xticklabels(dataframes['Concord']['Model'], rotation=45, ha='right', color='#d0d0d0', fontsize=12)
+        ax.tick_params(axis='y', colors='#d0d0d0', labelsize=12)
+        ax.legend(facecolor='black', edgecolor='white', fontsize=12)
+    
+        # Add a table with the totals
+        cell_text = [[totals[name] for name in totals.keys()]]
+        columns = list(totals.keys())
+        rows = ['Total']
+        table = ax.table(cellText=cell_text, colLabels=columns, rowLabels=rows, cellLoc='center', loc='bottom', bbox=[0, -0.3, 1, 0.15])
+        table.auto_set_font_size(False)
+        table.set_fontsize(12)
+        table.scale(1.2, 1.2)
+    
         plt.tight_layout()
-        st.pyplot(plt)
-
+        st.pyplot(fig)
+    
     dataframes = {
         'Concord': cn_df,
         'Hickory': hk_df,
