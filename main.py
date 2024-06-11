@@ -199,6 +199,8 @@ else:
 with tab2:
     st.markdown("### Current CDK Inventory")
     if not current_data.empty:
+        num_rows = len(current_data)
+        st.markdown(f"<span style='font-size: small;'>{num_rows} vehicles</span>", unsafe_allow_html=True)
         st.dataframe(current_data, use_container_width=True, height=780, hide_index=True)
     else:
         st.error("No current inventory data to display.")
