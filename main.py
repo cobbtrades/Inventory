@@ -561,14 +561,15 @@ with tab5:
         plt.figure(figsize=(14, 8))
         bar_width = 0.2
         positions = range(len(dataframes['Concord']['Model']))
+        colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728']  # Custom color palette for better contrast
         for i, (name, df) in enumerate(dataframes.items()):
-            plt.bar([p + bar_width * i for p in positions], df[metric], width=bar_width, label=name)
-        plt.title(title, color='white')
-        plt.xlabel('Model', color='white')
-        plt.ylabel(ylabel, color='white')
-        plt.xticks([p + bar_width * 1.5 for p in positions], dataframes['Concord']['Model'], rotation=45, ha='right', color='white')
-        plt.yticks(color='white')
-        plt.legend()
+            plt.bar([p + bar_width * i for p in positions], df[metric], width=bar_width, label=name, color=colors[i])
+        plt.title(title, color='#d0d0d0', fontsize=16)
+        plt.xlabel('Model', color='#d0d0d0', fontsize=14)
+        plt.ylabel(ylabel, color='#d0d0d0', fontsize=14)
+        plt.xticks([p + bar_width * 1.5 for p in positions], dataframes['Concord']['Model'], rotation=45, ha='right', color='#d0d0d0', fontsize=12)
+        plt.yticks(color='#d0d0d0', fontsize=12)
+        plt.legend(facecolor='black', edgecolor='white', fontsize=12)
         plt.tight_layout()
         st.pyplot(plt)
 
