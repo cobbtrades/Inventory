@@ -385,8 +385,8 @@ h3 {
     color: #fafafa;
 }
 table {
-    color: #fafafa;
-    background-color: #1e2130;
+    color: #000000;
+    background-color: #FFFFFF;
     border: 1px solid #383e53;
     text-align: center;
     width: 100%;
@@ -395,8 +395,8 @@ table {
     word-wrap: break-word;
 }
 thead th {
-    color: #fafafa;
-    background-color: #383e53;
+    color: #000000;
+    background-color: #FFFFFF;
     text-align: center;
     padding: 8px;
 }
@@ -406,10 +406,10 @@ tbody td {
     word-wrap: break-word;
 }
 tbody tr:nth-child(even) {
-    background-color: #1e2130;
+    background-color: #FFFFFF;
 }
 tbody tr:nth-child(odd) {
-    background-color: #2c2f40;
+    background-color: #FFFFFF;
 }
 .dataframe-container {
     font-size: 12px; /* Adjust font size as needed */
@@ -422,7 +422,7 @@ tbody tr:nth-child(odd) {
     padding: 2px; /* Adjust cell padding */
 }
 .dataframe-container th {
-    background-color: #2c2f40; /* Adjust header background color */
+    background-color: #FFFFFF; /* Adjust header background color */
 }
 </style>
 """
