@@ -197,10 +197,15 @@ if not combined_data.empty:
             """
             <style>
             .dataframe-table {
-                background-color: white;
-                border: 1px solid black;
-                color: black;
+                color: #000000;
                 font-weight: bold;
+                background-color: #FFFFFF;
+                border: 1px solid #383e53;
+                text-align: center;
+                width: 100%;
+                border-collapse: collapse;
+                table-layout: fixed;
+                word-wrap: break-word;
             }
             .dataframe-table th, .dataframe-table td {
                 border: 1px solid black;
