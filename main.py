@@ -203,7 +203,7 @@ if not combined_data.empty:
             color = st.selectbox('Color', options=colors, key='all_color')
         filtered_df = filter_data(combined_data, model, trim, package, color)
         styled_df = style_dataframe(filtered_df)
-        st.dataframe(styled_df, use_container_width=True, height=780, hide_index=True)
+        st.write(styled_df.to_html(), unsafe_allow_html=True)
 else:
     st.error("No data to display.")
 
