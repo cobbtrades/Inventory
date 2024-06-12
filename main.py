@@ -386,6 +386,7 @@ h3 {
 }
 table {
     color: #000000;
+    font-weight: bold;
     background-color: #FFFFFF;
     border: 1px solid #383e53;
     text-align: center;
