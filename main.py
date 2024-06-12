@@ -157,18 +157,15 @@ st.write(
 )
 
 def style_dataframe(df):
-    return df.style.set_properties(
-        **{
-            'background-color': 'white',
-            'color': 'black',
-            'border-color': 'black'
-        }
-    ).set_table_styles(
-        [{
-            'selector': 'thead th',
-            'props': [('background-color', 'white'), ('color', 'black'), ('border-color', 'black')]
-        }]
-    )
+    styled_df = df.style.set_properties(**{
+        'background-color': 'white',
+        'color': 'black',
+        'border-color': 'black'
+    }).set_table_styles([{
+        'selector': 'thead th',
+        'props': [('background-color', 'white'), ('color', 'black'), ('border', '1px solid black')]
+    }])
+    return styled_df
     
 # Create tabs for "All Stores", "Current", "Dealer Trade", and "Incoming"
 tab1, tab2, tab3, tab4, tab5 = st.tabs(["All Stores", "Current CDK", "Dealer Trade", "Incoming", "Sales"])
