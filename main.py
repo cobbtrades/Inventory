@@ -191,7 +191,30 @@ if not combined_data.empty:
             colors = ['All'] if model == 'All' else ['All'] + combined_data[combined_data['MDL'] == model]['EXT'].unique().tolist()
             color = st.selectbox('Color', options=colors, key='all_color')
         filtered_df = filter_data(combined_data, model, trim, package, color)
-        st.dataframe(filtered_df, use_container_width=True, height=780, hide_index=True)
+
+        # Apply custom CSS for DataFrame
+        st.write(
+            """
+            <style>
+            .dataframe-table {
+                background-color: white;
+                border: 1px solid black;
+                color: black;
+                font-weight: bold;
+            }
+            .dataframe-table th, .dataframe-table td {
+                border: 1px solid black;
+            }
+            </style>
+            """,
+            unsafe_allow_html=True
+        )
+
+        # Convert DataFrame to HTML and apply CSS
+        st.markdown(
+            filtered_df.style.set_table_attributes('class="dataframe-table"').render(),
+            unsafe_allow_html=True
+        )
 else:
     st.error("No data to display.")
 
