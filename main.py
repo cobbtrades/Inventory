@@ -377,17 +377,39 @@ with tab3:
 
 dark_mode_css = """
 <style>
+:root {
+    --background-color: #ffffff;
+    --text-color: #000000;
+    --table-bg-color: #f0f0f0;
+    --table-border-color: #dddddd;
+    --thead-bg-color: #e0e0e0;
+    --tbody-odd-bg-color: #ffffff;
+    --tbody-even-bg-color: #f9f9f9;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background-color: #0e1117;
+        --text-color: #fafafa;
+        --table-bg-color: #1e2130;
+        --table-border-color: #383e53;
+        --thead-bg-color: #383e53;
+        --tbody-odd-bg-color: #2c2f40;
+        --tbody-even-bg-color: #1e2130;
+    }
+}
+
 body {
-    background-color: #0e1117;
-    color: #fafafa;
+    background-color: var(--background-color);
+    color: var(--text-color);
 }
 h3 {
-    color: #fafafa;
+    color: var(--text-color);
 }
 table {
-    color: #fafafa;
-    background-color: #1e2130;
-    border: 1px solid #383e53;
+    color: var(--text-color);
+    background-color: var(--table-bg-color);
+    border: 1px solid var(--table-border-color);
     text-align: center;
     width: 100%;
     border-collapse: collapse;
@@ -395,8 +417,8 @@ table {
     word-wrap: break-word;
 }
 thead th {
-    color: #fafafa;
-    background-color: #383e53;
+    color: var(--text-color);
+    background-color: var(--thead-bg-color);
     text-align: center;
     padding: 8px;
 }
@@ -406,10 +428,10 @@ tbody td {
     word-wrap: break-word;
 }
 tbody tr:nth-child(even) {
-    background-color: #1e2130;
+    background-color: var(--tbody-even-bg-color);
 }
 tbody tr:nth-child(odd) {
-    background-color: #2c2f40;
+    background-color: var(--tbody-odd-bg-color);
 }
 .dataframe-container {
     font-size: 12px; /* Adjust font size as needed */
@@ -422,7 +444,7 @@ tbody tr:nth-child(odd) {
     padding: 2px; /* Adjust cell padding */
 }
 .dataframe-container th {
-    background-color: #2c2f40; /* Adjust header background color */
+    background-color: var(--thead-bg-color); /* Adjust header background color */
 }
 </style>
 """
