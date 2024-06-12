@@ -156,17 +156,6 @@ st.write(
     unsafe_allow_html=True
 )
 
-def style_dataframe(df):
-    styled_df = df.style.set_properties(**{
-        'background-color': 'white',
-        'color': 'black',
-        'border-color': 'black'
-    }).set_table_styles([{
-        'selector': 'thead th',
-        'props': [('background-color', 'white'), ('color', 'black'), ('border', '1px solid black')]
-    }])
-    return styled_df
-    
 # Create tabs for "All Stores", "Current", "Dealer Trade", and "Incoming"
 tab1, tab2, tab3, tab4, tab5 = st.tabs(["All Stores", "Current CDK", "Dealer Trade", "Incoming", "Sales"])
 
@@ -202,8 +191,7 @@ if not combined_data.empty:
             colors = ['All'] if model == 'All' else ['All'] + combined_data[combined_data['MDL'] == model]['EXT'].unique().tolist()
             color = st.selectbox('Color', options=colors, key='all_color')
         filtered_df = filter_data(combined_data, model, trim, package, color)
-        styled_df = style_dataframe(filtered_df)
-        st.dataframe(styled_df, use_container_width=True, height=780, hide_index=True)
+        st.dataframe(filtered_df, use_container_width=True, height=780, hide_index=True)
 else:
     st.error("No data to display.")
 
