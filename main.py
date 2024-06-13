@@ -1,25 +1,12 @@
-import pandas as pd
-import streamlit as st
-import os
-import requests
-import base64
-import time
+import pandas as pd, streamlit as st, os, requests, base64, time, openpyxl, plotly.express as px, matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from io import BytesIO
-import plotly.express as px
-import openpyxl
-import matplotlib.pyplot as plt
 from streamlit_extras.grid import grid
 
-# Set page configuration for wide layout
 st.set_page_config(layout="wide", page_title="Nissan Inventory", page_icon="logo.png")
-
-# Define file paths for each store's inventory data
 file_paths = ['files/Concord.xls', 'files/Winston.xls', 'files/Lake.xls', 'files/Hickory.xls']
-
-# Define ext_mapping dictionary
 ext_mapping = {
     'A20': 'RED ALERT', 'B51': 'ELECTRIC BLUE', 'BW5': 'HERMOSA BLUE', 'CAS': 'MOCHA ALMOND',
     'DAN': 'OBSIDIAN GREEN', 'DAQ': 'TACTICAL GREEN', 'EBB': 'MONARCH ORANGE', 'EBL': 'SUNSET DRIFT',
@@ -36,31 +23,16 @@ ext_mapping = {
     'NCA': 'BURGUNDY', 'QBE': 'EVEREST WHITE', 'KBZ': 'ATLANTIC GRAY', 'XKY': 'ATLANTIC/BLACK ROOF',
     'XKJ': 'EVEREST/BLACK', 'RCF': 'BLUESTONE PEARL', 'XHQ': 'DEEP OCEAN/BLACK', 'XJR': 'SEIRAN BLUE/BLACK'
 }
-
 mdl_mapping = {
-    'ALTIMA': 'ALT',
-    'ARMADA': 'ARM',
-    'FRONTIER': '720',
-    'KICKS': 'KIX',
-    'LEAF ELECTRIC': 'LEF',
-    'MURANO': 'MUR',
-    'PATHFINDER': 'PTH',
-    'ROGUE': 'RGE',
-    'SENTRA': 'SEN',
-    'TITAN': 'TTN',
-    'VERSA': 'VSD',
-    'Z NISMO': 'Z',
-    'Z PROTO': 'Z'
+    'ALTIMA': 'ALT', 'ARMADA': 'ARM', 'FRONTIER': '720', 'KICKS': 'KIX', 'LEAF ELECTRIC': 'LEF',
+    'MURANO': 'MUR', 'PATHFINDER': 'PTH', 'ROGUE': 'RGE', 'SENTRA': 'SEN', 'TITAN': 'TTN',
+    'VERSA': 'VSD', 'Z NISMO': 'Z', 'Z PROTO': 'Z'
 }
-
 dealer_acronyms = {
-    'MODERN NISSAN OF CONCORD': 'CONCORD',
-    'MODERN NISSAN OF HICKORY': 'HICKORY',
-    'MODERN NISSAN, LLC': 'WINSTON',
-    'MODERN NISSAN/LAKE NORMAN': 'LAKE'
+    'MODERN NISSAN OF CONCORD': 'CONCORD', 'MODERN NISSAN OF HICKORY': 'HICKORY',
+    'MODERN NISSAN, LLC': 'WINSTON', 'MODERN NISSAN/LAKE NORMAN': 'LAKE'
 }
 
-# Function to load data and handle columns dynamically
 @st.cache_data
 def load_data(file_paths):
     expected_columns = [
@@ -74,7 +46,6 @@ def load_data(file_paths):
         'ORD_CUST_DATE': 'ORD_DATE', 'DLR_DLV_DT': 'DLV_DATE', 'RTL_SALE_DT': 'SOLD'
     }
     data_frames = []
-    
     for file in file_paths:
         if os.path.exists(file):
             dfs = pd.read_html(file)
@@ -107,17 +78,13 @@ def load_data(file_paths):
             st.error(f"File {file} not found in the repository.")
     return data_frames
 
-# Load data from specified file paths
 data_frames = load_data(file_paths)
-
-# Combine data from all stores into a single DataFrame
 if data_frames:
     combined_data = pd.concat([df[0] for df in data_frames], ignore_index=True)
     combined_data.reset_index(drop=True, inplace=True)
 else:
     combined_data = pd.DataFrame()
         
-# Load Current Inventory data from Excel file
 @st.cache_data
 def load_current_data(file_path):
     if os.path.exists(file_path):
@@ -142,7 +109,6 @@ def load_current_data(file_path):
 
 current_data = load_current_data('InventoryUpdate.xlsx')
 
-# Custom CSS for padding and container width
 st.write(
     """
     <style>
@@ -156,10 +122,8 @@ st.write(
     unsafe_allow_html=True
 )
 
-# Create tabs for "All Stores", "Current", "Dealer Trade", and "Incoming"
 tab1, tab2, tab3, tab4, tab5 = st.tabs(["All Stores", "Current CDK", "Dealer Trade", "Incoming", "Sales"])
 
-# Function to filter data based on selectbox inputs
 @st.cache_data
 def filter_data(df, model, trim, package, color):
     if model != 'All':
@@ -172,7 +136,6 @@ def filter_data(df, model, trim, package, color):
         df = df[df['EXT'] == color]
     return df
 
-# Display combined data for all stores with filters
 if not combined_data.empty:
     with tab1:
         cols = st.columns([2, 1, 1, 1, 1])
@@ -181,7 +144,6 @@ if not combined_data.empty:
         with cols[1]:
             model = st.selectbox('Model', options=['All'] + combined_data['MDL'].unique().tolist(), key='all_model')
         with cols[2]:
-            # Filter options based on selected model
             trims = ['All'] if model == 'All' else ['All'] + combined_data[combined_data['MDL'] == model]['TRIM'].unique().tolist()
             trim = st.selectbox('Trim', options=trims, key='all_trim')
         with cols[3]:
@@ -195,7 +157,6 @@ if not combined_data.empty:
 else:
     st.error("No data to display.")
 
-# Display Current Inventory data in the Current tab
 with tab2:
     st.markdown("### Current CDK Inventory")
     if not current_data.empty:
@@ -205,14 +166,12 @@ with tab2:
     else:
         st.error("No current inventory data to display.")
 
-# Function to calculate transfer amount
 def calculate_transfer_amount(key_charge, projected_cost):
     return projected_cost - key_charge - 400
 
 def format_currency(value):
     return "${:,.2f}".format(value)
 
-# Display Dealer Trade form in the Dealer Trade tab
 with tab3:
     st.markdown("### Dealer Trade")
     col1, col2 = st.columns(2)
@@ -275,7 +234,6 @@ with tab3:
     incoming_purchase_price = st.text_input("Incoming Purchase Price", key="incoming_purchase_price_input_trade")
 
     if st.button("Generate Trade PDF", key="generate_trade_pdf_button"):
-        # Generate PDF
         pdf_buffer = BytesIO()
         c = canvas.Canvas(pdf_buffer, pagesize=letter)
         width, height = letter
@@ -284,13 +242,10 @@ with tab3:
         c.setFont("Helvetica-Bold", 16)
         c.drawCentredString(width / 2.0, height - 52 - offset, title)
         c.setFont("Helvetica", 10)
-        # Column positions
         col1_x = 72
         col2_x = 200
-        # Top section
         c.drawString(col1_x, height - 84 - offset, f"Date: {formatted_date}")
         c.drawString(col2_x, height - 84 - offset, f"Manager: {manager}")
-        # Our Trade / Their Trade / Sold / Floorplan
         c.drawString(col1_x, height - 108 - offset, "OUR TRADE")
         c.drawString(col1_x, height - 120 - offset, f"{'         X' if our_trade else ''}")
         c.drawString(col2_x, height - 108 - offset, "THEIR TRADE")
@@ -299,13 +254,11 @@ with tab3:
         c.drawString(col1_x, height - 156 - offset, f"{'   X' if sold else ''}")
         c.drawString(col2_x, height - 144 - offset, "FLOORPLAN")
         c.drawString(col2_x, height - 156 - offset, f"{'          X' if floorplan else ''}")
-        # Address Information
-        addr_x = 320  # Adjust as needed for positioning
+        addr_x = 320
         c.drawString(addr_x, height - 108 - offset, "PLEASE SEND MCO/CHECK TO:")
         c.drawString(addr_x, height - 120 - offset, "MODERN AUTOMOTIVE SUPPORT CENTER")
         c.drawString(addr_x, height - 132 - offset, "3901 WEST POINT BLVD.")
         c.drawString(addr_x, height - 144 - offset, "WINSTON-SALEM, NC 27103")
-        # Intercompany DX
         c.setFillColorRGB(0.7, 0.7, 0.7)
         c.rect(70, height - 180 - offset, 475, 20, fill=1)
         c.setFillColorRGB(0, 0, 0)
@@ -314,7 +267,6 @@ with tab3:
         c.drawString(140, height - 200 - offset, from_location)
         c.drawString(330, height - 200 - offset, "To:")
         c.drawString(380, height - 200 - offset, to_location)
-        # Vehicle details
         c.drawString(72, height - 220 - offset, "Stock Number:")
         c.drawString(160, height - 220 - offset, stock_number)
         c.drawString(72, height - 240 - offset, "Year/Make/Model:")
@@ -327,7 +279,6 @@ with tab3:
         c.drawString(420, height - 240 - offset, format_currency(projected_cost))
         c.drawString(330, height - 260 - offset, "Transfer Amount:")
         c.drawString(420, height - 260 - offset, formatted_transfer_amount)
-        # Non-Modern Dealership Information
         c.setFillColorRGB(0.7, 0.7, 0.7)
         c.rect(70, height - 290 - offset, 475, 20, fill=1)
         c.setFillColorRGB(0, 0, 0)
@@ -344,7 +295,6 @@ with tab3:
         c.drawString(190, height - 390 - offset, dealer_code)
         c.drawString(72, height - 410 - offset, "Contact Name:")
         c.drawString(190, height - 410 - offset, contact_name)
-        # Outgoing Unit
         c.setFillColorRGB(0.7, 0.7, 0.7)
         c.rect(70, height - 440 - offset, 475, 20, fill=1)
         c.setFillColorRGB(0, 0, 0)
@@ -357,7 +307,6 @@ with tab3:
         c.drawString(190, height - 500 - offset, outgoing_full_vin)
         c.drawString(72, height - 520 - offset, "Sale Price:")
         c.drawString(190, height - 520 - offset, outgoing_sale_price)
-        # Incoming Unit
         c.setFillColorRGB(0.7, 0.7, 0.7)
         c.rect(70, height - 550 - offset, 475, 20, fill=1)
         c.setFillColorRGB(0, 0, 0)
@@ -377,13 +326,8 @@ with tab3:
 
 dark_mode_css = """
 <style>
-body {
-    background-color: #0e1117;
-    color: #fafafa;
-}
-h3 {
-    color: #fafafa;
-}
+body {background-color: #0e1117; color: #fafafa;}
+h3 {color: #fafafa;}
 table {
     color: #000000;
     font-weight: bold;
@@ -395,40 +339,16 @@ table {
     table-layout: fixed;
     word-wrap: break-word;
 }
-thead th {
-    color: #000000;
-    background-color: #FFFFFF;
-    text-align: center;
-    padding: 8px;
-}
-tbody td {
-    text-align: center;
-    padding: 8px;
-    word-wrap: break-word;
-}
-tbody tr:nth-child(even) {
-    background-color: #FFFFFF;
-}
-tbody tr:nth-child(odd) {
-    background-color: #FFFFFF;
-}
-.dataframe-container {
-    font-size: 12px; /* Adjust font size as needed */
-    padding: 1px; /* Adjust padding as needed */
-}
-.dataframe-container table {
-    width: 100%;
-}
-.dataframe-container th, .dataframe-container td {
-    padding: 2px; /* Adjust cell padding */
-}
-.dataframe-container th {
-    background-color: #FFFFFF; /* Adjust header background color */
-}
+thead th {color: #000000; background-color: #FFFFFF; text-align: center; padding: 8px;}
+tbody td {text-align: center; padding: 8px; word-wrap: break-word;}
+tbody tr:nth-child(even) {background-color: #FFFFFF;}
+tbody tr:nth-child(odd) {background-color: #FFFFFF;}
+.dataframe-container {font-size: 12px; padding: 1px;}
+.dataframe-container table {width: 100%;}
+.dataframe-container th, .dataframe-container td {padding: 2px;}
+.dataframe-container th {background-color: #FFFFFF;}
 </style>
 """
-
-# Apply the custom CSS
 st.markdown(dark_mode_css, unsafe_allow_html=True)
 
 def replace_mdl_with_full_name(df, reverse_mdl_mapping):
@@ -450,7 +370,6 @@ def summarize_incoming_data(df, start_date, end_date, all_models, all_dealers):
     pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
     return pivot_table
 
-# Function to summarize retailed data
 def summarize_retailed_data(df, start_date, end_date, all_models, all_dealers):
     df['SOLD'] = pd.to_datetime(df['SOLD'], errors='coerce')
     filtered_df = df[(df['LOC'] == 'RETAILED') & (df['SOLD'] >= start_date) & (df['SOLD'] <= end_date)]
@@ -461,7 +380,6 @@ def summarize_retailed_data(df, start_date, end_date, all_models, all_dealers):
     pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
     return pivot_table
 
-# Function to summarize DLV INV data
 def summarize_dlv_inv_data(df, all_models, all_dealers):
     filtered_df = df[(df['LOC'] == 'DLR INV') & (df['SOLD'].isna())]
     filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].replace(dealer_acronyms)
@@ -471,7 +389,6 @@ def summarize_dlv_inv_data(df, all_models, all_dealers):
     pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
     return pivot_table
 
-# Function to summarize deliveries for current month
 def summarize_dlv_date_data(df, start_date, end_date, all_models, all_dealers):
     df['DLV_DATE'] = pd.to_datetime(df['DLV_DATE'], errors='coerce')
     filtered_df = df[(df['DLV_DATE'] >= start_date) & (df['DLV_DATE'] <= end_date)]
@@ -524,9 +441,7 @@ with tab4:
                 following_month_summary = summarize_incoming_data(combined_data, following_month_start, following_month_end, all_models, all_dealers)
                 st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(following_month_summary)}</div>", unsafe_allow_html=True)
                 
-                # Summarize deliveries for the current month
                 current_month_dlv_summary = summarize_dlv_date_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
-                # Calculate 'BALANCE TO ARRIVE' for the current month
                 balance_to_arrive = current_month_summary.subtract(current_month_dlv_summary, fill_value=0)
                 st.markdown(f"<h5 style='text-align: center;'>Balance to Arrive for {start_of_month.strftime('%B')}</h5>", unsafe_allow_html=True)
                 st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(balance_to_arrive)}</div>", unsafe_allow_html=True)
@@ -540,16 +455,13 @@ with tab5:
         df = df.drop([0, 1])
         df.columns = ['Model', 'Sold Roll 90', 'Sold-MTD', 'Dlr Invoice', 'Dlr Inventory', 'Days Supply',
                       'Wholesale to Retail Dealer(avg days)', 'Wholesale to Retail District(avg days)', 'Wholesale to Retail Region(avg days)']
-        # Ensure the 'Model' column is a string
         df['Model'] = df['Model'].astype(str)
-        # Convert numeric columns to appropriate types and handle missing values
         numeric_columns = ['Sold Roll 90', 'Sold-MTD', 'Dlr Invoice', 'Dlr Inventory', 'Days Supply',
                            'Wholesale to Retail Dealer(avg days)', 'Wholesale to Retail District(avg days)', 'Wholesale to Retail Region(avg days)']
         df[numeric_columns] = df[numeric_columns].apply(pd.to_numeric, errors='coerce')
-        df = df.dropna(subset=['Model'])  # Drop rows where 'Model' is NaN
+        df = df.dropna(subset=['Model'])
         return df
     
-    # Process each file using the function
     cn_df = process_excel('files/Concord90.xls')
     hk_df = process_excel('files/Hickory90.xls')
     ln_df = process_excel('files/Lake90.xls')
