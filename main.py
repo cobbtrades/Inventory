@@ -372,7 +372,7 @@ def summarize_incoming_data(df, start_date, end_date, all_models, all_dealers):
 
 def summarize_retailed_data(df, start_date, end_date, all_models, all_dealers):
     df['SOLD'] = pd.to_datetime(df['SOLD'], errors='coerce')
-    filtered_df = df[(df['LOC'] == 'RETAILED') & (df['SOLD'] >= start_date) & (df['SOLD'] <= end_date)]
+    filtered_df = df[(df['LOC'] == 'RETAILED')]
     filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].replace(dealer_acronyms)
     filtered_df = replace_mdl_with_full_name(filtered_df, reverse_mdl_mapping)
     all_combinations = pd.MultiIndex.from_product([all_dealers, all_models], names=['DEALER_NAME', 'MDL'])
