@@ -51,7 +51,7 @@ def load_data(file_paths):
             dfs = pd.read_html(file)
             if dfs:
                 df = dfs[0]
-                df = df[[col for col in expected_columns if col in df.columns]]
+                df = df[[col for col in expected_columns if col in df.columns]].copy()
                 df.rename(columns=new_column_names, inplace=True)
                 if 'MDLYR' in df.columns:
                     df['MDLYR'] = df['MDLYR'].apply(lambda x: str(x).strip()[:-1])
