@@ -1,4 +1,4 @@
-import pandas as pd, streamlit as st, os, requests, base64, time, openpyxl, plotly.express as px, matplotlib.pyplot as plt
+import pandas as pd, streamlit as st, os, requests, base64, time, openpyxl, plotly.express as px, matplotlib.pyplot as plt, plotly.graph_objects as go
 from datetime import datetime, timedelta
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
@@ -448,6 +448,34 @@ with tab4:
     else:
         st.error("No data to display.")
 
+def plot_metric(dataframes, metric, title, ylabel):
+    fig = go.Figure()
+    
+    bar_width = 0.2
+    colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728']  # Custom color palette for better contrast
+
+    for i, (name, df) in enumerate(dataframes.items()):
+        fig.add_trace(go.Bar(
+            x=df['Model'],
+            y=df[metric],
+            name=name,
+            marker_color=colors[i]
+        ))
+
+    fig.update_layout(
+        title=title,
+        xaxis_title='Model',
+        yaxis_title=ylabel,
+        barmode='group',
+        bargap=0.2,
+        bargroupgap=0.1,
+        plot_bgcolor='#0e1117',
+        paper_bgcolor='#0e1117',
+        font=dict(color='#d0d0d0')
+    )
+    
+    st.plotly_chart(fig, use_container_width=True)
+
 with tab5:
     def process_excel(file):
         df = pd.read_html(file)[0].iloc[:, :9]
@@ -467,29 +495,13 @@ with tab5:
     ln_df = process_excel('files/Lake90.xls')
     ws_df = process_excel('files/Winston90.xls')
 
-    def plot_metric(dataframes, metric, title, ylabel):
-        plt.style.use('dark_background')
-        plt.figure(figsize=(14, 8))
-        bar_width = 0.2
-        positions = range(len(dataframes['Concord']['Model']))
-        colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728']  # Custom color palette for better contrast
-        for i, (name, df) in enumerate(dataframes.items()):
-            plt.bar([p + bar_width * i for p in positions], df[metric], width=bar_width, label=name, color=colors[i])
-        plt.title(title, color='#d0d0d0', fontsize=16)
-        plt.xlabel('Model', color='#d0d0d0', fontsize=14)
-        plt.ylabel(ylabel, color='#d0d0d0', fontsize=14)
-        plt.xticks([p + bar_width * 1.5 for p in positions], dataframes['Concord']['Model'], rotation=45, ha='right', color='#d0d0d0', fontsize=12)
-        plt.yticks(color='#d0d0d0', fontsize=12)
-        plt.legend(facecolor='black', edgecolor='white', fontsize=12)
-        plt.tight_layout()
-        st.pyplot(plt)
-
     dataframes = {
         'Concord': cn_df,
         'Hickory': hk_df,
         'Lake': ln_df,
         'Winston': ws_df
     }
+    
     bl1, col1, col2, bl2 = st.columns([0.1, 1, 1, 0.1])
     with col1:
         plot_metric(dataframes, 'Sold Roll 90', 'Sales Trends Over the Last 90 Days', 'Sold Roll 90')
