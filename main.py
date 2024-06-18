@@ -251,6 +251,7 @@ with tab3:
         c = canvas.Canvas(pdf_buffer, pagesize=letter)
         width, height = letter
         offset = 20
+        location = st.session_state["to_input_trade"]
         title = f"{location} {get_store_number(location)}"
         c.setFont("Helvetica-Bold", 16)
         c.drawCentredString(width / 2.0, height - 52 - offset, title)
