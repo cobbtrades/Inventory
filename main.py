@@ -171,6 +171,14 @@ def calculate_transfer_amount(key_charge, projected_cost):
 
 def format_currency(value):
     return "${:,.2f}".format(value)
+def get_store_number(location):
+    store_numbers = {
+        "MODERN NISSAN OF CONCORD": "STORE #3",
+        "MODERN NISSAN OF WINSTON": "STORE #2",
+        "MODERN NISSAN OF LAKE NORMAN": "STORE #6",
+        "MODERN NISSAN OF HICKORY": "STORE #11"
+    }
+    return store_numbers.get(location, "UNKNOWN STORE")
 
 with tab3:
     st.markdown("### Dealer Trade")
@@ -201,7 +209,12 @@ with tab3:
     with col6:
         from_location = st.text_input("From:", key="from_input_trade")
     with col7:
-        to_location = st.text_input("To:", key="to_input_trade")
+        to_location = st.selectbox("To:", 
+                                   ["MODERN NISSAN OF CONCORD", 
+                                    "MODERN NISSAN OF WINSTON", 
+                                    "MODERN NISSAN OF LAKE NORMAN", 
+                                    "MODERN NISSAN OF HICKORY"], 
+                                   key="to_input_trade")
     col8, col9 = st.columns(2)
     with col8:
         stock_number = st.text_input("Stock Number", key="stock_number_input_trade")
@@ -238,7 +251,7 @@ with tab3:
         c = canvas.Canvas(pdf_buffer, pagesize=letter)
         width, height = letter
         offset = 20
-        title = "MODERN NISSAN OF CONCORD STORE #3"
+        title = f"{location} {get_store_number(location)}"
         c.setFont("Helvetica-Bold", 16)
         c.drawCentredString(width / 2.0, height - 52 - offset, title)
         c.setFont("Helvetica", 10)
