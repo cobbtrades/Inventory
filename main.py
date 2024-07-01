@@ -38,12 +38,12 @@ def load_data(file_paths):
     expected_columns = [
         'LOC_DESC', 'DLRORD', 'MDLYR', 'MDL', 'TRM_LVL', 'DRV_TRN', 'EXT', 'INT',
         'MCODE', 'VIN', 'DEALER_NAME', 'DLR_DLV_DT', 'DLRETA', 'ORD_CUST_NAME',
-        'ORD_CUST_EMAIL_ADDR', 'ORD_CUST_DATE', 'GOPTS', 'RTL_SALE_DT'
+        'ORD_CUST_EMAIL_ADDR', 'ORD_CUST_DATE', 'GOPTS', 'RTL_SALE_DT', 'MSRP',
     ]
     new_column_names = {
         'LOC_DESC': 'LOC', 'DLRORD': 'ORDER', 'TRM_LVL': 'TRIM', 'DRV_TRN': 'DRIVE',
         'DLRETA': 'ETA', 'ORD_CUST_NAME': 'CUST_NAME', 'ORD_CUST_EMAIL_ADDR': 'CUST_EMAIL',
-        'ORD_CUST_DATE': 'ORD_DATE', 'DLR_DLV_DT': 'DLV_DATE', 'RTL_SALE_DT': 'SOLD'
+        'ORD_CUST_DATE': 'ORD_DATE', 'DLR_DLV_DT': 'DLV_DATE', 'RTL_SALE_DT': 'SOLD', 'MSRP': 'MSRP'
     }
     data_frames = []
     for file in file_paths:
