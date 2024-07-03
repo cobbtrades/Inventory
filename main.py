@@ -349,7 +349,7 @@ table {
     color: #000000;
     font-weight: bold;
     background-color: #FFFFFF;
-    border: 1px solid #383e53;
+    border: 1px solid #000000;
     text-align: center;
     width: 100%;
     border-collapse: collapse;
