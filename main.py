@@ -487,7 +487,7 @@ def plot_metric(dataframes, metric, title, ylabel):
         barmode='group',
         bargap=0.2,
         bargroupgap=0.1,
-        plot_bgcolor='#000000',
+        plot_bgcolor='#ffffff',
         paper_bgcolor='#0e1117',
         font=dict(color='#d0d0d0')
     )
