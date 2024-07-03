@@ -489,7 +489,21 @@ def plot_metric(dataframes, metric, title, ylabel):
         bargroupgap=0.1,
         plot_bgcolor='#ffffff',
         paper_bgcolor='#ffffff',
-        font=dict(color='#000000')
+        font=dict(color='#000000'),
+        margin=dict(l=10, r=10, t=40, b=40),  # Adjust margins to make space for the border
+        shapes=[dict(
+            type="rect",
+            x0=0,
+            y0=0,
+            x1=1,
+            y1=1,
+            line=dict(
+                color="black",
+                width=2,
+            ),
+            xref="paper",
+            yref="paper"
+        )]
     )
     
     st.plotly_chart(fig, use_container_width=True)
