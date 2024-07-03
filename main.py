@@ -341,10 +341,11 @@ with tab3:
         time.sleep(0.5)
         st.download_button(label="Download Trade PDF", data=pdf_data, file_name="dealer_trade.pdf", mime="application/pdf", key="download_trade_pdf_button")
 
-dark_mode_css = """
+# Custom CSS to enforce light theme and table styles
+light_theme_css = """
 <style>
-body {background-color: #0e1117; color: #fafafa;}
-h3 {color: #fafafa;}
+body {background-color: #FFFFFF; color: #000000;}
+h3 {color: #000000;}
 table {
     color: #000000;
     font-weight: bold;
@@ -356,17 +357,17 @@ table {
     table-layout: fixed;
     word-wrap: break-word;
 }
-thead th {color: #000000; background-color: #FFFFFF; text-align: center; padding: 8px;}
-tbody td {text-align: center; padding: 8px; word-wrap: break-word;}
-tbody tr:nth-child(even) {background-color: #FFFFFF;}
-tbody tr:nth-child(odd) {background-color: #FFFFFF;}
+thead th {color: #000000; background-color: #FFFFFF; text-align: center; padding: 8px; border: 1px solid #000000;}
+tbody td {text-align: center; padding: 8px; word-wrap: break-word; border: 1px solid #000000;}
+tbody tr:nth-child(even) {background-color: #f2f2f2;}
+tbody tr:nth-child(odd) {background-color: #ffffff;}
 .dataframe-container {font-size: 12px; padding: 1px;}
 .dataframe-container table {width: 100%;}
 .dataframe-container th, .dataframe-container td {padding: 2px;}
 .dataframe-container th {background-color: #FFFFFF;}
 </style>
 """
-st.markdown(dark_mode_css, unsafe_allow_html=True)
+st.markdown(light_theme_css, unsafe_allow_html=True)
 
 def replace_mdl_with_full_name(df, reverse_mdl_mapping):
     df['MDL'] = df['MDL'].replace(reverse_mdl_mapping)
