@@ -488,8 +488,8 @@ def plot_metric(dataframes, metric, title, ylabel):
         bargap=0.2,
         bargroupgap=0.1,
         plot_bgcolor='#ffffff',
-        paper_bgcolor='#0e1117',
-        font=dict(color='#d0d0d0')
+        paper_bgcolor='#ffffff',
+        font=dict(color='#000000')
     )
     
     st.plotly_chart(fig, use_container_width=True)
