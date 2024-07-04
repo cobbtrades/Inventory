@@ -1,0 +1,964 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+
+
+
+
+
+
+
+
+
+  <!-- Sales by Model Line -->
+<table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" id="AutoNumber1" height="137">
+  <tbody>
+    <tr>
+      <td rowspan="2" bgcolor="#bebebe" height="42">Model Line:<br/></td>
+      
+      <td rowspan="2" bgcolor="#bebebe" height="42">
+        
+          Units Sold 
+        
+      Rolling Days 90</td>
+      
+      
+	  
+	    <td rowspan="2" bgcolor="#bebebe" height="42">Units Sold-MTD</td>
+	    <!-- RVR-447: Add dealer invoice to Sales Inquiry -->
+	    <td rowspan="2" bgcolor="#bebebe">Dlr Invoice</td>
+        <td rowspan="2" bgcolor="#bebebe">Dlr Inventory</td>
+        <td rowspan="2" bgcolor="#bebebe">Dlr Days Supply**</td>
+        <td colspan="3" bgcolor="#bebebe">Wholesale to Retail (avg.days)</td>
+	  
+
+      <td colspan="3" bgcolor="#bebebe" height="42" class="OMS_TableHeading">
+	    
+	      Wholesale to Retail (Ranking)
+	    
+      </td>
+      </tr>
+    <tr>
+		
+		    <td bgcolor="#bebebe">Dealer</td>
+		    <td bgcolor="#bebebe">District</td>
+		    <td bgcolor="#bebebe">Region</td>
+		    <td bgcolor="#bebebe">Dealer</td>
+		    <td bgcolor="#bebebe">District</td>
+		    <td bgcolor="#bebebe">Region</td>
+		
+    </tr>
+
+    
+    <tr>
+    
+      <td height="19">
+        TITAN</td>
+    
+              <td align="right" height="19" class="OMS_TableContents">2</td>
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <!-- RVR-447: Add dealer invoice to Sales Inquiry -->
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <td align="right" height="19" class="OMS_TableContents">6</td>
+            <td align="right" height="19" class="OMS_TableContents">
+            
+              234
+      
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+          69
+        
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+          196
+        
+       </td>
+      
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          175
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          1
+        
+            </td>
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          10
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          12
+        
+       </td>
+    </tr>
+  
+    <tr>
+    
+      <td height="19">
+        SENTRA</td>
+    
+              <td align="right" height="19" class="OMS_TableContents">24</td>
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <!-- RVR-447: Add dealer invoice to Sales Inquiry -->
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <td align="right" height="19" class="OMS_TableContents">48</td>
+            <td align="right" height="19" class="OMS_TableContents">
+            
+              156
+      
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+          74
+        
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+          67
+        
+       </td>
+      
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          61
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          2
+        
+            </td>
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          4
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          5
+        
+       </td>
+    </tr>
+  
+    <tr>
+    
+      <td height="19">
+        ALTIMA</td>
+    
+              <td align="right" height="19" class="OMS_TableContents">14</td>
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <!-- RVR-447: Add dealer invoice to Sales Inquiry -->
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <td align="right" height="19" class="OMS_TableContents">11</td>
+            <td align="right" height="19" class="OMS_TableContents">
+            
+              61
+      
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+          86
+        
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+          103
+        
+       </td>
+      
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          100
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          3
+        
+            </td>
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          7
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          8
+        
+       </td>
+    </tr>
+  
+    <tr>
+    
+      <td height="19">
+        PTHFINDR</td>
+    
+              <td align="right" height="19" class="OMS_TableContents">18</td>
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <!-- RVR-447: Add dealer invoice to Sales Inquiry -->
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <td align="right" height="19" class="OMS_TableContents">26</td>
+            <td align="right" height="19" class="OMS_TableContents">
+            
+              113
+      
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+          89
+        
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+          85
+        
+       </td>
+      
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          82
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          4
+        
+            </td>
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          6
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          7
+        
+       </td>
+    </tr>
+  
+    <tr>
+    
+      <td height="19">
+        ROGUE</td>
+    
+              <td align="right" height="19" class="OMS_TableContents">35</td>
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <!-- RVR-447: Add dealer invoice to Sales Inquiry -->
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <td align="right" height="19" class="OMS_TableContents">29</td>
+            <td align="right" height="19" class="OMS_TableContents">
+            
+              65
+      
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+          93
+        
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+          63
+        
+       </td>
+      
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          60
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          5
+        
+            </td>
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          3
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          4
+        
+       </td>
+    </tr>
+  
+    <tr>
+    
+      <td height="19">
+        VSD</td>
+    
+              <td align="right" height="19" class="OMS_TableContents">2</td>
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <!-- RVR-447: Add dealer invoice to Sales Inquiry -->
+            <td align="right" height="19" class="OMS_TableContents">2</td>
+            <td align="right" height="19" class="OMS_TableContents">14</td>
+            <td align="right" height="19" class="OMS_TableContents">
+            
+              546
+      
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+          102
+        
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+          60
+        
+       </td>
+      
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          48
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          6
+        
+            </td>
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          1
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          2
+        
+       </td>
+    </tr>
+  
+    <tr>
+    
+      <td height="19">
+        FRONTIER</td>
+    
+              <td align="right" height="19" class="OMS_TableContents">11</td>
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <!-- RVR-447: Add dealer invoice to Sales Inquiry -->
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <td align="right" height="19" class="OMS_TableContents">7</td>
+            <td align="right" height="19" class="OMS_TableContents">
+            
+              50
+      
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+          106
+        
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+          80
+        
+       </td>
+      
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          101
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          7
+        
+            </td>
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          5
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          9
+        
+       </td>
+    </tr>
+  
+    <tr>
+    
+      <td height="19">
+        ARMADA</td>
+    
+              <td align="right" height="19" class="OMS_TableContents">2</td>
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <!-- RVR-447: Add dealer invoice to Sales Inquiry -->
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <td align="right" height="19" class="OMS_TableContents">3</td>
+            <td align="right" height="19" class="OMS_TableContents">
+            
+              117
+      
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+          111
+        
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+          243
+        
+       </td>
+      
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          205
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          8
+        
+            </td>
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          12
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          14
+        
+       </td>
+    </tr>
+  
+    <tr>
+    
+      <td height="19">
+        KICKS</td>
+    
+              <td align="right" height="19" class="OMS_TableContents">15</td>
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <!-- RVR-447: Add dealer invoice to Sales Inquiry -->
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <td align="right" height="19" class="OMS_TableContents">19</td>
+            <td align="right" height="19" class="OMS_TableContents">
+            
+              99
+      
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+          122
+        
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+          85
+        
+       </td>
+      
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          76
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          9
+        
+            </td>
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          6
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          6
+        
+       </td>
+    </tr>
+  
+    <tr>
+    
+      <td height="19">
+        LEAF</td>
+    
+              <td align="right" height="19" class="OMS_TableContents">0</td>
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <!-- RVR-447: Add dealer invoice to Sales Inquiry -->
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <td align="right" height="19" class="OMS_TableContents">
+            
+N/A
+            
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+N/A
+        
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+          169
+        
+       </td>
+      
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          212
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+			N/A
+        
+            </td>
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          8
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          15
+        
+       </td>
+    </tr>
+  
+    <tr>
+    
+      <td height="19">
+        MAXIMA</td>
+    
+              <td align="right" height="19" class="OMS_TableContents">0</td>
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <!-- RVR-447: Add dealer invoice to Sales Inquiry -->
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <td align="right" height="19" class="OMS_TableContents">
+            
+N/A
+            
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+N/A
+        
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+          397
+        
+       </td>
+      
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          330
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+			N/A
+        
+            </td>
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          14
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          16
+        
+       </td>
+    </tr>
+  
+    <tr>
+    
+      <td height="19">
+        Z COUPE</td>
+    
+              <td align="right" height="19" class="OMS_TableContents">0</td>
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <!-- RVR-447: Add dealer invoice to Sales Inquiry -->
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <td align="right" height="19" class="OMS_TableContents">1</td>
+            <td align="right" height="19" class="OMS_TableContents">
+            
+N/A
+            
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+N/A
+        
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+          61
+        
+       </td>
+      
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          52
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+			N/A
+        
+            </td>
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          2
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          3
+        
+       </td>
+    </tr>
+  
+    <tr>
+    
+      <td height="19">
+        N KICKS</td>
+    
+              <td align="right" height="19" class="OMS_TableContents">0</td>
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <!-- RVR-447: Add dealer invoice to Sales Inquiry -->
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <td align="right" height="19" class="OMS_TableContents">
+            
+N/A
+            
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+N/A
+        
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+N/A
+        
+       </td>
+      
+       <td align="right" height="19" class="OMS_TableContents">
+        
+			N/A
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+			N/A
+        
+            </td>
+       <td align="right" height="19" class="OMS_TableContents">
+        
+			N/A
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+			N/A
+        
+       </td>
+    </tr>
+  
+    <tr>
+    
+      <td height="19">
+        ARIYA</td>
+    
+              <td align="right" height="19" class="OMS_TableContents">0</td>
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <!-- RVR-447: Add dealer invoice to Sales Inquiry -->
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <td align="right" height="19" class="OMS_TableContents">
+            
+N/A
+            
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+N/A
+        
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+          314
+        
+       </td>
+      
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          204
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+			N/A
+        
+            </td>
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          13
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          13
+        
+       </td>
+    </tr>
+  
+    <tr>
+    
+      <td height="19">
+        MURANO</td>
+    
+              <td align="right" height="19" class="OMS_TableContents">0</td>
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <!-- RVR-447: Add dealer invoice to Sales Inquiry -->
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <td align="right" height="19" class="OMS_TableContents">6</td>
+            <td align="right" height="19" class="OMS_TableContents">
+            
+N/A
+            
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+N/A
+        
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+          174
+        
+       </td>
+      
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          150
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+			N/A
+        
+            </td>
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          9
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          11
+        
+       </td>
+    </tr>
+  
+    <tr>
+    
+      <td height="19">
+        TITAN XD</td>
+    
+              <td align="right" height="19" class="OMS_TableContents">0</td>
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <!-- RVR-447: Add dealer invoice to Sales Inquiry -->
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <td align="right" height="19" class="OMS_TableContents">
+            
+N/A
+            
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+N/A
+        
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+          218
+        
+       </td>
+      
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          135
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+			N/A
+        
+            </td>
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          11
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          10
+        
+       </td>
+    </tr>
+  
+    <tr>
+    
+      <td height="19">
+        GT-R</td>
+    
+              <td align="right" height="19" class="OMS_TableContents">0</td>
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <!-- RVR-447: Add dealer invoice to Sales Inquiry -->
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <td align="right" height="19" class="OMS_TableContents">
+            
+N/A
+            
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+N/A
+        
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+N/A
+        
+       </td>
+      
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          29
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+			N/A
+        
+            </td>
+       <td align="right" height="19" class="OMS_TableContents">
+        
+			N/A
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          1
+        
+       </td>
+    </tr>
+  
+    <tr>
+    
+      <td height="19" class="OMS_TableContents">
+        TOTAL</td>
+    
+              <td align="right" height="19" class="OMS_TableContents">123</td>
+            <td align="right" height="19" class="OMS_TableContents">0</td>
+            <!-- RVR-447: Add dealer invoice to Sales Inquiry -->
+            <td align="right" height="19" class="OMS_TableContents">2</td>
+            <td align="right" height="19" class="OMS_TableContents">170</td>
+            <td align="right" height="19" class="OMS_TableContents">
+            
+              108
+      
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+          93
+        
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+          88
+        
+       </td>
+      
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          83
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+			N/A
+        
+            </td>
+       <td align="right" height="19" class="OMS_TableContents">
+        
+			N/A
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+			N/A
+        
+       </td>
+    </tr>
+  
+
+  </tbody>
+</table>
+
+<table cellpadding="0" cellspacing="0">
+  <tr class="InformationText">
+    <td height="10"></td>
+  </tr>
+  <tr>
+    <td><span class="OMS_TableContents">** Dealer Days Supply is based on 78 selling days for a 90-day sales period. Day Supply and Wholesale to Retail are based on drafted vehicles only (not invoiced/in-transit)</SPAN>
+    </td>
+  </tr>
+</table>
