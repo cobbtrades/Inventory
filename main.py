@@ -242,7 +242,6 @@ with tab3:
         outgoing_year_make_model = st.text_input("Outgoing Year Make Model", key="outgoing_year_make_model_input_trade")
         outgoing_full_vin = st.text_input("Outgoing Full VIN #", key="outgoing_full_vin_input_trade")
         outgoing_sale_price = st.text_input("Outgoing Sale Price", key="outgoing_sale_price_input_trade")
-        st.markdown('<div class="small-spacing"><hr></div>', unsafe_allow_html=True)
     with r_col:
         st.text("Incoming Unit")
         incoming_year_make_model = st.text_input("Incoming Year Make Model", key="incoming_year_make_model_input_trade")
