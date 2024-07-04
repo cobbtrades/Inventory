@@ -38,12 +38,12 @@ def load_data(file_paths):
     expected_columns = [
         'LOC_DESC', 'DLRORD', 'MDLYR', 'MDL', 'TRM_LVL', 'DRV_TRN', 'EXT', 'INT',
         'MCODE', 'VIN', 'DEALER_NAME', 'DLR_DLV_DT', 'DLRETA', 'ORD_CUST_NAME',
-        'ORD_CUST_EMAIL_ADDR', 'ORD_CUST_DATE', 'GOPTS', 'RTL_SALE_DT',
+        'ORD_CUST_EMAIL_ADDR', 'ORD_CUST_DATE', 'GOPTS', 'RTL_SALE_DT'
     ]
     new_column_names = {
         'LOC_DESC': 'LOC', 'DLRORD': 'ORDER', 'TRM_LVL': 'TRIM', 'DRV_TRN': 'DRIVE',
         'DLRETA': 'ETA', 'ORD_CUST_NAME': 'CUST_NAME', 'ORD_CUST_EMAIL_ADDR': 'CUST_EMAIL',
-        'ORD_CUST_DATE': 'ORD_DATE', 'DLR_DLV_DT': 'DLV_DATE', 'RTL_SALE_DT': 'SOLD',
+        'ORD_CUST_DATE': 'ORD_DATE', 'DLR_DLV_DT': 'DLV_DATE', 'RTL_SALE_DT': 'SOLD'
     }
     data_frames = []
     for file in file_paths:
@@ -235,19 +235,16 @@ with tab3:
     dealer_code = st.text_input("Dealer Code", key="dealer_code_input_trade")
     contact_name = st.text_input("Contact Name", key="contact_name_input_trade")
     st.markdown('<div class="small-spacing"><hr></div>', unsafe_allow_html=True)
-    l_col, r_col = st.columns(2)
-    with l_col:
-        st.text("Outgoing Unit")
-        outgoing_stock_number = st.text_input("Outgoing Stock Number", key="outgoing_stock_number_input_trade")
-        outgoing_year_make_model = st.text_input("Outgoing Year Make Model", key="outgoing_year_make_model_input_trade")
-        outgoing_full_vin = st.text_input("Outgoing Full VIN #", key="outgoing_full_vin_input_trade")
-        outgoing_sale_price = st.text_input("Outgoing Sale Price", key="outgoing_sale_price_input_trade")
-        st.markdown('<div class="small-spacing"><hr></div>', unsafe_allow_html=True)
-    with r_col:
-        st.text("Incoming Unit")
-        incoming_year_make_model = st.text_input("Incoming Year Make Model", key="incoming_year_make_model_input_trade")
-        incoming_full_vin = st.text_input("Incoming Full VIN #", key="incoming_full_vin_input_trade")
-        incoming_purchase_price = st.text_input("Incoming Purchase Price", key="incoming_purchase_price_input_trade")
+    st.text("Outgoing Unit")
+    outgoing_stock_number = st.text_input("Outgoing Stock Number", key="outgoing_stock_number_input_trade")
+    outgoing_year_make_model = st.text_input("Outgoing Year Make Model", key="outgoing_year_make_model_input_trade")
+    outgoing_full_vin = st.text_input("Outgoing Full VIN #", key="outgoing_full_vin_input_trade")
+    outgoing_sale_price = st.text_input("Outgoing Sale Price", key="outgoing_sale_price_input_trade")
+    st.markdown('<div class="small-spacing"><hr></div>', unsafe_allow_html=True)
+    st.text("Incoming Unit")
+    incoming_year_make_model = st.text_input("Incoming Year Make Model", key="incoming_year_make_model_input_trade")
+    incoming_full_vin = st.text_input("Incoming Full VIN #", key="incoming_full_vin_input_trade")
+    incoming_purchase_price = st.text_input("Incoming Purchase Price", key="incoming_purchase_price_input_trade")
 
     if st.button("Generate Trade PDF", key="generate_trade_pdf_button"):
         pdf_buffer = BytesIO()
@@ -341,33 +338,32 @@ with tab3:
         time.sleep(0.5)
         st.download_button(label="Download Trade PDF", data=pdf_data, file_name="dealer_trade.pdf", mime="application/pdf", key="download_trade_pdf_button")
 
-# Custom CSS to enforce light theme and table styles
-light_theme_css = """
+dark_mode_css = """
 <style>
-body {background-color: #FFFFFF; color: #000000;}
-h3 {color: #000000;}
+body {background-color: #0e1117; color: #fafafa;}
+h3 {color: #fafafa;}
 table {
     color: #000000;
     font-weight: bold;
     background-color: #FFFFFF;
-    border: 1px solid #000000;
+    border: 1px solid #383e53;
     text-align: center;
     width: 100%;
     border-collapse: collapse;
     table-layout: fixed;
     word-wrap: break-word;
 }
-thead th {color: #000000; background-color: #FFFFFF; text-align: center; padding: 8px; border: 1px solid #000000;}
-tbody td {text-align: center; padding: 8px; word-wrap: break-word; border: 1px solid #000000;}
-tbody tr:nth-child(even) {background-color: #f2f2f2;}
-tbody tr:nth-child(odd) {background-color: #ffffff;}
+thead th {color: #000000; background-color: #FFFFFF; text-align: center; padding: 8px;}
+tbody td {text-align: center; padding: 8px; word-wrap: break-word;}
+tbody tr:nth-child(even) {background-color: #FFFFFF;}
+tbody tr:nth-child(odd) {background-color: #FFFFFF;}
 .dataframe-container {font-size: 12px; padding: 1px;}
 .dataframe-container table {width: 100%;}
 .dataframe-container th, .dataframe-container td {padding: 2px;}
 .dataframe-container th {background-color: #FFFFFF;}
 </style>
 """
-st.markdown(light_theme_css, unsafe_allow_html=True)
+st.markdown(dark_mode_css, unsafe_allow_html=True)
 
 def replace_mdl_with_full_name(df, reverse_mdl_mapping):
     df['MDL'] = df['MDL'].replace(reverse_mdl_mapping)
@@ -390,7 +386,6 @@ def summarize_incoming_data(df, start_date, end_date, all_models, all_dealers):
 
 def summarize_retailed_data(df, start_date, end_date, all_models, all_dealers):
     df['SOLD'] = pd.to_datetime(df['SOLD'], errors='coerce')
-    df = df[df['SOLD'] >= start_date]
     filtered_df = df[(df['LOC'] == 'RETAILED')]
     filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].replace(dealer_acronyms)
     filtered_df = replace_mdl_with_full_name(filtered_df, reverse_mdl_mapping)
@@ -488,23 +483,9 @@ def plot_metric(dataframes, metric, title, ylabel):
         barmode='group',
         bargap=0.2,
         bargroupgap=0.1,
-        plot_bgcolor='#ffffff',
-        paper_bgcolor='#ffffff',
-        font=dict(color='#000000'),
-        margin=dict(l=10, r=10, t=40, b=40),  # Adjust margins to make space for the border
-        shapes=[dict(
-            type="rect",
-            x0=0,
-            y0=0,
-            x1=1,
-            y1=1,
-            line=dict(
-                color="black",
-                width=2,
-            ),
-            xref="paper",
-            yref="paper"
-        )]
+        plot_bgcolor='#0e1117',
+        paper_bgcolor='#0e1117',
+        font=dict(color='#d0d0d0')
     )
     
     st.plotly_chart(fig, use_container_width=True)
