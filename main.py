@@ -1,5 +1,6 @@
 import pandas as pd, streamlit as st, os, requests, base64, time, openpyxl, plotly.express as px, matplotlib.pyplot as plt, plotly.graph_objects as go
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from io import BytesIO
@@ -426,7 +427,7 @@ with tab4:
         start_of_month = today.replace(day=1)
         next_month_start = start_of_month.replace(month=start_of_month.month + 1).replace(day=1)
         following_month_start = start_of_month.replace(month=start_of_month.month + 2).replace(day=1)
-        start_for_calc = start_of_month.replace(month=start_of_month.month + 3).replace(day=1)
+        start_for_calc = start_of_month + relativedelta(months=3)
         end_of_month = next_month_start - timedelta(days=1)
         next_month_end = following_month_start - timedelta(days=1)
         following_month_end = start_for_calc - timedelta(days=1)
