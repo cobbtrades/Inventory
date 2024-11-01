@@ -425,8 +425,8 @@ with tab4:
     if not combined_data.empty:
         today = datetime.today()
         start_of_month = today.replace(day=1)
-        next_month_start = start_of_month.replace(month=start_of_month.month + 1).replace(day=1)
-        following_month_start = start_of_month.replace(month=start_of_month.month + 2).replace(day=1)
+        next_month_start = start_of_month + relativedelta(months=1)
+        following_month_start = start_of_month + relativedelta(months=2)
         start_for_calc = start_of_month + relativedelta(months=3)
         end_of_month = next_month_start - timedelta(days=1)
         next_month_end = following_month_start - timedelta(days=1)
