@@ -526,7 +526,7 @@ def summarize_current_inventory(dataframes):
     combined_data.reset_index(inplace=True)
     combined_data = combined_data[~combined_data["Model"].isin(["GT-R", "TITAN XD"])]
     combined_data["Total"] = combined_data.iloc[:, 1:].sum(axis=1)
-    total_row = combined_data.iloc[combined_data["Model"].str.lower() == "total"]
+    total_row = combined_data.loc[combined_data["Model"].str.lower() == "total"]
     combined_data = combined_data[combined_data["Model"].str.lower() != "total"].sort_values("Model")
     if not total_row.empty:
         combined_data = pd.concat([combined_data, total_row], ignore_index=True)
