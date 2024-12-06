@@ -189,13 +189,14 @@ def format_90_day_sales(summary_90_day_sales):
     # Add the "Total" column
     formatted_summary["Total"] = formatted_summary.sum(axis=1)
     
-    # Reset the index and drop it
-    formatted_summary = formatted_summary.reset_index(drop=True)
+    # Reset the index to make "Model" a column
+    formatted_summary = formatted_summary.reset_index()
     
-    # Remove any additional total rows if they exist
-    formatted_summary = formatted_summary[formatted_summary["Model"] != "TOTAL"]
+    # Ensure "Model" exists and filter out rows where "Model" is "TOTAL"
+    if "Model" in formatted_summary.columns:
+        formatted_summary = formatted_summary[formatted_summary["Model"] != "TOTAL"]
     
-    # Rename columns using dlr_acronyms
+    # Rename columns using `dlr_acronyms`
     formatted_summary.columns = [
         dlr_acronyms.get(col, col) if col != "Model" else col
         for col in formatted_summary.columns
