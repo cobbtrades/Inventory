@@ -189,8 +189,8 @@ def format_90_day_sales(summary_90_day_sales):
     # Add the "Total" column
     formatted_summary["Total"] = formatted_summary.sum(axis=1)
     
-    # Reset the index to make "Model" the first column
-    formatted_summary = formatted_summary.reset_index(inplace=True)
+    # Reset the index and drop it
+    formatted_summary = formatted_summary.reset_index(drop=True)
     
     # Remove any additional total rows if they exist
     formatted_summary = formatted_summary[formatted_summary["Model"] != "TOTAL"]
