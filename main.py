@@ -112,6 +112,56 @@ def load_current_data(file_path):
 
 current_data = load_current_data('InventoryUpdate.xlsx')
 
+@st.cache_data
+def process_90_day_sales(file_path):
+    """Process the 90-day sales data for a given file."""
+    data = pd.read_html(file_path)[0]
+    cleaned_data = data.iloc[2:, :9]  # Ignore the first two rows and unnecessary columns beyond 9
+    cleaned_data.columns = [
+        "Model",
+        "Units Sold Rolling Days 90",
+        "Units Sold-MTD",
+        "Dlr Invoice",
+        "Dlr Inventory",
+        "Dlr Days Supply",
+        "Wholesale to Retail Dealer (avg days)",
+        "Wholesale to Retail District (avg days)",
+        "Wholesale to Retail Region (avg days)",
+    ]
+    numeric_columns = [
+        "Units Sold Rolling Days 90",
+        "Units Sold-MTD",
+        "Dlr Invoice",
+        "Dlr Inventory",
+        "Dlr Days Supply",
+        "Wholesale to Retail Dealer (avg days)",
+        "Wholesale to Retail District (avg days)",
+        "Wholesale to Retail Region (avg days)",
+    ]
+    cleaned_data[numeric_columns] = cleaned_data[numeric_columns].apply(pd.to_numeric, errors="coerce")
+    cleaned_data = cleaned_data.dropna(subset=["Model"])
+    return cleaned_data.groupby("Model")["Units Sold Rolling Days 90"].sum().reset_index()
+
+# Load data for all stores
+store_summaries = {}
+for store, file_path in store_files.items():
+    try:
+        store_summaries[store] = process_90_day_sales(file_path)
+    except Exception as e:
+        store_summaries[store] = pd.DataFrame(columns=["Model", "Units Sold Rolling Days 90"])
+
+def summarize_90_day_sales_by_store():
+    """Summarize 90-day sales across all stores."""
+    all_stores_summary = pd.concat(
+        {store: summary.set_index("Model") for store, summary in store_summaries.items()},
+        axis=1
+    ).fillna(0)
+    all_stores_summary.columns = [f"{store} Sales" for store in store_summaries.keys()]
+    return all_stores_summary.reset_index()
+
+# Summarize the 90-day sales for integration into Tab 4
+summary_90_day_sales = summarize_90_day_sales_by_store()
+
 st.write(
     """
     <style>
@@ -442,9 +492,8 @@ with tab4:
                 current_month_summary = summarize_incoming_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
                 st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(current_month_summary)}</div>", unsafe_allow_html=True)
                 
-                st.markdown(f"<h5 style='text-align: center;'>RETAILED</h5>", unsafe_allow_html=True)
-                retailed_summary = summarize_retailed_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
-                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(retailed_summary)}</div>", unsafe_allow_html=True)
+                st.markdown(f"<h5 style='text-align: center;'>90-Day Sales Summary</h5>", unsafe_allow_html=True)
+                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(summary_90_day_sales)}</div>", unsafe_allow_html=True)
             
             with col2:
                 st.markdown(f"<h5 style='text-align: center;'>Incoming for {next_month_start.strftime('%B')}</h5>", unsafe_allow_html=True)
