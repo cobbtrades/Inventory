@@ -518,25 +518,17 @@ def summarize_retailed_data(df, start_date, end_date, all_models, all_dealers):
     return pivot_table
 
 def summarize_current_inventory(dataframes):
-    """Summarize the current inventory across all stores."""
-    # Concatenate the Dlr Inventory data from all stores
     combined_data = pd.concat(
         {store: df.set_index("Model")["Dlr Inventory"] for store, df in dataframes.items() if "Dlr Inventory" in df},
         axis=1,
     ).fillna(0)
-    
-    # Rename columns using `dlr_acronyms`
     combined_data.columns = [dlr_acronyms.get(col, col) for col in combined_data.columns]
-
-    # Reset index to convert "Model" back to a column
     combined_data.reset_index(inplace=True)
-
-    # Filter out rows with "GT-R" and "TITAN XD"
     combined_data = combined_data[~combined_data["Model"].isin(["GT-R", "TITAN XD"])]
-
-    # Add a "Total" column
     combined_data["Total"] = combined_data.iloc[:, 1:].sum(axis=1)
-
+    total_row = combined_data[combined_data["Model"] == "Total"]
+    combined_data = combined_data[combined_data["Model"] != "Total"].sort_values("Model")
+    combined_data = pd.concat([combined_data, total_row], ignore_index=True)
     return combined_data
 
 def summarize_dlv_date_data(df, start_date, end_date, all_models, all_dealers):
