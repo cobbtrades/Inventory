@@ -192,9 +192,11 @@ def format_90_day_sales(summary_90_day_sales):
     # Reset the index to make "Model" a column
     formatted_summary = formatted_summary.reset_index()
     
-    # Ensure "Model" exists and filter out rows where "Model" is "TOTAL"
+    # Ensure "Model" exists and filter out rows where "Model" is "TOTAL" or "GTR"
     if "Model" in formatted_summary.columns:
-        formatted_summary = formatted_summary[formatted_summary["Model"] != "TOTAL"]
+        formatted_summary = formatted_summary[
+            (formatted_summary["Model"] != "TOTAL") & (formatted_summary["Model"] != "GTR")
+        ]
     
     # Rename columns using `dlr_acronyms`
     formatted_summary.columns = [
