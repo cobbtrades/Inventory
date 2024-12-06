@@ -514,7 +514,7 @@ def summarize_dlv_date_data(df, start_date, end_date, all_models, all_dealers):
     return pivot_table
 
 def dataframe_to_html(df):
-    html = df.to_html(classes='dataframe-container', border=0, index_names=False)
+    html = df.to_html(classes='dataframe-container', border=0, index=False)  # Set index=False
     return html
 
 with tab4:
