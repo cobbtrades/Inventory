@@ -563,9 +563,9 @@ with tab4:
                 next_month_summary = summarize_incoming_data(combined_data, next_month_start, next_month_end, all_models, all_dealers)
                 st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(next_month_summary)}</div>", unsafe_allow_html=True)
                 
-                st.markdown(f"<h5 style='text-align: center;'>RETAILED Month to Date</h5>", unsafe_allow_html=True)
-                retailed_summary = summarize_retailed_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
-                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(retailed_summary)}</div>", unsafe_allow_html=True)
+                st.markdown(f"<h5 style='text-align: center;'>Current NNA Inventory(DLR INV)</h5>", unsafe_allow_html=True)
+                dlv_inv_summary = summarize_dlv_inv_data(combined_data, all_models, all_dealers)
+                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(dlv_inv_summary)}</div>", unsafe_allow_html=True)
             
             with col3:
                 st.markdown(f"<h5 style='text-align: center;'>Incoming for {following_month_start.strftime('%B')}</h5>", unsafe_allow_html=True)
