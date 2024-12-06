@@ -514,6 +514,10 @@ def summarize_dlv_date_data(df, start_date, end_date, all_models, all_dealers):
     return pivot_table
 
 def dataframe_to_html(df):
+    html = df.to_html(classes='dataframe-container', border=0, index_names=False)
+    return html
+    
+def dataframe_to_html_90(df):
     html = df.to_html(classes='dataframe-container', border=0, index=False)  # Set index=False
     return html
 
@@ -538,7 +542,7 @@ with tab4:
                 st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(current_month_summary)}</div>", unsafe_allow_html=True)
                 
                 st.markdown(f"<h5 style='text-align: center;'>90-Day Sales Summary</h5>", unsafe_allow_html=True)
-                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(formatted_90_day_sales)}</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html_90(formatted_90_day_sales)}</div>", unsafe_allow_html=True)
             
             with col2:
                 st.markdown(f"<h5 style='text-align: center;'>Incoming for {next_month_start.strftime('%B')}</h5>", unsafe_allow_html=True)
