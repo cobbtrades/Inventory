@@ -178,12 +178,14 @@ def format_90_day_sales(summary_90_day_sales):
         index="Model",
         columns="Dealer",
         aggfunc="sum",
-        fill_value=0,
-        margins=True,  # Adds a Total column
-        margins_name="Total"
+        fill_value=0
     )
-    # Reset the index to make Model the first column
+    # Add the "Total" column
+    formatted_summary["Total"] = formatted_summary.sum(axis=1)
+    # Reset the index to make "Model" the first column
     formatted_summary = formatted_summary.reset_index()
+    # Remove any additional total rows if they exist
+    formatted_summary = formatted_summary[formatted_summary["Model"] != "TOTAL"]
     return formatted_summary
 
 summary_90_day_sales = summarize_90_day_sales_by_store()
