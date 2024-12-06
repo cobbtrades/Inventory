@@ -195,7 +195,7 @@ def format_90_day_sales(summary_90_day_sales):
     # Ensure "Model" exists and filter out rows where "Model" is "TOTAL" or "GTR"
     if "Model" in formatted_summary.columns:
         formatted_summary = formatted_summary[
-            (formatted_summary["Model"] != "TOTAL") & (formatted_summary["Model"] != "GTR")
+            (formatted_summary["Model"] != "TOTAL") & (formatted_summary["Model"] != "GT-R")
         ]
     
     # Rename columns using `dlr_acronyms`
