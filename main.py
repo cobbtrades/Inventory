@@ -399,6 +399,21 @@ def summarize_retailed_data(df, start_date, end_date, all_models, all_dealers):
     pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
     return pivot_table
 
+def summarize_90_day_sales(dataframes, all_models, all_dealers):
+    all_combinations = pd.MultiIndex.from_product([all_dealers, all_models], names=['DEALER_NAME', 'Model'])
+    summaries = []
+
+    for dealer, df in dataframes.items():
+        df = df[['Model', 'Sold Roll 90']].copy()
+        df['DEALER_NAME'] = dealer
+        summaries.append(df)
+
+    combined_df = pd.concat(summaries, ignore_index=True)
+    combined_df = combined_df.groupby(['DEALER_NAME', 'Model'])['Sold Roll 90'].sum().reindex(all_combinations, fill_value=0).reset_index(name='Count')
+    
+    pivot_table = pd.pivot_table(combined_df, values='Count', index='Model', columns='DEALER_NAME', aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
+    return pivot_table
+
 def summarize_dlv_inv_data(df, all_models, all_dealers):
     filtered_df = df[(df['LOC'] == 'DLR INV') & (df['SOLD'].isna())]
     filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].replace(dealer_acronyms)
@@ -442,9 +457,9 @@ with tab4:
                 current_month_summary = summarize_incoming_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
                 st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(current_month_summary)}</div>", unsafe_allow_html=True)
                 
-                st.markdown(f"<h5 style='text-align: center;'>RETAILED</h5>", unsafe_allow_html=True)
-                retailed_summary = summarize_retailed_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
-                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(retailed_summary)}</div>", unsafe_allow_html=True)
+                st.markdown(f"<h5 style='text-align: center;'>90-Day Sales</h5>", unsafe_allow_html=True)
+                ninety_day_summary = summarize_90_day_sales(dataframes, all_models, all_dealers)
+                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(ninety_day_summary)}</div>", unsafe_allow_html=True)
             
             with col2:
                 st.markdown(f"<h5 style='text-align: center;'>Incoming for {next_month_start.strftime('%B')}</h5>", unsafe_allow_html=True)
