@@ -162,11 +162,12 @@ def summarize_90_day_sales_by_store():
         {store: summary.set_index("Model") for store, summary in store_summaries.items()},
         axis=1
     ).fillna(0)
+    
+    # Rename columns to reflect dealers
     all_stores_summary.columns = [f"{store}" for store in store_summaries.keys()]
-    return all_stores_summary.reset_index()
-
-# Summarize the 90-day sales for integration into Tab 4
-summary_90_day_sales = summarize_90_day_sales_by_store()
+    all_stores_summary.reset_index(inplace=True)
+    all_stores_summary = all_stores_summary.melt(id_vars=["Model"], var_name="Dealer", value_name="Units Sold Rolling Days 90")
+    return all_stores_summary
 
 @st.cache_data
 def format_90_day_sales(summary_90_day_sales):
@@ -185,7 +186,7 @@ def format_90_day_sales(summary_90_day_sales):
     formatted_summary = formatted_summary.reset_index()
     return formatted_summary
 
-# Format the 90-day sales summary
+summary_90_day_sales = summarize_90_day_sales_by_store()
 formatted_90_day_sales = format_90_day_sales(summary_90_day_sales)
 
 st.write(
