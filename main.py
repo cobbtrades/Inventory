@@ -192,10 +192,12 @@ def format_90_day_sales(summary_90_day_sales):
     # Reset the index to make "Model" a column
     formatted_summary = formatted_summary.reset_index()
     
-    # Ensure "Model" exists and filter out rows where "Model" is "TOTAL" or "GTR"
+    # Ensure "Model" exists and filter out rows where "Model" is "TOTAL" or "GTR" or "TITAN XD"
     if "Model" in formatted_summary.columns:
         formatted_summary = formatted_summary[
-            (formatted_summary["Model"] != "TOTAL") & (formatted_summary["Model"] != "GT-R")
+            (formatted_summary["Model"] != "TOTAL") & 
+            (formatted_summary["Model"] != "GT-R") & 
+            (formatted_summary["Model"] != "TITAN XD")
         ]
     
     # Rename columns using `dlr_acronyms`
@@ -203,6 +205,16 @@ def format_90_day_sales(summary_90_day_sales):
         dlr_acronyms.get(col, col) if col != "Model" else col
         for col in formatted_summary.columns
     ]
+    
+    # Calculate the total row
+    total_row = formatted_summary.drop(columns=["Model"]).sum(numeric_only=True)
+    total_row["Model"] = "Total"
+    
+    # Append the total row
+    formatted_summary = pd.concat(
+        [formatted_summary, pd.DataFrame([total_row])],
+        ignore_index=True
+    )
     
     return formatted_summary
 
