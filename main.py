@@ -430,18 +430,6 @@ def process_excel(file):
         df[numeric_columns] = df[numeric_columns].apply(pd.to_numeric, errors='coerce')
         df = df.dropna(subset=['Model'])
         return df
-    
-    cn_df = process_excel('files/Concord90.xls')
-    hk_df = process_excel('files/Hickory90.xls')
-    ln_df = process_excel('files/Lake90.xls')
-    ws_df = process_excel('files/Winston90.xls')
-
-    dataframes = {
-        'Concord': cn_df,
-        'Hickory': hk_df,
-        'Lake': ln_df,
-        'Winston': ws_df
-    }
 
 def summarize_90_day_sales(dataframes, all_models, all_dealers):
     all_combinations = pd.MultiIndex.from_product([all_dealers, all_models], names=['DEALER_NAME', 'Model'])
@@ -463,6 +451,17 @@ def dataframe_to_html(df):
     return html
 
 with tab4:
+    cn_df = process_excel('files/Concord90.xls')
+    hk_df = process_excel('files/Hickory90.xls')
+    ln_df = process_excel('files/Lake90.xls')
+    ws_df = process_excel('files/Winston90.xls')
+
+    dataframes = {
+        'Concord': cn_df,
+        'Hickory': hk_df,
+        'Lake': ln_df,
+        'Winston': ws_df
+    }
     container = st.container()
     if not combined_data.empty:
         today = datetime.today()
