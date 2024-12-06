@@ -8,6 +8,12 @@ from streamlit_extras.grid import grid
 
 st.set_page_config(layout="wide", page_title="Nissan Inventory", page_icon="logo.png")
 file_paths = ['files/Concord.xls', 'files/Winston.xls', 'files/Lake.xls', 'files/Hickory.xls']
+store_files = {
+    "Concord": "files/Concord90.xls",
+    "Hickory": "files/Hickory90.xls",
+    "Lake Norman": "files/Lake90.xls",
+    "Winston-Salem": "files/Winston90.xls",
+}
 ext_mapping = {
     'A20': 'RED ALERT', 'B51': 'ELECTRIC BLUE', 'BW5': 'HERMOSA BLUE', 'CAS': 'MOCHA ALMOND',
     'CBF': 'CANYON BRONZE', 'XLC': 'GUN/RED', 'XLE': 'YELLOW/BLACK', 'XLD': 'ICE/BLACK',
