@@ -163,16 +163,25 @@ for store, file_path in store_files.items():
 
 def summarize_90_day_sales_by_store():
     """Summarize 90-day sales across all stores."""
-    all_stores_summary = pd.concat(
-        {store: summary.set_index("Model") for store, summary in store_summaries.items()},
-        axis=1
-    ).fillna(0)
-    
-    # Rename columns to reflect dealers
-    all_stores_summary.columns = [f"{store}" for store in store_summaries.keys()]
-    all_stores_summary.reset_index(inplace=True)
-    all_stores_summary = all_stores_summary.melt(id_vars=["Model"], var_name="Dealer", value_name="Units Sold Rolling Days 90")
-    return all_stores_summary
+    try:
+        # Concatenate DataFrames, aligning on index
+        all_stores_summary = pd.concat(
+            {store: summary.set_index("Model") for store, summary in store_summaries.items() if not summary.empty},
+            axis=1
+        ).fillna(0)
+
+        # Flatten MultiIndex columns and rename
+        all_stores_summary.columns = all_stores_summary.columns.get_level_values(0)
+        all_stores_summary.reset_index(inplace=True)
+
+        # Melt for long-form representation
+        all_stores_summary = all_stores_summary.melt(
+            id_vars=["Model"], var_name="Dealer", value_name="Units Sold Rolling Days 90"
+        )
+        return all_stores_summary
+    except Exception as e:
+        st.error(f"Error summarizing 90-day sales: {e}")
+        return pd.DataFrame(columns=["Model", "Dealer", "Units Sold Rolling Days 90"])
 
 @st.cache_data
 def format_90_day_sales(summary_90_day_sales):
