@@ -193,8 +193,6 @@ def summarize_90_day_sales_by_store():
         
 @st.cache_data
 def format_90_day_sales(summary_90_day_sales):
-    """Format the 90-day sales summary to match the look of other tables."""
-    # Pivot the table for a cleaner display
     formatted_summary = summary_90_day_sales.pivot_table(
         values="Units Sold Rolling Days 90",
         index="Model",
@@ -202,31 +200,24 @@ def format_90_day_sales(summary_90_day_sales):
         aggfunc="sum",
         fill_value=0
     )
-    
-    # Add the "Total" column
     formatted_summary["Total"] = formatted_summary.sum(axis=1)
-    
-    # Reset the index to make "Model" a column
     formatted_summary = formatted_summary.reset_index()
-    
-    # Filter out rows like "GTR" and "TITAN XD" and ensure "Total" remains at the bottom
     formatted_summary = formatted_summary[~formatted_summary["Model"].isin(["GT-R", "TITAN XD", "TOTAL"])]
-    
-    # Rename columns using `dlr_acronyms`
     formatted_summary.columns = [
         dlr_acronyms.get(col, col) if col != "Model" else col
         for col in formatted_summary.columns
     ]
-    
-    # Sort alphabetically by Model, excluding the Total row
-    total_row = formatted_summary[formatted_summary["Model"].str.lower() == "total"]
-    formatted_summary = formatted_summary[formatted_summary["Model"].str.lower() != "total"]
-    formatted_summary = formatted_summary.sort_values("Model", key=lambda x: x.str.lower())
-    
-    # Append the Total row at the bottom
-    if not total_row.empty:
-        formatted_summary = pd.concat([formatted_summary, total_row], ignore_index=True)
-    
+    total_row = formatted_summary.drop(columns=["Model"]).sum(numeric_only=True)
+    total_row["Model"] = "Total"
+    formatted_summary = pd.concat(
+        [formatted_summary, pd.DataFrame([total_row])],
+        ignore_index=True
+    )
+    formatted_summary = formatted_summary.sort_values(
+        by="Model",
+        key=lambda x: x.str.lower() if x.name == "Model" else x,
+        ignore_index=True
+    )
     return formatted_summary
 
 summary_90_day_sales = summarize_90_day_sales_by_store()
