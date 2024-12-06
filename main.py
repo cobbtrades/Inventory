@@ -418,6 +418,46 @@ def summarize_dlv_date_data(df, start_date, end_date, all_models, all_dealers):
     pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
     return pivot_table
 
+def process_excel(file):
+        df = pd.read_html(file)[0].iloc[:, :9]
+        df.columns = df.iloc[1]
+        df = df.drop([0, 1])
+        df.columns = ['Model', 'Sold Roll 90', 'Sold-MTD', 'Dlr Invoice', 'Dlr Inventory', 'Days Supply',
+                      'Wholesale to Retail Dealer(avg days)', 'Wholesale to Retail District(avg days)', 'Wholesale to Retail Region(avg days)']
+        df['Model'] = df['Model'].astype(str)
+        numeric_columns = ['Sold Roll 90', 'Sold-MTD', 'Dlr Invoice', 'Dlr Inventory', 'Days Supply',
+                           'Wholesale to Retail Dealer(avg days)', 'Wholesale to Retail District(avg days)', 'Wholesale to Retail Region(avg days)']
+        df[numeric_columns] = df[numeric_columns].apply(pd.to_numeric, errors='coerce')
+        df = df.dropna(subset=['Model'])
+        return df
+    
+    cn_df = process_excel('files/Concord90.xls')
+    hk_df = process_excel('files/Hickory90.xls')
+    ln_df = process_excel('files/Lake90.xls')
+    ws_df = process_excel('files/Winston90.xls')
+
+    dataframes = {
+        'Concord': cn_df,
+        'Hickory': hk_df,
+        'Lake': ln_df,
+        'Winston': ws_df
+    }
+
+def summarize_90_day_sales(dataframes, all_models, all_dealers):
+    all_combinations = pd.MultiIndex.from_product([all_dealers, all_models], names=['DEALER_NAME', 'Model'])
+    summaries = []
+
+    for dealer, df in dataframes.items():
+        df = df[['Model', 'Sold Roll 90']].copy()
+        df['DEALER_NAME'] = dealer
+        summaries.append(df)
+
+    combined_df = pd.concat(summaries, ignore_index=True)
+    combined_df = combined_df.groupby(['DEALER_NAME', 'Model'])['Sold Roll 90'].sum().reindex(all_combinations, fill_value=0).reset_index(name='Count')
+    
+    pivot_table = pd.pivot_table(combined_df, values='Count', index='Model', columns='DEALER_NAME', aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
+    return pivot_table
+
 def dataframe_to_html(df):
     html = df.to_html(classes='dataframe-container', border=0, index_names=False)
     return html
@@ -442,9 +482,9 @@ with tab4:
                 current_month_summary = summarize_incoming_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
                 st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(current_month_summary)}</div>", unsafe_allow_html=True)
                 
-                st.markdown(f"<h5 style='text-align: center;'>RETAILED</h5>", unsafe_allow_html=True)
-                retailed_summary = summarize_retailed_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
-                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(retailed_summary)}</div>", unsafe_allow_html=True)
+                st.markdown(f"<h5 style='text-align: center;'>90-Day Sales</h5>", unsafe_allow_html=True)
+                ninety_day_summary = summarize_90_day_sales(dataframes, all_models, all_dealers)
+                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(ninety_day_summary)}</div>", unsafe_allow_html=True)
             
             with col2:
                 st.markdown(f"<h5 style='text-align: center;'>Incoming for {next_month_start.strftime('%B')}</h5>", unsafe_allow_html=True)
