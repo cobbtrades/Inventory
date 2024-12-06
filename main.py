@@ -162,11 +162,31 @@ def summarize_90_day_sales_by_store():
         {store: summary.set_index("Model") for store, summary in store_summaries.items()},
         axis=1
     ).fillna(0)
-    all_stores_summary.columns = [f"{store} Sales" for store in store_summaries.keys()]
+    all_stores_summary.columns = [f"{store}" for store in store_summaries.keys()]
     return all_stores_summary.reset_index()
 
 # Summarize the 90-day sales for integration into Tab 4
 summary_90_day_sales = summarize_90_day_sales_by_store()
+
+@st.cache_data
+def format_90_day_sales(summary_90_day_sales):
+    """Format the 90-day sales summary to match the look of other tables."""
+    # Pivot the table for a cleaner display
+    formatted_summary = summary_90_day_sales.pivot_table(
+        values="Units Sold Rolling Days 90",
+        index="Model",
+        columns="Dealer",
+        aggfunc="sum",
+        fill_value=0,
+        margins=True,  # Adds a Total column
+        margins_name="Total"
+    )
+    # Reset the index to make Model the first column
+    formatted_summary = formatted_summary.reset_index()
+    return formatted_summary
+
+# Format the 90-day sales summary
+formatted_90_day_sales = format_90_day_sales(summary_90_day_sales)
 
 st.write(
     """
@@ -499,7 +519,7 @@ with tab4:
                 st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(current_month_summary)}</div>", unsafe_allow_html=True)
                 
                 st.markdown(f"<h5 style='text-align: center;'>90-Day Sales Summary</h5>", unsafe_allow_html=True)
-                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(summary_90_day_sales)}</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(formatted_90_day_sales)}</div>", unsafe_allow_html=True)
             
             with col2:
                 st.markdown(f"<h5 style='text-align: center;'>Incoming for {next_month_start.strftime('%B')}</h5>", unsafe_allow_html=True)
