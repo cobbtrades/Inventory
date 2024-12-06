@@ -201,13 +201,8 @@ def format_90_day_sales(summary_90_day_sales):
     # Reset the index to make "Model" a column
     formatted_summary = formatted_summary.reset_index()
     
-    # Ensure "Model" exists and filter out rows where "Model" is "TOTAL" or "GTR" or "TITAN XD"
-    if "Model" in formatted_summary.columns:
-        formatted_summary = formatted_summary[
-            (formatted_summary["Model"] != "TOTAL") & 
-            (formatted_summary["Model"] != "GT-R") & 
-            (formatted_summary["Model"] != "TITAN XD")
-        ]
+    # Filter out rows like "GTR" and "TITAN XD" and ensure "Total" remains at the bottom
+    formatted_summary = formatted_summary[~formatted_summary["Model"].isin(["GT-R", "TITAN XD", "TOTAL"])]
     
     # Rename columns using `dlr_acronyms`
     formatted_summary.columns = [
@@ -215,15 +210,14 @@ def format_90_day_sales(summary_90_day_sales):
         for col in formatted_summary.columns
     ]
     
-    # Calculate the total row
-    total_row = formatted_summary.drop(columns=["Model"]).sum(numeric_only=True)
-    total_row["Model"] = "Total"
+    # Sort alphabetically by Model, excluding the Total row
+    total_row = formatted_summary[formatted_summary["Model"].str.lower() == "total"]
+    formatted_summary = formatted_summary[formatted_summary["Model"].str.lower() != "total"]
+    formatted_summary = formatted_summary.sort_values("Model", key=lambda x: x.str.lower())
     
-    # Append the total row
-    formatted_summary = pd.concat(
-        [formatted_summary, pd.DataFrame([total_row])],
-        ignore_index=True
-    )
+    # Append the Total row at the bottom
+    if not total_row.empty:
+        formatted_summary = pd.concat([formatted_summary, total_row], ignore_index=True)
     
     return formatted_summary
 
