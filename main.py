@@ -202,20 +202,14 @@ def format_90_day_sales(summary_90_day_sales):
     )
     formatted_summary["Total"] = formatted_summary.sum(axis=1)
     formatted_summary = formatted_summary.reset_index()
-    formatted_summary = formatted_summary[~formatted_summary["Model"].isin(["GT-R", "TITAN XD", "TOTAL"])]
-    formatted_summary.columns = [
-        dlr_acronyms.get(col, col) if col != "Model" else col
-        for col in formatted_summary.columns
-    ]
+    formatted_summary = formatted_summary[~formatted_summary["Model"].isin(["GT-R", "TITAN XD"])]
     total_row = formatted_summary.drop(columns=["Model"]).sum(numeric_only=True)
     total_row["Model"] = "Total"
+    formatted_summary = formatted_summary[formatted_summary["Model"] != "Total"].sort_values(
+        by="Model", key=lambda x: x.str.lower(), ignore_index=True
+    )
     formatted_summary = pd.concat(
         [formatted_summary, pd.DataFrame([total_row])],
-        ignore_index=True
-    )
-    formatted_summary = formatted_summary.sort_values(
-        by="Model",
-        key=lambda x: x.str.lower() if x.name == "Model" else x,
         ignore_index=True
     )
     return formatted_summary
