@@ -125,7 +125,7 @@ current_data = load_current_data('InventoryUpdate.xlsx')
 
 @st.cache_data
 def process_90_day_sales(file_path):
-    """Process the 90-day sales data for a given file."""
+    """Process the 90-day sales data and current inventory for a given file."""
     data = pd.read_html(file_path)[0]
     cleaned_data = data.iloc[2:, :9]  # Ignore the first two rows and unnecessary columns beyond 9
     cleaned_data.columns = [
@@ -133,7 +133,7 @@ def process_90_day_sales(file_path):
         "Units Sold Rolling Days 90",
         "Units Sold-MTD",
         "Dlr Invoice",
-        "Dlr Inventory",
+        "Dlr Inventory",  # This represents "Current Inventory"
         "Dlr Days Supply",
         "Wholesale to Retail Dealer (avg days)",
         "Wholesale to Retail District (avg days)",
@@ -143,7 +143,7 @@ def process_90_day_sales(file_path):
         "Units Sold Rolling Days 90",
         "Units Sold-MTD",
         "Dlr Invoice",
-        "Dlr Inventory",
+        "Dlr Inventory",  # Ensure this column is included for aggregation
         "Dlr Days Supply",
         "Wholesale to Retail Dealer (avg days)",
         "Wholesale to Retail District (avg days)",
@@ -151,7 +151,7 @@ def process_90_day_sales(file_path):
     ]
     cleaned_data[numeric_columns] = cleaned_data[numeric_columns].apply(pd.to_numeric, errors="coerce")
     cleaned_data = cleaned_data.dropna(subset=["Model"])
-    return cleaned_data.groupby("Model")["Units Sold Rolling Days 90"].sum().reset_index()
+    return cleaned_data
 
 # Load data for all stores
 store_summaries = {}
@@ -508,14 +508,18 @@ def summarize_retailed_data(df, start_date, end_date, all_models, all_dealers):
     pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
     return pivot_table
 
-def summarize_dlv_inv_data(df, all_models, all_dealers):
-    filtered_df = df[(df['LOC'] == 'DLR INV') & (df['SOLD'].isna())]
-    filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].replace(dealer_acronyms)
-    filtered_df = replace_mdl_with_full_name(filtered_df, reverse_mdl_mapping)
-    all_combinations = pd.MultiIndex.from_product([all_dealers, all_models], names=['DEALER_NAME', 'MDL'])
-    summary = filtered_df.groupby(['DEALER_NAME', 'MDL']).size().reindex(all_combinations, fill_value=0).reset_index(name='Count')
-    pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
-    return pivot_table
+def summarize_current_inventory(dataframes):
+    """Summarize the current inventory across all stores."""
+    combined_data = pd.concat(
+        {store: df.set_index("Model")["Dlr Inventory"] for store, df in dataframes.items()},
+        axis=1,
+    ).fillna(0)
+    
+    # Rename columns to reflect dealer names
+    combined_data.columns = [f"{store}" for store in dataframes.keys()]
+    combined_data["Total"] = combined_data.sum(axis=1)
+    combined_data.reset_index(inplace=True)
+    return combined_data
 
 def summarize_dlv_date_data(df, start_date, end_date, all_models, all_dealers):
     df['DLV_DATE'] = pd.to_datetime(df['DLV_DATE'], errors='coerce')
@@ -563,9 +567,9 @@ with tab4:
                 next_month_summary = summarize_incoming_data(combined_data, next_month_start, next_month_end, all_models, all_dealers)
                 st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(next_month_summary)}</div>", unsafe_allow_html=True)
                 
-                st.markdown(f"<h5 style='text-align: center;'>Current NNA Inventory(DLR INV)</h5>", unsafe_allow_html=True)
-                dlv_inv_summary = summarize_dlv_inv_data(combined_data, all_models, all_dealers)
-                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(dlv_inv_summary)}</div>", unsafe_allow_html=True)
+                st.markdown(f"<h5 style='text-align: center;'>Current Inventory</h5>", unsafe_allow_html=True)
+                current_inventory_summary = summarize_current_inventory(store_summaries)
+                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(current_inventory_summary)}</div>", unsafe_allow_html=True)
             
             with col3:
                 st.markdown(f"<h5 style='text-align: center;'>Incoming for {following_month_start.strftime('%B')}</h5>", unsafe_allow_html=True)
