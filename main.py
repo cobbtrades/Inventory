@@ -125,33 +125,37 @@ current_data = load_current_data('InventoryUpdate.xlsx')
 
 @st.cache_data
 def process_90_day_sales(file_path):
-    """Process the 90-day sales data and current inventory for a given file."""
-    data = pd.read_html(file_path)[0]
-    cleaned_data = data.iloc[2:, :9]  # Ignore the first two rows and unnecessary columns beyond 9
-    cleaned_data.columns = [
-        "Model",
-        "Units Sold Rolling Days 90",
-        "Units Sold-MTD",
-        "Dlr Invoice",
-        "Dlr Inventory",  # This represents "Current Inventory"
-        "Dlr Days Supply",
-        "Wholesale to Retail Dealer (avg days)",
-        "Wholesale to Retail District (avg days)",
-        "Wholesale to Retail Region (avg days)",
-    ]
-    numeric_columns = [
-        "Units Sold Rolling Days 90",
-        "Units Sold-MTD",
-        "Dlr Invoice",
-        "Dlr Inventory",  # Ensure this column is included for aggregation
-        "Dlr Days Supply",
-        "Wholesale to Retail Dealer (avg days)",
-        "Wholesale to Retail District (avg days)",
-        "Wholesale to Retail Region (avg days)",
-    ]
-    cleaned_data[numeric_columns] = cleaned_data[numeric_columns].apply(pd.to_numeric, errors="coerce")
-    cleaned_data = cleaned_data.dropna(subset=["Model"])
-    return cleaned_data
+    """Process the 90-day sales data for a given file."""
+    try:
+        data = pd.read_html(file_path)[0]
+        cleaned_data = data.iloc[2:, :9]  # Ignore headers and excess columns
+        cleaned_data.columns = [
+            "Model",
+            "Units Sold Rolling Days 90",
+            "Units Sold-MTD",
+            "Dlr Invoice",
+            "Dlr Inventory",  # Current Inventory
+            "Dlr Days Supply",
+            "Wholesale to Retail Dealer (avg days)",
+            "Wholesale to Retail District (avg days)",
+            "Wholesale to Retail Region (avg days)",
+        ]
+        numeric_columns = [
+            "Units Sold Rolling Days 90",
+            "Units Sold-MTD",
+            "Dlr Invoice",
+            "Dlr Inventory",
+            "Dlr Days Supply",
+            "Wholesale to Retail Dealer (avg days)",
+            "Wholesale to Retail District (avg days)",
+            "Wholesale to Retail Region (avg days)",
+        ]
+        cleaned_data[numeric_columns] = cleaned_data[numeric_columns].apply(pd.to_numeric, errors="coerce")
+        cleaned_data = cleaned_data.dropna(subset=["Model"])
+        return cleaned_data
+    except Exception as e:
+        st.error(f"Error processing file {file_path}: {e}")
+        return pd.DataFrame()
 
 # Load data for all stores
 store_summaries = {}
@@ -161,28 +165,32 @@ for store, file_path in store_files.items():
     except Exception as e:
         store_summaries[store] = pd.DataFrame(columns=["Model", "Units Sold Rolling Days 90"])
 
+@st.cache_data
 def summarize_90_day_sales_by_store():
     """Summarize 90-day sales across all stores."""
     try:
-        # Concatenate DataFrames, aligning on index
         all_stores_summary = pd.concat(
-            {store: summary.set_index("Model") for store, summary in store_summaries.items() if not summary.empty},
+            {store: df.set_index("Model")[["Units Sold Rolling Days 90"]] for store, df in store_summaries.items() if not df.empty},
             axis=1
         ).fillna(0)
 
-        # Flatten MultiIndex columns and rename
+        # Flatten MultiIndex columns
         all_stores_summary.columns = all_stores_summary.columns.get_level_values(0)
+
+        # Reset index for cleaner output
         all_stores_summary.reset_index(inplace=True)
 
-        # Melt for long-form representation
-        all_stores_summary = all_stores_summary.melt(
-            id_vars=["Model"], var_name="Dealer", value_name="Units Sold Rolling Days 90"
+        # Melt data for long format
+        summary_long = all_stores_summary.melt(
+            id_vars=["Model"], 
+            var_name="Dealer", 
+            value_name="Units Sold Rolling Days 90"
         )
-        return all_stores_summary
+        return summary_long
     except Exception as e:
         st.error(f"Error summarizing 90-day sales: {e}")
         return pd.DataFrame(columns=["Model", "Dealer", "Units Sold Rolling Days 90"])
-
+        
 @st.cache_data
 def format_90_day_sales(summary_90_day_sales):
     """Format the 90-day sales summary to match the look of other tables."""
