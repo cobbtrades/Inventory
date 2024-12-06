@@ -209,13 +209,13 @@ def format_90_day_sales(summary_90_day_sales):
     ]
     total_row = formatted_summary.drop(columns=["Model"]).sum(numeric_only=True)
     total_row["Model"] = "Total"
-    formatted_summary = pd.concat(
-        [formatted_summary, pd.DataFrame([total_row])],
-        ignore_index=True
-    )
     formatted_summary = formatted_summary.sort_values(
         by="Model",
         key=lambda x: x.str.lower() if x.name == "Model" else x,
+        ignore_index=True
+    )
+    formatted_summary = pd.concat(
+        [formatted_summary, pd.DataFrame([total_row])],
         ignore_index=True
     )
     return formatted_summary
