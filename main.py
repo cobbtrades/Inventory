@@ -42,6 +42,11 @@ dealer_acronyms = {
     'MODERN NISSAN, LLC': 'WINSTON', 'MODERN NISSAN/LAKE NORMAN': 'LAKE'
 }
 
+dlr_acronyms = {
+    'Concord': 'CONCORD', 'Hickory': 'HICKORY', 'Lake Norman': 'LAKE',
+    'Winston-Salem': 'WINSTON'
+}
+
 @st.cache_data
 def load_data(file_paths):
     expected_columns = [
@@ -180,12 +185,22 @@ def format_90_day_sales(summary_90_day_sales):
         aggfunc="sum",
         fill_value=0
     )
+    
     # Add the "Total" column
     formatted_summary["Total"] = formatted_summary.sum(axis=1)
+    
     # Reset the index to make "Model" the first column
     formatted_summary = formatted_summary.reset_index()
+    
     # Remove any additional total rows if they exist
     formatted_summary = formatted_summary[formatted_summary["Model"] != "TOTAL"]
+    
+    # Rename columns using dlr_acronyms
+    formatted_summary.columns = [
+        dlr_acronyms.get(col, col) if col != "Model" else col
+        for col in formatted_summary.columns
+    ]
+    
     return formatted_summary
 
 summary_90_day_sales = summarize_90_day_sales_by_store()
