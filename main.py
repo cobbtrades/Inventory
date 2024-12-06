@@ -578,7 +578,7 @@ with tab4:
                 
                 st.markdown(f"<h5 style='text-align: center;'>Current Inventory</h5>", unsafe_allow_html=True)
                 current_inventory_summary = summarize_current_inventory(store_summaries)
-                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(current_inventory_summary)}</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html_90(current_inventory_summary)}</div>", unsafe_allow_html=True)
             
             with col3:
                 st.markdown(f"<h5 style='text-align: center;'>Incoming for {following_month_start.strftime('%B')}</h5>", unsafe_allow_html=True)
