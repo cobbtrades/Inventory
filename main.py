@@ -111,7 +111,7 @@ def load_current_data(file_path):
             'STATUS', 'VIN', 'BALANCE', 'CUSTOM'
         ]
         df['YEAR'] = df['YEAR'].astype(str).str.replace(',', '')
-        df['COLOR'] = df['COLOR'].apply(lambda x: ext_mapping.get(x[:3], x))
+        df['COLOR'] = df['COLOR'].apply(lambda x: ext_mapping.get(x[:3], x) if isinstance(x, str) else x)
         df['MCODE'] = df['MCODE'].astype(str).str.replace(',', '')
         df['MDL'] = df['MDL'].replace(mdl_mapping)
         df.sort_values(by='COMPANY', inplace=True)
