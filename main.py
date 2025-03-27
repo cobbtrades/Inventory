@@ -494,11 +494,21 @@ reverse_mdl_mapping = {'ALT': 'ALTIMA', 'ARM': 'ARMADA', '720': 'FRONTIER', 'KIX
 def summarize_incoming_data(df, start_date, end_date, all_models, all_dealers):
     df['ETA'] = pd.to_datetime(df['ETA'], errors='coerce')
     filtered_df = df[(df['ETA'] >= start_date) & (df['ETA'] <= end_date)]
+    filtered_df = filtered_df[filtered_df['DEALER_NAME'].str.upper() != "NISSAN OF BOONE"]
     filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].replace(dealer_acronyms)
     filtered_df = replace_mdl_with_full_name(filtered_df, reverse_mdl_mapping)
     all_combinations = pd.MultiIndex.from_product([all_dealers, all_models], names=['DEALER_NAME', 'MDL'])
     summary = filtered_df.groupby(['DEALER_NAME', 'MDL']).size().reindex(all_combinations, fill_value=0).reset_index(name='Count')
-    pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
+    pivot_table = pd.pivot_table(
+        summary,
+        values='Count',
+        index='MDL',
+        columns='DEALER_NAME',
+        aggfunc=sum,
+        fill_value=0,
+        margins=True,
+        margins_name='Total'
+    )
     return pivot_table
 
 def summarize_retailed_data(df, start_date, end_date, all_models, all_dealers):
