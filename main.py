@@ -168,20 +168,17 @@ for store, file_path in store_files.items():
 
 @st.cache_data
 def summarize_90_day_sales_by_store():
-    """Summarize 90-day sales across all stores."""
     try:
+        filtered_summaries = {
+            store: df for store, df in store_summaries.items()
+            if store.upper() != "NISSAN OF BOONE" and not df.empty
+        }
         all_stores_summary = pd.concat(
-            {store: df.set_index("Model")[["Units Sold Rolling Days 90"]] for store, df in store_summaries.items() if not df.empty},
+            {store: df.set_index("Model")[["Units Sold Rolling Days 90"]] for store, df in filtered_summaries.items()},
             axis=1
         ).fillna(0)
-
-        # Flatten MultiIndex columns
         all_stores_summary.columns = all_stores_summary.columns.get_level_values(0)
-
-        # Reset index for cleaner output
         all_stores_summary.reset_index(inplace=True)
-
-        # Melt data for long format
         summary_long = all_stores_summary.melt(
             id_vars=["Model"], 
             var_name="Dealer", 
@@ -499,21 +496,13 @@ def summarize_incoming_data(df, start_date, end_date, all_models, all_dealers):
     filtered_df = replace_mdl_with_full_name(filtered_df, reverse_mdl_mapping)
     all_combinations = pd.MultiIndex.from_product([all_dealers, all_models], names=['DEALER_NAME', 'MDL'])
     summary = filtered_df.groupby(['DEALER_NAME', 'MDL']).size().reindex(all_combinations, fill_value=0).reset_index(name='Count')
-    pivot_table = pd.pivot_table(
-        summary,
-        values='Count',
-        index='MDL',
-        columns='DEALER_NAME',
-        aggfunc=sum,
-        fill_value=0,
-        margins=True,
-        margins_name='Total'
-    )
+    pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
     return pivot_table
 
 def summarize_retailed_data(df, start_date, end_date, all_models, all_dealers):
     df['SOLD'] = pd.to_datetime(df['SOLD'], errors='coerce')
     filtered_df = df[(df['LOC'] == 'RETAILED')]
+    filtered_df = filtered_df[filtered_df['DEALER_NAME'].str.upper() != "NISSAN OF BOONE"]
     filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].replace(dealer_acronyms)
     filtered_df = replace_mdl_with_full_name(filtered_df, reverse_mdl_mapping)
     all_combinations = pd.MultiIndex.from_product([all_dealers, all_models], names=['DEALER_NAME', 'MDL'])
@@ -539,6 +528,7 @@ def summarize_current_inventory(dataframes):
 def summarize_dlv_date_data(df, start_date, end_date, all_models, all_dealers):
     df['DLV_DATE'] = pd.to_datetime(df['DLV_DATE'], errors='coerce')
     filtered_df = df[(df['DLV_DATE'] >= start_date) & (df['DLV_DATE'] <= end_date)]
+    filtered_df = filtered_df[filtered_df['DEALER_NAME'].str.upper() != "NISSAN OF BOONE"]
     filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].replace(dealer_acronyms)
     filtered_df = replace_mdl_with_full_name(filtered_df, reverse_mdl_mapping)
     all_combinations = pd.MultiIndex.from_product([all_dealers, all_models], names=['DEALER_NAME', 'MDL'])
