@@ -48,6 +48,8 @@ dlr_acronyms = {
     'Winston-Salem': 'WINSTON'
 }
 
+excluded_dealers = ["NISSAN OF BOONE"]
+
 @st.cache_data
 def load_data(file_paths):
     expected_columns = [
@@ -556,7 +558,8 @@ with tab4:
         next_month_end = following_month_start - timedelta(days=1)
         following_month_end = start_for_calc - timedelta(days=1)
         all_models = combined_data['MDL'].replace(reverse_mdl_mapping).unique()
-        all_dealers = combined_data['DEALER_NAME'].replace(dealer_acronyms).unique()
+        all_dealers = combined_data['DEALER_NAME'].replace(dealer_acronyms)
+        all_dealers = all_dealers[~combined_data['DEALER_NAME'].str.upper().isin([d.upper() for d in excluded_dealers])].unique()
         with container:
             blank_col1, col1, col2, col3, blank_col2 = st.columns([0.1, 1, 1, 1, 0.1])
             with col1:
