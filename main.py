@@ -99,6 +99,7 @@ def load_data(file_paths):
 data_frames = load_data(file_paths)
 if data_frames:
     combined_data = pd.concat([df[0] for df in data_frames], ignore_index=True)
+    combined_data.drop_duplicates(subset="VIN", inplace=True)
     combined_data.reset_index(drop=True, inplace=True)
 else:
     combined_data = pd.DataFrame()
