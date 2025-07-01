@@ -493,6 +493,7 @@ reverse_mdl_mapping = {'ALT': 'ALTIMA', 'ARM': 'ARMADA', '720': 'FRONTIER', 'KIX
 @st.cache_data
 def summarize_incoming_data(df, start_date, end_date, all_models, all_dealers):
     df['ETA'] = pd.to_datetime(df['ETA'], errors='coerce')
+    df = df.drop_duplicates(subset=['VIN'])
     filtered_df = df[(df['ETA'] >= start_date) & (df['ETA'] <= end_date)]
     filtered_df = filtered_df[~filtered_df['DEALER_NAME'].str.upper().isin(["NISSAN OF BOONE", "EAST CHARLOTTE NISSAN"])]
     filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].replace(dealer_acronyms)
