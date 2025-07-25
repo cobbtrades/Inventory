@@ -77,7 +77,7 @@
       
        <td align="right" height="19" class="OMS_TableContents">
         
-          131
+          132
         
        </td>
        
@@ -88,7 +88,7 @@
             </td>
        <td align="right" height="19" class="OMS_TableContents">
         
-          11
+          9
         
        </td>
        
@@ -121,7 +121,7 @@
             </td>
             <td align="right" height="19" class="OMS_TableContents">
         
-          56
+          55
         
        </td>
       
@@ -171,7 +171,7 @@
             </td>
             <td align="right" height="19" class="OMS_TableContents">
         
-          57
+          55
         
        </td>
       
@@ -188,7 +188,7 @@
             </td>
        <td align="right" height="19" class="OMS_TableContents">
         
-          2
+          1
         
        </td>
        
@@ -227,7 +227,7 @@
       
        <td align="right" height="19" class="OMS_TableContents">
         
-          71
+          72
         
        </td>
        
@@ -238,7 +238,7 @@
             </td>
        <td align="right" height="19" class="OMS_TableContents">
         
-          3
+          2
         
        </td>
        
@@ -252,71 +252,21 @@
     <tr>
     
       <td height="19">
-        N KICKS</td>
-    
-              <td align="right" height="19" class="OMS_TableContents">15</td>
-            <td align="right" height="19" class="OMS_TableContents">3</td>
-            <!-- RVR-447: Add dealer invoice to Sales Inquiry -->
-            <td align="right" height="19" class="OMS_TableContents">2</td>
-            <td align="right" height="19" class="OMS_TableContents">14</td>
-            <td align="right" height="19" class="OMS_TableContents">
-            
-              73
-      
-            </td>
-            <td align="right" height="19" class="OMS_TableContents">
-        
-          50
-        
-            </td>
-            <td align="right" height="19" class="OMS_TableContents">
-        
-          88
-        
-       </td>
-      
-       <td align="right" height="19" class="OMS_TableContents">
-        
-          51
-        
-       </td>
-       
-       <td align="right" height="19" class="OMS_TableContents">
-        
-          5
-        
-            </td>
-       <td align="right" height="19" class="OMS_TableContents">
-        
-          7
-        
-       </td>
-       
-       <td align="right" height="19" class="OMS_TableContents">
-        
-          1
-        
-       </td>
-    </tr>
-  
-    <tr>
-    
-      <td height="19">
         ROGUE</td>
     
-              <td align="right" height="19" class="OMS_TableContents">48</td>
-            <td align="right" height="19" class="OMS_TableContents">7</td>
+              <td align="right" height="19" class="OMS_TableContents">50</td>
+            <td align="right" height="19" class="OMS_TableContents">9</td>
             <!-- RVR-447: Add dealer invoice to Sales Inquiry -->
             <td align="right" height="19" class="OMS_TableContents">0</td>
-            <td align="right" height="19" class="OMS_TableContents">63</td>
+            <td align="right" height="19" class="OMS_TableContents">61</td>
             <td align="right" height="19" class="OMS_TableContents">
             
-              102
+              95
       
             </td>
             <td align="right" height="19" class="OMS_TableContents">
         
-          53
+          54
         
             </td>
             <td align="right" height="19" class="OMS_TableContents">
@@ -333,18 +283,68 @@
        
        <td align="right" height="19" class="OMS_TableContents">
         
-          6
+          5
         
             </td>
        <td align="right" height="19" class="OMS_TableContents">
         
-          6
+          4
         
        </td>
        
        <td align="right" height="19" class="OMS_TableContents">
         
           5
+        
+       </td>
+    </tr>
+  
+    <tr>
+    
+      <td height="19">
+        N KICKS</td>
+    
+              <td align="right" height="19" class="OMS_TableContents">16</td>
+            <td align="right" height="19" class="OMS_TableContents">4</td>
+            <!-- RVR-447: Add dealer invoice to Sales Inquiry -->
+            <td align="right" height="19" class="OMS_TableContents">2</td>
+            <td align="right" height="19" class="OMS_TableContents">13</td>
+            <td align="right" height="19" class="OMS_TableContents">
+            
+              63
+      
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+          56
+        
+            </td>
+            <td align="right" height="19" class="OMS_TableContents">
+        
+          88
+        
+       </td>
+      
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          51
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          6
+        
+            </td>
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          5
+        
+       </td>
+       
+       <td align="right" height="19" class="OMS_TableContents">
+        
+          1
         
        </td>
     </tr>
@@ -371,7 +371,7 @@
             </td>
             <td align="right" height="19" class="OMS_TableContents">
         
-          102
+          103
         
        </td>
       
@@ -388,7 +388,7 @@
             </td>
        <td align="right" height="19" class="OMS_TableContents">
         
-          8
+          6
         
        </td>
        
@@ -404,19 +404,19 @@
       <td height="19">
         PTHFINDR</td>
     
-              <td align="right" height="19" class="OMS_TableContents">31</td>
-            <td align="right" height="19" class="OMS_TableContents">6</td>
+              <td align="right" height="19" class="OMS_TableContents">33</td>
+            <td align="right" height="19" class="OMS_TableContents">8</td>
             <!-- RVR-447: Add dealer invoice to Sales Inquiry -->
             <td align="right" height="19" class="OMS_TableContents">0</td>
-            <td align="right" height="19" class="OMS_TableContents">20</td>
+            <td align="right" height="19" class="OMS_TableContents">18</td>
             <td align="right" height="19" class="OMS_TableContents">
             
-              50
+              43
       
             </td>
             <td align="right" height="19" class="OMS_TableContents">
         
-          68
+          72
         
             </td>
             <td align="right" height="19" class="OMS_TableContents">
@@ -438,7 +438,7 @@
             </td>
        <td align="right" height="19" class="OMS_TableContents">
         
-          4
+          3
         
        </td>
        
@@ -471,7 +471,7 @@
             </td>
             <td align="right" height="19" class="OMS_TableContents">
         
-          83
+          84
         
        </td>
       
@@ -488,7 +488,7 @@
             </td>
        <td align="right" height="19" class="OMS_TableContents">
         
-          5
+          4
         
        </td>
        
@@ -538,7 +538,7 @@
             </td>
        <td align="right" height="19" class="OMS_TableContents">
         
-          9
+          7
         
        </td>
        
@@ -588,7 +588,7 @@
             </td>
        <td align="right" height="19" class="OMS_TableContents">
         
-          10
+          8
         
        </td>
        
@@ -627,7 +627,7 @@ N/A
       
        <td align="right" height="19" class="OMS_TableContents">
         
-          326
+          320
         
        </td>
        
@@ -638,7 +638,7 @@ N/A
             </td>
        <td align="right" height="19" class="OMS_TableContents">
         
-          13
+          11
         
        </td>
        
@@ -677,7 +677,7 @@ N/A
       
        <td align="right" height="19" class="OMS_TableContents">
         
-          353
+          351
         
        </td>
        
@@ -777,7 +777,7 @@ N/A
       
        <td align="right" height="19" class="OMS_TableContents">
         
-          108
+          109
         
        </td>
        
@@ -788,7 +788,7 @@ N/A
             </td>
        <td align="right" height="19" class="OMS_TableContents">
         
-          12
+          10
         
        </td>
        
@@ -854,19 +854,19 @@ N/A
       <td height="19" class="OMS_TableContents">
         TOTAL</td>
     
-              <td align="right" height="19" class="OMS_TableContents">173</td>
-            <td align="right" height="19" class="OMS_TableContents">35</td>
+              <td align="right" height="19" class="OMS_TableContents">178</td>
+            <td align="right" height="19" class="OMS_TableContents">40</td>
             <!-- RVR-447: Add dealer invoice to Sales Inquiry -->
             <td align="right" height="19" class="OMS_TableContents">3</td>
-            <td align="right" height="19" class="OMS_TableContents">195</td>
+            <td align="right" height="19" class="OMS_TableContents">190</td>
             <td align="right" height="19" class="OMS_TableContents">
             
-              88
+              83
       
             </td>
             <td align="right" height="19" class="OMS_TableContents">
         
-          71
+          72
         
             </td>
             <td align="right" height="19" class="OMS_TableContents">
