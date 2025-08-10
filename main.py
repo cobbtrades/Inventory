@@ -1,10 +1,10 @@
-import pandas as pd, streamlit as st, os, requests, base64, time, openpyxl, plotly.express as px, matplotlib.pyplot as plt, plotly.graph_objects as go
+import pandas as pd, streamlit as st, os, time, plotly.graph_objects as go, warnings, numpy as np
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from io import BytesIO
-from streamlit_extras.grid import grid
+warnings.filterwarnings('ignore', category=UserWarning, module='openpyxl')
 
 st.set_page_config(layout="wide", page_title="Nissan Inventory", page_icon="logo.png")
 file_paths = ['files/Concord.xls', 'files/Winston.xls', 'files/Lake.xls', 'files/Hickory.xls']
@@ -96,10 +96,23 @@ def load_data(file_paths):
             st.error(f"File {file} not found in the repository.")
     return data_frames
 
+def add_unit_key(df: pd.DataFrame) -> pd.DataFrame:
+    df = df.copy()
+    vin = df['VIN'].astype(str).str.strip()
+    order = df['ORDER'].astype(str).str.strip()
+    df['UNIT_KEY'] = np.where(vin != '', vin, order)
+    return df
+
 data_frames = load_data(file_paths)
 if data_frames:
-    combined_data = pd.concat([df[0] for df in data_frames], ignore_index=True)
-    combined_data.drop_duplicates(subset="VIN", inplace=True)
+    frames = []
+    for df, _ in data_frames:
+        tmp = add_unit_key(df)
+        tmp['ETA_DT'] = pd.to_datetime(tmp['ETA'], errors='coerce')
+        tmp.sort_values(['DEALER_NAME', 'UNIT_KEY', 'ETA_DT'], inplace=True, na_position='last')
+        tmp = tmp.drop_duplicates(subset=['DEALER_NAME', 'UNIT_KEY'], keep='last')
+        frames.append(tmp.drop(columns=['ETA_DT']))
+    combined_data = pd.concat(frames, ignore_index=True)
     combined_data.reset_index(drop=True, inplace=True)
 else:
     combined_data = pd.DataFrame()
@@ -111,16 +124,20 @@ def load_current_data(file_path):
         del df['Deal \nNo.']
         del df['Make']
         df.columns = [
-            'STOCK', 'YEAR', 'MDL', 'MCODE', 'COLOR', 'LOT', 'COMPANY', 'AGE', 
-            'STATUS', 'VIN', 'BALANCE', 'CUSTOM'
+            'STOCK', 'YEAR', 'MDL', 'MCODE', 'COLOR', 'LOT', 'COMPANY',
+            'AGE', 'STATUS', 'VIN', 'BALANCE', 'CUSTOM'
         ]
-        df['YEAR'] = df['YEAR'].astype(str).str.replace(',', '')
-        df['COLOR'] = df['COLOR'].apply(lambda x: ext_mapping.get(x[:3], x) if isinstance(x, str) else x)
-        df['MCODE'] = df['MCODE'].astype(str).str.replace(',', '')
-        df['MDL'] = df['MDL'].replace(mdl_mapping)
+        df['YEAR'] = pd.to_numeric(df['YEAR'], errors='coerce').fillna(0).astype(int)
+        df['BALANCE'] = pd.to_numeric(df['BALANCE'], errors='coerce').fillna(0.0)
+        df['COLOR'] = df['COLOR'].apply(
+            lambda x: ext_mapping.get(str(x)[:3], x) if isinstance(x, str) else x
+        )
+        df['MCODE'] = df['MCODE'].astype(str).str.replace(',', '', regex=False)
+        df['MDL']   = df['MDL'].replace(mdl_mapping)
+        str_cols = df.select_dtypes(include=['object']).columns
+        df[str_cols] = df[str_cols].fillna('')
         df.sort_values(by='COMPANY', inplace=True)
         df.reset_index(drop=True, inplace=True)
-        df.fillna('', inplace=True)
         return df
     else:
         st.error(f"File {file_path} not found.")
@@ -305,14 +322,15 @@ with tab3:
         st.write(f"Date: {formatted_date}")
     with col2:
         manager = st.text_input("Manager", key="manager_input_trade")
+
     st.markdown('<div class="small-spacing"><hr></div>', unsafe_allow_html=True)
     col3, col4, col5 = st.columns([1, 1, 2])
     with col3:
         our_trade = st.checkbox("Our Trade", key="our_trade_checkbox_trade")
-        sold = st.checkbox("Sold", key="sold_checkbox_trade")
+        sold     = st.checkbox("Sold",     key="sold_checkbox_trade")
     with col4:
         their_trade = st.checkbox("Their Trade", key="their_trade_checkbox_trade")
-        floorplan = st.checkbox("Floorplan", key="floorplan_checkbox_trade")
+        floorplan   = st.checkbox("Floorplan",   key="floorplan_checkbox_trade")
     with col5:
         st.text("""
         PLEASE SEND MCO/CHECK TO:
@@ -320,55 +338,73 @@ with tab3:
         3901 WEST POINT BLVD.
         WINSTON-SALEM, NC 27103
         """)
+
     st.text("Intercompany DX")
     col6, col7 = st.columns(2)
     with col6:
         from_location = st.text_input("From:", key="from_input_trade")
     with col7:
-        to_location = st.selectbox("To:", 
-                                   ["MODERN NISSAN OF CONCORD", 
-                                    "MODERN NISSAN OF WINSTON", 
-                                    "MODERN NISSAN OF LAKE NORMAN", 
-                                    "MODERN NISSAN OF HICKORY"], 
-                                   key="to_input_trade")
+        to_location = st.selectbox(
+            "To:", 
+            [
+                "MODERN NISSAN OF CONCORD", 
+                "MODERN NISSAN OF WINSTON", 
+                "MODERN NISSAN OF LAKE NORMAN", 
+                "MODERN NISSAN OF HICKORY"
+            ], 
+            key="to_input_trade"
+        )
+
     col8, col9 = st.columns(2)
     with col8:
-        stock_number = st.text_input("Stock Number", key="stock_number_input_trade")
-        year_make_model = st.text_input("Year Make Model", key="year_make_model_input_trade")
-        full_vin = st.text_input("Full VIN #", key="full_vin_input_trade")
+        stock_number      = st.text_input("Stock Number", key="stock_number_input_trade")
+        year_make_model   = st.text_input("Year Make Model", key="year_make_model_input_trade")
+        full_vin          = st.text_input("Full VIN #", key="full_vin_input_trade")
     with col9:
-        key_charge = st.number_input("Key Charge ($)", value=0.00, format="%.2f", key="key_charge_input_trade")
-        projected_cost = st.number_input("Projected Cost ($)", value=0.00, format="%.2f", key="projected_cost_input_trade")
-        transfer_amount = calculate_transfer_amount(key_charge, projected_cost)
-        formatted_transfer_amount = format_currency(transfer_amount)
-        st.text_input("Transfer Amount", value=formatted_transfer_amount, key="transfer_amount_input_trade", disabled=True)
-        
+        projected_cost    = st.number_input(
+                                "Projected Cost ($)", 
+                                value=0.00, 
+                                format="%.2f", 
+                                key="projected_cost_input_trade"
+                            )
+        formatted_projected_cost = format_currency(projected_cost)
+
     st.text("Non-Modern Dealership Information")
     dealership_name = st.text_input("Dealership Name", key="dealership_name_input_trade")
-    address = st.text_input("Address", key="address_input_trade")
-    city_state_zip = st.text_input("City, State ZIP Code", key="city_state_zip_input_trade")
-    phone_number = st.text_input("Phone Number", key="phone_number_input_trade")
-    dealer_code = st.text_input("Dealer Code", key="dealer_code_input_trade")
-    contact_name = st.text_input("Contact Name", key="contact_name_input_trade")
+    address         = st.text_input("Address", key="address_input_trade")
+    city_state_zip  = st.text_input("City, State ZIP Code", key="city_state_zip_input_trade")
+    phone_number    = st.text_input("Phone Number", key="phone_number_input_trade")
+    dealer_code     = st.text_input("Dealer Code", key="dealer_code_input_trade")
+    contact_name    = st.text_input("Contact Name", key="contact_name_input_trade")
+
     st.markdown('<div class="small-spacing"><hr></div>', unsafe_allow_html=True)
     l_col, r_col = st.columns(2)
     with l_col:
         st.text("Outgoing Unit")
-        outgoing_stock_number = st.text_input("Outgoing Stock Number", key="outgoing_stock_number_input_trade")
-        outgoing_year_make_model = st.text_input("Outgoing Year Make Model", key="outgoing_year_make_model_input_trade")
-        outgoing_full_vin = st.text_input("Outgoing Full VIN #", key="outgoing_full_vin_input_trade")
-        outgoing_sale_price = st.text_input("Outgoing Sale Price", key="outgoing_sale_price_input_trade")
+        outgoing_stock_number        = st.text_input("Outgoing Stock Number",       key="outgoing_stock_number_input_trade")
+        outgoing_year_make_model     = st.text_input("Outgoing Year Make Model",    key="outgoing_year_make_model_input_trade")
+        outgoing_full_vin            = st.text_input("Outgoing Full VIN #",         key="outgoing_full_vin_input_trade")
+        outgoing_sale_price          = st.text_input("Outgoing Sale Price",         key="outgoing_sale_price_input_trade")
+        outgoing_projected_cost      = st.number_input(
+                                           "Outgoing Projected Cost ($)",
+                                           value=0.00,
+                                           format="%.2f",
+                                           key="outgoing_projected_cost_input_trade"
+                                       )
+        formatted_outgoing_proj_cost = format_currency(outgoing_projected_cost)
     with r_col:
         st.text("Incoming Unit")
-        incoming_year_make_model = st.text_input("Incoming Year Make Model", key="incoming_year_make_model_input_trade")
-        incoming_full_vin = st.text_input("Incoming Full VIN #", key="incoming_full_vin_input_trade")
-        incoming_purchase_price = st.text_input("Incoming Purchase Price", key="incoming_purchase_price_input_trade")
+        incoming_year_make_model     = st.text_input("Incoming Year Make Model", key="incoming_year_make_model_input_trade")
+        incoming_full_vin            = st.text_input("Incoming Full VIN #",       key="incoming_full_vin_input_trade")
+        incoming_purchase_price      = st.text_input("Incoming Purchase Price",   key="incoming_purchase_price_input_trade")
 
     if st.button("Generate Trade PDF", key="generate_trade_pdf_button"):
         pdf_buffer = BytesIO()
         c = canvas.Canvas(pdf_buffer, pagesize=letter)
         width, height = letter
         offset = 20
+
+        # Header
         location = st.session_state["to_input_trade"]
         title = f"{location} {get_store_number(location)}"
         c.setFont("Helvetica-Bold", 16)
@@ -376,8 +412,12 @@ with tab3:
         c.setFont("Helvetica", 10)
         col1_x = 72
         col2_x = 200
+
+        # Date & Manager
         c.drawString(col1_x, height - 84 - offset, f"Date: {formatted_date}")
         c.drawString(col2_x, height - 84 - offset, f"Manager: {manager}")
+
+        # Trade Checkboxes
         c.drawString(col1_x, height - 108 - offset, "OUR TRADE")
         c.drawString(col1_x, height - 120 - offset, f"{'         X' if our_trade else ''}")
         c.drawString(col2_x, height - 108 - offset, "THEIR TRADE")
@@ -386,35 +426,45 @@ with tab3:
         c.drawString(col1_x, height - 156 - offset, f"{'   X' if sold else ''}")
         c.drawString(col2_x, height - 144 - offset, "FLOORPLAN")
         c.drawString(col2_x, height - 156 - offset, f"{'          X' if floorplan else ''}")
+
+        # Address block
         addr_x = 320
         c.drawString(addr_x, height - 108 - offset, "PLEASE SEND MCO/CHECK TO:")
         c.drawString(addr_x, height - 120 - offset, "MODERN AUTOMOTIVE SUPPORT CENTER")
         c.drawString(addr_x, height - 132 - offset, "3901 WEST POINT BLVD.")
         c.drawString(addr_x, height - 144 - offset, "WINSTON-SALEM, NC 27103")
+
+        # Intercompany DX bar
         c.setFillColorRGB(0.7, 0.7, 0.7)
         c.rect(70, height - 180 - offset, 475, 20, fill=1)
         c.setFillColorRGB(0, 0, 0)
         c.drawString(72, height - 175 - offset, "Intercompany DX")
+
+        # From / To
         c.drawString(72, height - 200 - offset, "From:")
         c.drawString(140, height - 200 - offset, from_location)
         c.drawString(330, height - 200 - offset, "To:")
         c.drawString(380, height - 200 - offset, to_location)
+
+        # Vehicle Info
         c.drawString(72, height - 220 - offset, "Stock Number:")
         c.drawString(160, height - 220 - offset, stock_number)
         c.drawString(72, height - 240 - offset, "Year/Make/Model:")
         c.drawString(160, height - 240 - offset, year_make_model)
         c.drawString(72, height - 260 - offset, "Full VIN #:")
         c.drawString(160, height - 260 - offset, full_vin)
-        c.drawString(330, height - 220 - offset, "Key Charge:")
-        c.drawString(420, height - 220 - offset, format_currency(key_charge))
-        c.drawString(330, height - 240 - offset, "Projected Cost:")
-        c.drawString(420, height - 240 - offset, format_currency(projected_cost))
-        c.drawString(330, height - 260 - offset, "Transfer Amount:")
-        c.drawString(420, height - 260 - offset, formatted_transfer_amount)
+
+        # Projected Cost (header)
+        c.drawString(330, height - 220 - offset, "Projected Cost:")
+        c.drawString(420, height - 220 - offset, formatted_projected_cost)
+
+        # Non-Modern Dealership header
         c.setFillColorRGB(0.7, 0.7, 0.7)
         c.rect(70, height - 290 - offset, 475, 20, fill=1)
         c.setFillColorRGB(0, 0, 0)
         c.drawString(72, height - 285 - offset, "Non-Modern Dealership Information")
+
+        # Non-Modern fields
         c.drawString(72, height - 310 - offset, "Dealership Name:")
         c.drawString(190, height - 310 - offset, dealership_name)
         c.drawString(72, height - 330 - offset, "Address:")
@@ -427,10 +477,14 @@ with tab3:
         c.drawString(190, height - 390 - offset, dealer_code)
         c.drawString(72, height - 410 - offset, "Contact Name:")
         c.drawString(190, height - 410 - offset, contact_name)
+
+        # Outgoing Unit header
         c.setFillColorRGB(0.7, 0.7, 0.7)
         c.rect(70, height - 440 - offset, 475, 20, fill=1)
         c.setFillColorRGB(0, 0, 0)
         c.drawString(72, height - 435 - offset, "Outgoing Unit")
+
+        # Outgoing fields
         c.drawString(72, height - 460 - offset, "Stock Number:")
         c.drawString(190, height - 460 - offset, outgoing_stock_number)
         c.drawString(72, height - 480 - offset, "Year Make Model:")
@@ -439,22 +493,36 @@ with tab3:
         c.drawString(190, height - 500 - offset, outgoing_full_vin)
         c.drawString(72, height - 520 - offset, "Sale Price:")
         c.drawString(190, height - 520 - offset, outgoing_sale_price)
+        c.drawString(72, height - 540 - offset, "Projected Cost:")
+        c.drawString(190, height - 540 - offset, formatted_outgoing_proj_cost)
+
+        # Incoming Unit header
         c.setFillColorRGB(0.7, 0.7, 0.7)
-        c.rect(70, height - 550 - offset, 475, 20, fill=1)
+        c.rect(70, height - 570 - offset, 475, 20, fill=1)
         c.setFillColorRGB(0, 0, 0)
-        c.drawString(72, height - 545 - offset, "Incoming Unit")
-        c.drawString(72, height - 570 - offset, "Year Make Model:")
-        c.drawString(190, height - 570 - offset, incoming_year_make_model)
-        c.drawString(72, height - 590 - offset, "Full VIN #:")
-        c.drawString(190, height - 590 - offset, incoming_full_vin)
-        c.drawString(72, height - 610 - offset, "Purchase Price:")
-        c.drawString(190, height - 610 - offset, incoming_purchase_price)
+        c.drawString(72, height - 565 - offset, "Incoming Unit")
+
+        # Incoming fields
+        c.drawString(72, height - 590 - offset, "Year Make Model:")
+        c.drawString(190, height - 590 - offset, incoming_year_make_model)
+        c.drawString(72, height - 610 - offset, "Full VIN #:")
+        c.drawString(190, height - 610 - offset, incoming_full_vin)
+        c.drawString(72, height - 630 - offset, "Purchase Price:")
+        c.drawString(190, height - 630 - offset, incoming_purchase_price)
+
         c.showPage()
         c.save()
         pdf_buffer.seek(0)
+
         pdf_data = pdf_buffer.getvalue()
         time.sleep(0.5)
-        st.download_button(label="Download Trade PDF", data=pdf_data, file_name="dealer_trade.pdf", mime="application/pdf", key="download_trade_pdf_button")
+        st.download_button(
+            label="Download Trade PDF",
+            data=pdf_data,
+            file_name="dealer_trade.pdf",
+            mime="application/pdf",
+            key="download_trade_pdf_button"
+        )
 
 dark_mode_css = """
 <style>
@@ -493,16 +561,45 @@ reverse_mdl_mapping = {'ALT': 'ALTIMA', 'ARM': 'ARMADA', '720': 'FRONTIER', 'KIX
 
 @st.cache_data
 def summarize_incoming_data(df, start_date, end_date, all_models, all_dealers):
-    df['ETA'] = pd.to_datetime(df['ETA'], errors='coerce')
-    df = df.drop_duplicates(subset=['VIN'])
-    filtered_df = df[(df['ETA'] >= start_date) & (df['ETA'] <= end_date)]
-    filtered_df = filtered_df[~filtered_df['DEALER_NAME'].str.upper().isin(["NISSAN OF BOONE", "EAST CHARLOTTE NISSAN"])]
-    filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].replace(dealer_acronyms)
-    filtered_df = replace_mdl_with_full_name(filtered_df, reverse_mdl_mapping)
-    all_combinations = pd.MultiIndex.from_product([all_dealers, all_models], names=['DEALER_NAME', 'MDL'])
-    summary = filtered_df.groupby(['DEALER_NAME', 'MDL']).size().reindex(all_combinations, fill_value=0).reset_index(name='Count')
-    pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
-    return pivot_table
+    src = df.copy()
+    src['ETA'] = pd.to_datetime(src['ETA'], errors='coerce').dt.normalize()
+
+    # inclusive window for the passed month
+    start = pd.Timestamp(start_date.year, start_date.month, 1)
+    end   = pd.Timestamp(end_date.year, end_date.month, end_date.day)
+
+    filtered = src[(src['ETA'] >= start) & (src['ETA'] <= end)]
+
+    # exclude non-target dealers, then normalize names
+    filtered = filtered[~filtered['DEALER_NAME'].str.upper().isin(["NISSAN OF BOONE", "EAST CHARLOTTE NISSAN"])]
+    filtered['DEALER_NAME'] = filtered['DEALER_NAME'].replace(dealer_acronyms)
+
+    # robust de-duplication
+    filtered = add_unit_key(filtered)
+    filtered.sort_values(['DEALER_NAME', 'UNIT_KEY', 'ETA'], inplace=True)
+    filtered = filtered.drop_duplicates(subset=['DEALER_NAME','UNIT_KEY'], keep='last')
+
+    # model labels to full names
+    filtered = replace_mdl_with_full_name(filtered, reverse_mdl_mapping)
+
+    combos = pd.MultiIndex.from_product([all_dealers, all_models], names=['DEALER_NAME','MDL'])
+    summary = (filtered
+        .groupby(['DEALER_NAME','MDL'])
+        .size()
+        .reindex(combos, fill_value=0)
+        .reset_index(name='Count'))
+
+    pivot = pd.pivot_table(
+        summary,
+        values='Count',
+        index='MDL',
+        columns='DEALER_NAME',
+        aggfunc='sum',
+        fill_value=0,
+        margins=True,
+        margins_name='Total'
+    )
+    return pivot
 
 def summarize_retailed_data(df, start_date, end_date, all_models, all_dealers):
     df['SOLD'] = pd.to_datetime(df['SOLD'], errors='coerce')
