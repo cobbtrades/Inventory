@@ -68,15 +68,17 @@ if result is not None:
     (st.success if ok else st.error)(msg)
     st.text_area("Latest downloader log", log, height=240)
 
+# Status
+last_date, last_log = _load_last_run()
+st.caption(f"Last OMS pull date (ET): {last_date or 'never'}")
+
+st.markdown("<div style='height:24px'></div>", unsafe_allow_html=True)
+
 # Manual trigger
 if st.button("Refresh now"):
     ok, msg, log = refresh_oms_now()
     (st.success if ok else st.error)(msg)
     st.text_area("Latest downloader log", log, height=240)
-
-# Status
-last_date, last_log = _load_last_run()
-st.caption(f"Last OMS pull date (ET): {last_date or 'never'}")
 
 file_paths = ['files/Concord.xls', 'files/Winston.xls', 'files/Lake.xls', 'files/Hickory.xls']
 store_files = {
