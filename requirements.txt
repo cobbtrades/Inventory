@@ -7,3 +7,6 @@ reportlab
 plotly
 seaborn
 matplotlib
+python-dotenv
+python-dateutil
+tzdata
