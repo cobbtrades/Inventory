@@ -368,26 +368,28 @@ with tab2:
     if not current_data.empty:
         num_rows = len(current_data)
         st.markdown(f"<span style='font-size: small;'>{num_rows} vehicles</span>", unsafe_allow_html=True)
+        styled = (
+            current_data
+              .style
+              .set_properties(
+                  subset=[
+                      "STOCK","MDL","COLOR","LOT","COMPANY",
+                      "STATUS","VIN","CUSTOM"   # columns you want centered
+                  ],
+                  **{"text-align": "center"}
+              )
+              .format({
+                  "YEAR": "{:d}",
+                  "AGE": "{:d}",
+                  "BALANCE": "{:,.2f}",
+              })
+        )
+        
         st.dataframe(
-            current_data,
+            styled,
             use_container_width=True,
             height=780,
             hide_index=True,
-            column_config={
-                "STOCK":   st.column_config.TextColumn("STOCK", width="small"),
-                "YEAR":    st.column_config.NumberColumn("YEAR", format="%d", width="small"),
-                "MDL":     st.column_config.TextColumn("MDL", width="small"),
-                "MCODE":   st.column_config.TextColumn("MCODE", width="small"),
-                "COLOR":   st.column_config.TextColumn("COLOR", width="medium"),
-                "LOT":     st.column_config.TextColumn("LOT", width="small"),
-                "COMPANY": st.column_config.TextColumn("COMPANY", width="small"),
-                "AGE":     st.column_config.NumberColumn("AGE", format="%d", width="small"),
-                "STATUS":  st.column_config.TextColumn("STATUS", width="small"),
-                "VIN":     st.column_config.TextColumn("VIN", width="medium"),
-                "BALANCE": st.column_config.TextColumn("BALANCE", width="small"),
-                # Let CUSTOM take the remaining space
-                "CUSTOM":  st.column_config.TextColumn("CUSTOM", width="large"),
-            },
         )
     else:
         st.error("No current inventory data to display.")
