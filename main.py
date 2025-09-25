@@ -1,12 +1,89 @@
-import pandas as pd, streamlit as st, os, time, plotly.graph_objects as go, warnings, numpy as np
-from datetime import datetime, timedelta
+import pandas as pd, streamlit as st, os, time, plotly.graph_objects as go, warnings, numpy as np, io, json, contextlib
+from datetime import datetime, timedelta, time as dt_time
+from zoneinfo import ZoneInfo
 from dateutil.relativedelta import relativedelta
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from io import BytesIO
+from pathlib import Path
+from oms_modelline_downloader import main as run_oms
 warnings.filterwarnings('ignore', category=UserWarning, module='openpyxl')
 
+FILES_DIR = Path(__file__).resolve().parent / "files"
+MARKER_PATH = FILES_DIR / "oms_last_run.json"
+NY = ZoneInfo("America/New_York")
+RUN_AFTER = dt_time(6, 15)
+
 st.set_page_config(layout="wide", page_title="Nissan Inventory", page_icon="logo.png")
+
+def _load_last_run():
+    try:
+        with open(MARKER_PATH, "r", encoding="utf-8") as f:
+            obj = json.load(f)
+        return obj.get("date"), obj.get("log", "")
+    except Exception:
+        return None, ""
+
+def _save_last_run(today_str, log_txt):
+    MARKER_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with open(MARKER_PATH, "w", encoding="utf-8") as f:
+        json.dump({"date": today_str, "log": log_txt[-50000:]}, f)
+
+def _inject_cookies_from_secrets():
+    for k in ("HICKORY_COOKIE", "CONCORD_COOKIE", "WINSTON_COOKIE", "LAKE_COOKIE"):
+        v = st.secrets.get(k)
+        if v:
+            os.environ[k] = v
+
+def refresh_oms_now():
+    _inject_cookies_from_secrets()
+    buf = io.StringIO()
+    try:
+        with contextlib.redirect_stdout(buf), contextlib.redirect_stderr(buf):
+            run_oms()
+        ok = True
+        msg = "OMS refresh completed."
+    except SystemExit as e:
+        ok = False
+        msg = f"OMS downloader exited with code {int(e.code) if isinstance(e.code, int) else 1}."
+    except Exception as e:
+        ok = False
+        msg = f"Unexpected error: {e}"
+    log_txt = buf.getvalue()
+    _save_last_run(datetime.now(tz=NY).date().isoformat(), log_txt)
+    return ok, msg, log_txt
+
+def maybe_refresh_daily():
+    now = datetime.now(tz=NY)
+    today = now.date().isoformat()
+    last_date, _ = _load_last_run()
+    should_run = (last_date != today) and (now.time() >= RUN_AFTER)
+    if should_run:
+        return refresh_oms_now()
+    return None
+
+result = maybe_refresh_daily()
+if result is not None:
+    ok, msg, log = result
+    (st.success if ok else st.error)(msg)
+    st.text_area("Latest downloader log", log, height=240)
+
+# Manual trigger
+if st.button("Refresh now"):
+    ok, msg, log = refresh_oms_now()
+    (st.success if ok else st.error)(msg)
+    st.text_area("Latest downloader log", log, height=240)
+
+# Status
+last_date, last_log = _load_last_run()
+st.caption(f"Last OMS pull date (ET): {last_date or 'never'}")
+
+# List downloaded files
+if FILES_DIR.exists():
+    st.subheader("Downloaded files")
+    for p in sorted(FILES_DIR.glob("*.xls")):
+        st.write(p.name)
+
 file_paths = ['files/Concord.xls', 'files/Winston.xls', 'files/Lake.xls', 'files/Hickory.xls']
 store_files = {
     "Concord": "files/Concord90.xls",
@@ -192,7 +269,7 @@ def summarize_90_day_sales_by_store():
     try:
         filtered_summaries = {
             store: df for store, df in store_summaries.items()
-            if store.upper() != "NISSAN OF BOONE" and store.upper() != "EAST CHARLTOTE NISSAN" and not df.empty
+            if store.upper() != "NISSAN OF BOONE" and store.upper() != "EAST CHARLOTTE NISSAN" and not df.empty
         }
         all_stores_summary = pd.concat(
             {store: df.set_index("Model")[["Units Sold Rolling Days 90"]] for store, df in filtered_summaries.items()},
