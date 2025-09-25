@@ -384,7 +384,7 @@ with tab2:
                 "AGE":     st.column_config.NumberColumn("AGE", format="%d", width="small"),
                 "STATUS":  st.column_config.TextColumn("STATUS", width="small"),
                 "VIN":     st.column_config.TextColumn("VIN", width="medium"),
-                "BALANCE": st.column_config.NumberColumn("BALANCE", format="%,.2f", width="small"),
+                "BALANCE": st.column_config.TextColumn("BALANCE", width="small"),
                 # Let CUSTOM take the remaining space
                 "CUSTOM":  st.column_config.TextColumn("CUSTOM", width="large"),
             },
