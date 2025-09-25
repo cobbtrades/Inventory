@@ -10,3 +10,4 @@ matplotlib
 python-dotenv
 python-dateutil
 tzdata
+html5lib
