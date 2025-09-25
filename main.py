@@ -78,12 +78,6 @@ if st.button("Refresh now"):
 last_date, last_log = _load_last_run()
 st.caption(f"Last OMS pull date (ET): {last_date or 'never'}")
 
-# List downloaded files
-if FILES_DIR.exists():
-    st.subheader("Downloaded files")
-    for p in sorted(FILES_DIR.glob("*.xls")):
-        st.write(p.name)
-
 file_paths = ['files/Concord.xls', 'files/Winston.xls', 'files/Lake.xls', 'files/Hickory.xls']
 store_files = {
     "Concord": "files/Concord90.xls",
