@@ -1,6 +1,6 @@
-streamlit==1.34.0
+streamlit
 streamlit-extras
-pandas==1.5.2
+pandas
 lxml
 openpyxl
 reportlab
