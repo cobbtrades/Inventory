@@ -1,4 +1,4 @@
-import pandas as pd, streamlit as st, os, time, plotly.graph_objects as go, warnings, numpy as np
+import pandas as pd, streamlit as st, os, time, plotly.graph_objects as go, plotly.express as px, warnings, numpy as np
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from reportlab.lib.pagesizes import letter
@@ -709,8 +709,7 @@ with tab4:
 def plot_metric(dataframes, metric, title, ylabel):
     fig = go.Figure()
     
-    bar_width = 0.2
-    colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728']  # Custom color palette for better contrast
+    colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728']
 
     for i, (name, df) in enumerate(dataframes.items()):
         fig.add_trace(go.Bar(
@@ -725,15 +724,20 @@ def plot_metric(dataframes, metric, title, ylabel):
         xaxis_title='Model',
         yaxis_title=ylabel,
         barmode='group',
-        bargap=0.2,
-        bargroupgap=0.1,
         plot_bgcolor='#0e1117',
         paper_bgcolor='#0e1117',
-        font=dict(color='#d0d0d0'),
-        showlegend=True
+        font=dict(color='#d0d0d0')
     )
     
-    st.plotly_chart(fig, width='stretch')
+    # Define configuration options
+    config = {
+        'displayModeBar': False,
+        'staticPlot': False,
+        'scrollZoom': True,
+        'doubleClick': 'reset+autosize'
+    }
+    
+    st.plotly_chart(fig, config=config)
 
 with tab5:
     def process_excel(file):
