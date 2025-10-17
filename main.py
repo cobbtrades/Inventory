@@ -51,6 +51,18 @@ dlr_acronyms = {
 
 excluded_dealers = ["NISSAN OF BOONE", "EAST CHARLOTTE NISSAN"]
 
+def clean_dataframe_types(df):
+    """Ensure all dataframe columns have consistent, Arrow-compatible types."""
+    df = df.copy()
+    for col in df.columns:
+        if df[col].dtype == 'object':
+            # Convert all object columns to string, handling NaN values
+            df[col] = df[col].astype(str).replace('nan', '').replace('None', '')
+        elif pd.api.types.is_numeric_dtype(df[col]):
+            # Ensure numeric columns are properly typed
+            df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
+    return df
+
 @st.cache_data
 def load_data(file_paths):
     expected_columns = [
@@ -79,9 +91,9 @@ def load_data(file_paths):
                     df['EXT'] = df['EXT'].replace(ext_mapping)
                 date_columns = ['ETA', 'DLV_DATE', 'ORD_DATE', 'SOLD']
                 df[date_columns] = df[date_columns].apply(lambda col: pd.to_datetime(col, errors='coerce').dt.strftime('%m-%d-%Y'))
-                df['Premium'] = df['GOPTS'].apply(lambda x: 'PRM' if any(sub in x for sub in ['PRM', 'PR1', 'PR2', 'PR3']) else '')
-                df['Technology'] = df['GOPTS'].apply(lambda x: 'TECH' if any(sub in x for sub in ['TEC', 'TE1', 'TE2', 'TE3']) else '')
-                df['Convenience'] = df['GOPTS'].apply(lambda x: 'CONV' if any(sub in x for sub in ['CN1', 'CN2', 'CN3', 'CN4', 'CN5']) else '')
+                df['Premium'] = df['GOPTS'].apply(lambda x: 'PRM' if pd.notna(x) and isinstance(x, str) and any(sub in x for sub in ['PRM', 'PR1', 'PR2', 'PR3']) else '')
+                df['Technology'] = df['GOPTS'].apply(lambda x: 'TECH' if pd.notna(x) and isinstance(x, str) and any(sub in x for sub in ['TEC', 'TE1', 'TE2', 'TE3']) else '')
+                df['Convenience'] = df['GOPTS'].apply(lambda x: 'CONV' if pd.notna(x) and isinstance(x, str) and any(sub in x for sub in ['CN1', 'CN2', 'CN3', 'CN4', 'CN5']) else '')
                 df['PACKAGE'] = df[['Premium', 'Technology', 'Convenience']].apply(lambda x: ' '.join(filter(None, x)), axis=1)
                 df.drop(columns=['Premium', 'Technology', 'Convenience', 'GOPTS'], inplace=True)
                 cols = df.columns.tolist()
@@ -90,7 +102,8 @@ def load_data(file_paths):
                 df = df[cols]
                 df.sort_values(by='MDL', inplace=True)
                 df.reset_index(drop=True, inplace=True)
-                df.fillna('', inplace=True)
+                # Clean dataframe types to ensure Arrow compatibility
+                df = clean_dataframe_types(df)
                 data_frames.append((df, file))
         else:
             st.error(f"File {file} not found in the repository.")
@@ -114,6 +127,8 @@ if data_frames:
         frames.append(tmp.drop(columns=['ETA_DT']))
     combined_data = pd.concat(frames, ignore_index=True)
     combined_data.reset_index(drop=True, inplace=True)
+    # Clean types after concatenation to ensure Arrow compatibility
+    combined_data = clean_dataframe_types(combined_data)
 else:
     combined_data = pd.DataFrame()
         
@@ -134,10 +149,10 @@ def load_current_data(file_path):
         )
         df['MCODE'] = df['MCODE'].astype(str).str.replace(',', '', regex=False)
         df['MDL']   = df['MDL'].replace(mdl_mapping)
-        str_cols = df.select_dtypes(include=['object']).columns
-        df[str_cols] = df[str_cols].fillna('')
         df.sort_values(by='COMPANY', inplace=True)
         df.reset_index(drop=True, inplace=True)
+        # Clean types to ensure Arrow compatibility
+        df = clean_dataframe_types(df)
         return df
     else:
         st.error(f"File {file_path} not found.")
@@ -286,7 +301,7 @@ if not combined_data.empty:
             colors = ['All'] if model == 'All' else ['All'] + combined_data[combined_data['MDL'] == model]['EXT'].unique().tolist()
             color = st.selectbox('Color', options=colors, key='all_color')
         filtered_df = filter_data(combined_data, model, trim, package, color)
-        st.dataframe(filtered_df, use_container_width=True, height=780, hide_index=True)
+        st.dataframe(filtered_df, width='stretch', height=780, hide_index=True)
 else:
     st.error("No data to display.")
 
@@ -295,7 +310,7 @@ with tab2:
     if not current_data.empty:
         num_rows = len(current_data)
         st.markdown(f"<span style='font-size: small;'>{num_rows} vehicles</span>", unsafe_allow_html=True)
-        st.dataframe(current_data, use_container_width=True, height=780, hide_index=True)
+        st.dataframe(current_data, width='stretch', height=780, hide_index=True)
     else:
         st.error("No current inventory data to display.")
 
@@ -609,7 +624,7 @@ def summarize_retailed_data(df, start_date, end_date, all_models, all_dealers):
     filtered_df = replace_mdl_with_full_name(filtered_df, reverse_mdl_mapping)
     all_combinations = pd.MultiIndex.from_product([all_dealers, all_models], names=['DEALER_NAME', 'MDL'])
     summary = filtered_df.groupby(['DEALER_NAME', 'MDL']).size().reindex(all_combinations, fill_value=0).reset_index(name='Count')
-    pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
+    pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', aggfunc='sum', fill_value=0, margins=True, margins_name='Total')
     return pivot_table
 
 def summarize_current_inventory(dataframes):
@@ -635,7 +650,7 @@ def summarize_dlv_date_data(df, start_date, end_date, all_models, all_dealers):
     filtered_df = replace_mdl_with_full_name(filtered_df, reverse_mdl_mapping)
     all_combinations = pd.MultiIndex.from_product([all_dealers, all_models], names=['DEALER_NAME', 'MDL'])
     summary = filtered_df.groupby(['DEALER_NAME', 'MDL']).size().reindex(all_combinations, fill_value=0).reset_index(name='Count')
-    pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', aggfunc=sum, fill_value=0, margins=True, margins_name='Total')
+    pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', aggfunc='sum', fill_value=0, margins=True, margins_name='Total')
     return pivot_table
 
 def dataframe_to_html(df):
@@ -702,7 +717,7 @@ def plot_metric(dataframes, metric, title, ylabel):
             x=df['Model'],
             y=df[metric],
             name=name,
-            marker_color=colors[i]
+            marker=dict(color=colors[i])
         ))
 
     fig.update_layout(
@@ -714,10 +729,11 @@ def plot_metric(dataframes, metric, title, ylabel):
         bargroupgap=0.1,
         plot_bgcolor='#0e1117',
         paper_bgcolor='#0e1117',
-        font=dict(color='#d0d0d0')
+        font=dict(color='#d0d0d0'),
+        showlegend=True
     )
     
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
 
 with tab5:
     def process_excel(file):
