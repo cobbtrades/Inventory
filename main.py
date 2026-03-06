@@ -4,10 +4,42 @@ from dateutil.relativedelta import relativedelta
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from io import BytesIO
+import shutil
+from pathlib import Path
 warnings.filterwarnings('ignore', category=UserWarning, module='openpyxl')
 
-st.set_page_config(layout="wide", page_title="Nissan Inventory", page_icon="logo.png")
-file_paths = ['files/Concord.xls', 'files/Winston.xls', 'files/Lake.xls', 'files/Hickory.xls']
+st.set_page_config(layout="wide", page_title="Nissan Inventory", page_icon="logo.png", initial_sidebar_state="collapsed")
+
+# Ensure files directory exists
+files_dir = Path("files")
+files_dir.mkdir(exist_ok=True)
+
+# File upload and management functions
+def save_uploaded_files(uploaded_files):
+    """Save uploaded files to the appropriate directory and clear cache."""
+    if uploaded_files:
+        saved_files = []
+        for uploaded_file in uploaded_files:
+            # Save InventoryUpdate.xlsx to root, others to files directory
+            if uploaded_file.name == "InventoryUpdate.xlsx":
+                file_path = Path(uploaded_file.name)
+            else:
+                file_path = files_dir / uploaded_file.name
+            
+            with open(file_path, "wb") as f:
+                f.write(uploaded_file.getbuffer())
+            saved_files.append(uploaded_file.name)
+        # Clear all caches to reload data
+        st.cache_data.clear()
+        return saved_files
+    return []
+
+def get_file_paths():
+    """Get file paths, checking if files exist."""
+    file_paths = ['files/Concord.xls', 'files/Winston.xls', 'files/Lake.xls', 'files/Hickory.xls']
+    return [fp for fp in file_paths if os.path.exists(fp)]
+
+file_paths = get_file_paths()
 store_files = {
     "Concord": "files/Concord90.xls",
     "Hickory": "files/Hickory90.xls",
@@ -116,20 +148,25 @@ def add_unit_key(df: pd.DataFrame) -> pd.DataFrame:
     df['UNIT_KEY'] = np.where(vin != '', vin, order)
     return df
 
-data_frames = load_data(file_paths)
-if data_frames:
-    frames = []
-    for df, _ in data_frames:
-        tmp = add_unit_key(df)
-        tmp['ETA_DT'] = pd.to_datetime(tmp['ETA'], errors='coerce')
-        tmp.sort_values(['DEALER_NAME', 'UNIT_KEY', 'ETA_DT'], inplace=True, na_position='last')
-        tmp = tmp.drop_duplicates(subset=['DEALER_NAME', 'UNIT_KEY'], keep='last')
-        frames.append(tmp.drop(columns=['ETA_DT']))
-    combined_data = pd.concat(frames, ignore_index=True)
-    combined_data.reset_index(drop=True, inplace=True)
-    # Clean types after concatenation to ensure Arrow compatibility
-    combined_data = clean_dataframe_types(combined_data)
-else:
+# Load data with error handling
+try:
+    data_frames = load_data(file_paths)
+    if data_frames:
+        frames = []
+        for df, _ in data_frames:
+            tmp = add_unit_key(df)
+            tmp['ETA_DT'] = pd.to_datetime(tmp['ETA'], errors='coerce')
+            tmp.sort_values(['DEALER_NAME', 'UNIT_KEY', 'ETA_DT'], inplace=True, na_position='last')
+            tmp = tmp.drop_duplicates(subset=['DEALER_NAME', 'UNIT_KEY'], keep='last')
+            frames.append(tmp.drop(columns=['ETA_DT']))
+        combined_data = pd.concat(frames, ignore_index=True)
+        combined_data.reset_index(drop=True, inplace=True)
+        # Clean types after concatenation to ensure Arrow compatibility
+        combined_data = clean_dataframe_types(combined_data)
+    else:
+        combined_data = pd.DataFrame()
+except Exception as e:
+    st.warning(f"⚠️ Error loading data: {str(e)}. Please check your uploaded files.")
     combined_data = pd.DataFrame()
         
 @st.cache_data
@@ -158,7 +195,15 @@ def load_current_data(file_path):
         st.error(f"File {file_path} not found.")
         return pd.DataFrame()
 
-current_data = load_current_data('InventoryUpdate.xlsx')
+# Load current data with error handling
+try:
+    if os.path.exists('InventoryUpdate.xlsx'):
+        current_data = load_current_data('InventoryUpdate.xlsx')
+    else:
+        current_data = pd.DataFrame()
+except Exception as e:
+    st.warning(f"⚠️ Error loading current inventory data: {str(e)}")
+    current_data = pd.DataFrame()
 
 @st.cache_data
 def process_90_day_sales(file_path):
@@ -194,11 +239,14 @@ def process_90_day_sales(file_path):
         st.error(f"Error processing file {file_path}: {e}")
         return pd.DataFrame()
 
-# Load data for all stores
+# Load data for all stores with error handling
 store_summaries = {}
 for store, file_path in store_files.items():
     try:
-        store_summaries[store] = process_90_day_sales(file_path)
+        if os.path.exists(file_path):
+            store_summaries[store] = process_90_day_sales(file_path)
+        else:
+            store_summaries[store] = pd.DataFrame(columns=["Model", "Units Sold Rolling Days 90"])
     except Exception as e:
         store_summaries[store] = pd.DataFrame(columns=["Model", "Units Sold Rolling Days 90"])
 
@@ -257,20 +305,404 @@ def format_90_day_sales(summary_90_day_sales):
 summary_90_day_sales = summarize_90_day_sales_by_store()
 formatted_90_day_sales = format_90_day_sales(summary_90_day_sales)
 
-st.write(
-    """
-    <style>
+# Modern UI Styling
+modern_css = """
+<style>
+    /* Main container styling - ZERO top padding */
     .main .block-container {
-        padding-top: 1rem;
-        padding-left: 2rem;
-        padding-right: 2rem;
+        padding-top: 0rem !important;
+        padding-left: 3rem;
+        padding-right: 3rem;
+        padding-bottom: 3rem;
+        margin-top: 0 !important;
     }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+    
+    /* Remove ALL top spacing from Streamlit - comprehensive targeting */
+    .main .block-container > *:first-child,
+    .main .block-container > div:first-child,
+    .main .block-container > section:first-child {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+    
+    /* Remove Streamlit default spacing on all first elements */
+    .element-container:first-child,
+    div[data-testid="stVerticalBlock"]:first-child,
+    section[data-testid="stVerticalBlock"]:first-child {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+    
+    /* Remove spacing from expander when it's first - more aggressive */
+    .streamlit-expander:first-child,
+    div[data-testid="stExpander"]:first-child {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+    
+    /* Override Streamlit's default top padding on all containers */
+    section[data-testid="stAppViewContainer"] > div:first-child,
+    section[data-testid="stAppViewContainer"] > div > div:first-child {
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+    }
+    
+    /* Target the specific div that wraps everything */
+    div[data-testid="stAppViewContainer"] > div > div > div:first-child {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+    
+    /* Header styling */
+    .main-header {
+        background: linear-gradient(135deg, #c3002f 0%, #7a001d 100%);
+        padding: 1.5rem;
+        border-radius: 15px;
+        margin-bottom: 1rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+    
+    .main-header h1 {
+        color: white;
+        margin: 0;
+        font-size: 2.5rem;
+        font-weight: 700;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    /* File upload area styling */
+    .upload-section {
+        background: #1a1a1a;
+        padding: 1.5rem;
+        border-radius: 15px;
+        border: 2px dashed #c3002f;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    /* Reduce expander spacing - completely remove top spacing */
+    .streamlit-expanderHeader,
+    div[data-testid="stExpander"] > div:first-child {
+        margin-top: 0 !important;
+        margin-bottom: 0.5rem !important;
+        padding-top: 0.25rem !important;
+    }
+    
+    /* Remove top margin from expander content */
+    .streamlit-expanderContent {
+        margin-top: 0 !important;
+    }
+    
+    /* Target the expander wrapper directly */
+    div[data-testid="stExpander"] {
+        margin-top: 0 !important;
+    }
+    
+    .upload-section:hover {
+        border-color: #ff1744;
+        background: #202020;
+    }
+    
+    /* Tabs container */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 10px;
+        background: #151515;
+        padding: 10px;
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.08);
+    }
+    
+    /* Individual tabs */
+    .stTabs [data-baseweb="tab"] {
+        background: #202020;
+        color: #dcdcdc;
+        border-radius: 10px;
+        padding: 10px 20px;
+        font-weight: 600;
+        border: 1px solid rgba(255,255,255,0.06);
+        transition: all 0.25s ease;
+    }
+    
+    .stTabs [data-baseweb="tab"]:hover {
+        background: #2a2a2a;
+        color: white;
+    }
+    
+    /* Active tab */
+    .stTabs [aria-selected="true"] {
+        background: linear-gradient(135deg, #c3002f 0%, #7a001d 100%) !important;
+        color: white !important;
+        border: none !important;
+        box-shadow: 0 4px 14px rgba(195, 0, 47, 0.35);
+    }
+    
+    /* Success message styling */
+    .success-box {
+        background: linear-gradient(135deg, #0f9d58 0%, #34a853 100%);
+        color: white;
+        padding: 1rem;
+        border-radius: 10px;
+        margin: 1rem 0;
+        font-weight: 600;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    
+    /* Metric cards */
+    .metric-card {
+        background: #1a1a1a;
+        color: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        border-left: 4px solid #c3002f;
+    }
+    
+    /* Dataframe styling */
+    table {
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+    }
+    
+    thead th {
+        background: linear-gradient(135deg, #c3002f 0%, #7a001d 100%) !important;
+        color: white !important;
+        font-weight: 700 !important;
+        padding: 12px !important;
+    }
+    
+    tbody tr {
+        transition: background-color 0.2s ease;
+    }
+    
+    tbody tr:hover {
+        background-color: #2a2a2a !important;
+    }
+    
+    tbody tr:nth-child(even) {
+        background-color: #1b1b1b;
+        color: #e5e5e5;
+    }
+    
+    tbody tr:nth-child(odd) {
+        background-color: #141414;
+        color: #e5e5e5;
+    }
+    
+    /* Button styling */
+    .stButton > button {
+        background: linear-gradient(135deg, #c3002f 0%, #7a001d 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(195, 0, 47, 0.35);
+    }
+    
+    .stButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(195, 0, 47, 0.5);
+    }
+    
+    /* Selectbox / dropdown field */
+    .stSelectbox > div > div,
+    div[data-baseweb="select"] > div {
+        background-color: #1a1a1a !important;
+        color: white !important;
+        border-radius: 8px !important;
+        border: 1px solid rgba(255,255,255,0.08) !important;
+    }
+    
+    /* Selected value text */
+    div[data-baseweb="select"] span,
+    div[data-baseweb="select"] div {
+        color: white !important;
+    }
+    
+    /* Dropdown menu */
+    div[role="listbox"] {
+        background-color: #1a1a1a !important;
+        border: 1px solid rgba(255,255,255,0.08) !important;
+        color: white !important;
+    }
+    
+    /* Dropdown options */
+    div[role="option"] {
+        background-color: #1a1a1a !important;
+        color: white !important;
+    }
+    
+    div[role="option"]:hover {
+        background-color: #2a2a2a !important;
+        color: white !important;
+    }
+    
+    /* Inputs */
+    .stTextInput input,
+    .stNumberInput input,
+    .stTextArea textarea {
+        background-color: #1a1a1a !important;
+        color: white !important;
+        border: 1px solid rgba(255,255,255,0.08) !important;
+        border-radius: 8px !important;
+    }
+    
+    /* Labels */
+    label, .stMarkdown, p, h1, h2, h3, h4, h5, h6 {
+        color: #e5e5e5;
+    }
+    
+    /* App background */
+    .stApp {
+        background-color: #0e1117;
+        color: #e5e5e5;
+    }
+    
+    /* Hide Streamlit branding and header completely */
+    #MainMenu {visibility: hidden; height: 0 !important;}
+    footer {visibility: hidden; height: 0 !important;}
+    header {visibility: hidden; height: 0 !important;}
+    
+    /* Remove header spacing completely */
+    header[data-testid="stHeader"] {
+        display: none !important;
+        height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
+    /* Remove any top spacing from the app view - multiple selectors */
+    section[data-testid="stAppViewContainer"],
+    div[data-testid="stAppViewContainer"] {
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+    }
+    
+    /* Ensure main content starts at the very top */
+    .main,
+    div[class*="main"] {
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+    }
+    
+    /* Target the root app div */
+    #root > div:first-child {
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+    }
+    
+    /* Remove any spacing from body/html */
+    body {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+    
+    /* Force remove top spacing with negative margin as last resort */
+    .main .block-container:first-child {
+        margin-top: -2rem !important;
+    }
+    
+    /* Target the very first element */
+    .main > div:first-child > div:first-child {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+    
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: #161616;
+        border-radius: 10px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #c3002f 0%, #7a001d 100%);
+        border-radius: 10px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: #c3002f;
+    }
+</style>
+"""
+st.markdown(modern_css, unsafe_allow_html=True)
 
-tab1, tab2, tab3, tab4, tab5 = st.tabs(["All Stores", "Current CDK", "Dealer Trade", "Incoming", "Sales"])
+# JavaScript to force remove top spacing (runs after page load)
+st.markdown("""
+<script>
+    // Remove top spacing immediately and on load
+    function removeTopSpacing() {
+        // Target all possible containers
+        const containers = [
+            '.main .block-container',
+            'section[data-testid="stAppViewContainer"]',
+            '.main',
+            'div[data-testid="stVerticalBlock"]:first-child',
+            '.streamlit-expander:first-child'
+        ];
+        
+        containers.forEach(selector => {
+            const elements = document.querySelectorAll(selector);
+            elements.forEach(el => {
+                if (el) {
+                    el.style.marginTop = '0px';
+                    el.style.paddingTop = '0px';
+                }
+            });
+        });
+        
+        // Specifically target first expander
+        const firstExpander = document.querySelector('.streamlit-expander:first-child');
+        if (firstExpander) {
+            firstExpander.style.marginTop = '0px';
+            firstExpander.style.paddingTop = '0px';
+        }
+    }
+    
+    // Run immediately
+    removeTopSpacing();
+    
+    // Run on load
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', removeTopSpacing);
+    } else {
+        removeTopSpacing();
+    }
+    
+    // Run after a short delay to catch dynamically loaded content
+    setTimeout(removeTopSpacing, 100);
+    setTimeout(removeTopSpacing, 500);
+</script>
+""", unsafe_allow_html=True)
+
+# File Upload Section
+with st.expander("📁 Upload Files - Drag & Drop Your Files Folder Here", expanded=False):
+    
+    uploaded_files = st.file_uploader(
+        "Choose files to upload",
+        type=['xls', 'xlsx'],
+        accept_multiple_files=True,
+        help="Select one or more Excel files to upload. Files will be saved to the files folder and the app will refresh automatically."
+    )
+    
+    if uploaded_files:
+        if st.button("💾 Save Files & Refresh Data", type="primary", width='stretch'):
+            saved = save_uploaded_files(uploaded_files)
+            if saved:
+                st.markdown(f"""
+                <div class="success-box">
+                    ✅ Successfully uploaded {len(saved)} file(s): {', '.join(saved)}
+                    <br>🔄 Refreshing data...
+                </div>
+                """, unsafe_allow_html=True)
+                st.rerun()
+
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["🏪 All Stores", "💼 Current CDK", "🔄 Dealer Trade", "📥 Incoming", "📊 Sales"])
 
 @st.cache_data
 def filter_data(df, model, trim, package, color):
@@ -288,31 +720,37 @@ if not combined_data.empty:
     with tab1:
         cols = st.columns([2, 1, 1, 1, 1])
         with cols[0]:
-            st.markdown(f"### All Stores Inventory")
+            total_vehicles = len(combined_data)
+            st.metric("Total Vehicles", f"{total_vehicles:,}")
         with cols[1]:
-            model = st.selectbox('Model', options=['All'] + combined_data['MDL'].unique().tolist(), key='all_model')
+            model = st.selectbox('🚗 Model', options=['All'] + sorted(combined_data['MDL'].unique().tolist()), key='all_model')
         with cols[2]:
-            trims = ['All'] if model == 'All' else ['All'] + combined_data[combined_data['MDL'] == model]['TRIM'].unique().tolist()
-            trim = st.selectbox('Trim', options=trims, key='all_trim')
+            trims = ['All'] if model == 'All' else ['All'] + sorted(combined_data[combined_data['MDL'] == model]['TRIM'].unique().tolist())
+            trim = st.selectbox('✨ Trim', options=trims, key='all_trim')
         with cols[3]:
-            packages = ['All'] if model == 'All' else ['All'] + combined_data[combined_data['MDL'] == model]['PACKAGE'].unique().tolist()
-            package = st.selectbox('Package', options=packages, key='all_package')
+            packages = ['All'] if model == 'All' else ['All'] + sorted([p for p in combined_data[combined_data['MDL'] == model]['PACKAGE'].unique().tolist() if p and str(p) != 'nan'])
+            package = st.selectbox('📦 Package', options=packages, key='all_package')
         with cols[4]:
-            colors = ['All'] if model == 'All' else ['All'] + combined_data[combined_data['MDL'] == model]['EXT'].unique().tolist()
-            color = st.selectbox('Color', options=colors, key='all_color')
+            colors = ['All'] if model == 'All' else ['All'] + sorted(combined_data[combined_data['MDL'] == model]['EXT'].unique().tolist())
+            color = st.selectbox('🎨 Color', options=colors, key='all_color')
         filtered_df = filter_data(combined_data, model, trim, package, color)
-        st.dataframe(filtered_df, width='stretch', height=780, hide_index=True)
+        st.markdown(f"**Showing {len(filtered_df)} vehicle(s)**")
+        st.dataframe(filtered_df, height=780, hide_index=True, width='stretch')
 else:
-    st.error("No data to display.")
+    st.error("❌ No data to display. Please upload files using the file upload section above.")
 
 with tab2:
-    st.markdown("### Current CDK Inventory")
     if not current_data.empty:
         num_rows = len(current_data)
-        st.markdown(f"<span style='font-size: small;'>{num_rows} vehicles</span>", unsafe_allow_html=True)
-        st.dataframe(current_data, width='stretch', height=780, hide_index=True)
+        col1, col2 = st.columns(2)
+        with col1:
+            st.metric("Total Vehicles", f"{num_rows:,}")
+        with col2:
+            avg_age = current_data['AGE'].mean() if 'AGE' in current_data.columns else 0
+            st.metric("Avg Age (Days)", f"{avg_age:.1f}")
+        st.dataframe(current_data, height=780, hide_index=True, width='stretch')
     else:
-        st.error("No current inventory data to display.")
+        st.error("❌ No current inventory data to display. Please upload InventoryUpdate.xlsx file.")
 
 def calculate_transfer_amount(key_charge, projected_cost):
     return projected_cost - key_charge - 400
@@ -329,7 +767,6 @@ def get_store_number(location):
     return store_numbers.get(location, "UNKNOWN STORE")
 
 with tab3:
-    st.markdown("### Dealer Trade")
     col1, col2 = st.columns(2)
     with col1:
         current_date = datetime.today()
@@ -539,32 +976,60 @@ with tab3:
             key="download_trade_pdf_button"
         )
 
-dark_mode_css = """
+# Additional styling for dataframes in tabs
+dataframe_css = """
 <style>
-body {background-color: #0e1117; color: #fafafa;}
-h3 {color: #fafafa;}
-table {
-    color: #000000;
-    font-weight: bold;
-    background-color: #FFFFFF;
-    border: 1px solid #383e53;
-    text-align: center;
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed;
-    word-wrap: break-word;
+.dataframe-container {
+    font-size: 12px;
+    padding: 1px;
+    border-radius: 10px;
+    overflow: hidden;
 }
-thead th {color: #000000; background-color: #FFFFFF; text-align: center; padding: 8px;}
-tbody td {text-align: center; padding: 8px; word-wrap: break-word;}
-tbody tr:nth-child(even) {background-color: #FFFFFF;}
-tbody tr:nth-child(odd) {background-color: #FFFFFF;}
-.dataframe-container {font-size: 12px; padding: 1px;}
-.dataframe-container table {width: 100%;}
-.dataframe-container th, .dataframe-container td {padding: 2px;}
-.dataframe-container th {background-color: #FFFFFF;}
+.dataframe-container table {
+    width: 100%;
+    border-radius: 10px;
+}
+.dataframe-container th, .dataframe-container td {
+    padding: 8px;
+}
+.dataframe-container th {
+    background: linear-gradient(135deg, #c3002f 0%, #7a001d 100%);
+    color: white;
+    font-weight: 700;
+    text-align: center !important;
+}
+/* Center all cells except the first column (Model column) */
+.dataframe-container td {
+    text-align: center !important;
+    background-color: #ffffff !important;
+    color: #000000 !important;
+}
+.dataframe-container td:first-child,
+.dataframe-container th:first-child {
+    text-align: left !important;
+}
+/* Ensure all table cells have white background and black text */
+.dataframe-container tbody tr {
+    background-color: #ffffff !important;
+}
+.dataframe-container tbody tr:nth-child(even) {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+}
+.dataframe-container tbody tr:nth-child(odd) {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+}
+.dataframe-container tbody tr:hover {
+    background-color: #f5f5f5 !important;
+}
+.dataframe-container tbody td {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+}
 </style>
 """
-st.markdown(dark_mode_css, unsafe_allow_html=True)
+st.markdown(dataframe_css, unsafe_allow_html=True)
 
 def replace_mdl_with_full_name(df, reverse_mdl_mapping):
     df['MDL'] = df['MDL'].replace(reverse_mdl_mapping)
@@ -661,6 +1126,67 @@ def dataframe_to_html_90(df):
     html = df.to_html(classes='dataframe-container', border=0, index=False)  # Set index=False
     return html
 
+def reindex_table_to_match_models(df, models_to_match, index_col='MDL'):
+    """Reindex a dataframe to include all models from models_to_match, filling missing with zeros."""
+    if df.empty or not models_to_match:
+        return df
+    
+    try:
+        # Handle pivot tables with index (like incoming summaries)
+        if index_col in df.index.names or (hasattr(df.index, 'name') and df.index.name == index_col):
+            # Get current index values (excluding Total)
+            current_index = [str(m) for m in df.index if str(m).upper() != 'TOTAL']
+            # Create new index with models_to_match + Total if it existed
+            new_index = models_to_match.copy()
+            if 'Total' in df.index or any(str(m).upper() == 'TOTAL' for m in df.index):
+                new_index.append('Total')
+            
+            # Reindex to include all models, filling missing with 0
+            reindexed = df.reindex(new_index, fill_value=0)
+            return reindexed
+        
+        # Handle dataframes with 'Model' column (like 90-day sales and current inventory)
+        if 'Model' in df.columns:
+            # Get current models (excluding Total)
+            current_models = df[df['Model'].astype(str).str.upper() != 'TOTAL']['Model'].tolist()
+            # Create list of all models to show
+            all_models = models_to_match.copy()
+            # Check if Total row exists
+            has_total = any(df['Model'].astype(str).str.upper() == 'TOTAL')
+            
+            # Create a new dataframe with all models
+            result_rows = []
+            for model in all_models:
+                # Find matching row (case-insensitive)
+                matching = df[df['Model'].astype(str).str.upper() == str(model).upper()]
+                if not matching.empty:
+                    result_rows.append(matching.iloc[0].to_dict())
+                else:
+                    # Create zero row for missing model
+                    zero_row = {col: 0 if col != 'Model' else model for col in df.columns}
+                    result_rows.append(zero_row)
+            
+            # Add Total row if it existed
+            if has_total:
+                total_row = df[df['Model'].astype(str).str.upper() == 'TOTAL'].iloc[0].to_dict()
+                result_rows.append(total_row)
+            
+            result_df = pd.DataFrame(result_rows)
+            # Recalculate Total row if it exists
+            if has_total and len(result_df) > 0:
+                total_idx = result_df[result_df['Model'].astype(str).str.upper() == 'TOTAL'].index
+                if len(total_idx) > 0:
+                    numeric_cols = result_df.select_dtypes(include=[np.number]).columns
+                    result_df.loc[total_idx[0], numeric_cols] = result_df[result_df['Model'].astype(str).str.upper() != 'TOTAL'][numeric_cols].sum()
+            
+            return result_df
+        
+    except Exception as e:
+        # If reindexing fails, return original dataframe
+        return df
+    
+    return df
+
 with tab4:
     container = st.container()
     if not combined_data.empty:
@@ -676,31 +1202,62 @@ with tab4:
         all_dealers = combined_data['DEALER_NAME'].replace(dealer_acronyms)
         all_dealers = all_dealers[~combined_data['DEALER_NAME'].str.upper().isin([d.upper() for d in excluded_dealers])].unique()
         with container:
+            # Calculate balance_to_arrive first to get the models list
+            current_month_summary = summarize_incoming_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
+            current_month_dlv_summary = summarize_dlv_date_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
+            balance_to_arrive = current_month_summary.subtract(current_month_dlv_summary, fill_value=0)
+            
+            # Get models from balance_to_arrive (excluding Total row)
+            if not balance_to_arrive.empty:
+                balance_models = [str(m) for m in balance_to_arrive.index if str(m).upper() != 'TOTAL']
+            else:
+                balance_models = []
+            
             blank_col1, col1, col2, col3, blank_col2 = st.columns([0.1, 1, 1, 1, 0.1])
             with col1:
+                
                 st.markdown(f"<h5 style='text-align: center;'>Incoming for {start_of_month.strftime('%B')}</h5>", unsafe_allow_html=True)
-                current_month_summary = summarize_incoming_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
-                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(current_month_summary)}</div>", unsafe_allow_html=True)
+                if balance_models:
+                    current_month_summary_filtered = reindex_table_to_match_models(current_month_summary, balance_models, 'MDL')
+                else:
+                    current_month_summary_filtered = current_month_summary
+                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(current_month_summary_filtered)}</div>", unsafe_allow_html=True)
                 
                 st.markdown(f"<h5 style='text-align: center;'>90-Day Sales Summary</h5>", unsafe_allow_html=True)
-                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html_90(formatted_90_day_sales)}</div>", unsafe_allow_html=True)
+                if balance_models:
+                    formatted_90_day_sales_filtered = reindex_table_to_match_models(formatted_90_day_sales, balance_models, 'Model')
+                else:
+                    formatted_90_day_sales_filtered = formatted_90_day_sales
+                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html_90(formatted_90_day_sales_filtered)}</div>", unsafe_allow_html=True)
             
             with col2:
-                st.markdown(f"<h5 style='text-align: center;'>Incoming for {next_month_start.strftime('%B')}</h5>", unsafe_allow_html=True)
                 next_month_summary = summarize_incoming_data(combined_data, next_month_start, next_month_end, all_models, all_dealers)
-                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(next_month_summary)}</div>", unsafe_allow_html=True)
+                current_inventory_summary = summarize_current_inventory(store_summaries)
+                
+                st.markdown(f"<h5 style='text-align: center;'>Incoming for {next_month_start.strftime('%B')}</h5>", unsafe_allow_html=True)
+                if balance_models:
+                    next_month_summary_filtered = reindex_table_to_match_models(next_month_summary, balance_models, 'MDL')
+                else:
+                    next_month_summary_filtered = next_month_summary
+                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(next_month_summary_filtered)}</div>", unsafe_allow_html=True)
                 
                 st.markdown(f"<h5 style='text-align: center;'>Current Inventory</h5>", unsafe_allow_html=True)
-                current_inventory_summary = summarize_current_inventory(store_summaries)
-                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html_90(current_inventory_summary)}</div>", unsafe_allow_html=True)
+                if balance_models:
+                    current_inventory_summary_filtered = reindex_table_to_match_models(current_inventory_summary, balance_models, 'Model')
+                else:
+                    current_inventory_summary_filtered = current_inventory_summary
+                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html_90(current_inventory_summary_filtered)}</div>", unsafe_allow_html=True)
             
             with col3:
-                st.markdown(f"<h5 style='text-align: center;'>Incoming for {following_month_start.strftime('%B')}</h5>", unsafe_allow_html=True)
                 following_month_summary = summarize_incoming_data(combined_data, following_month_start, following_month_end, all_models, all_dealers)
-                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(following_month_summary)}</div>", unsafe_allow_html=True)
                 
-                current_month_dlv_summary = summarize_dlv_date_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
-                balance_to_arrive = current_month_summary.subtract(current_month_dlv_summary, fill_value=0)
+                st.markdown(f"<h5 style='text-align: center;'>Incoming for {following_month_start.strftime('%B')}</h5>", unsafe_allow_html=True)
+                if balance_models:
+                    following_month_summary_filtered = reindex_table_to_match_models(following_month_summary, balance_models, 'MDL')
+                else:
+                    following_month_summary_filtered = following_month_summary
+                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(following_month_summary_filtered)}</div>", unsafe_allow_html=True)
+                
                 st.markdown(f"<h5 style='text-align: center;'>Balance to Arrive for {start_of_month.strftime('%B')}</h5>", unsafe_allow_html=True)
                 st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(balance_to_arrive)}</div>", unsafe_allow_html=True)
     else:
@@ -709,7 +1266,7 @@ with tab4:
 def plot_metric(dataframes, metric, title, ylabel):
     fig = go.Figure()
     
-    colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728']
+    colors = ['#c3002f', '#8c8c8c', '#4d4d4d', '#d9d9d9']
 
     for i, (name, df) in enumerate(dataframes.items()):
         fig.add_trace(go.Bar(
@@ -740,6 +1297,7 @@ def plot_metric(dataframes, metric, title, ylabel):
     st.plotly_chart(fig, config=config)
 
 with tab5:
+    st.markdown("### 📊 Sales Analytics & Trends")
     def process_excel(file):
         df = pd.read_html(file)[0].iloc[:, :9]
         df.columns = df.iloc[1]
@@ -753,17 +1311,26 @@ with tab5:
         df = df.dropna(subset=['Model'])
         return df
     
-    cn_df = process_excel('files/Concord90.xls')
-    hk_df = process_excel('files/Hickory90.xls')
-    ln_df = process_excel('files/Lake90.xls')
-    ws_df = process_excel('files/Winston90.xls')
-
-    dataframes = {
-        'Concord': cn_df,
-        'Hickory': hk_df,
-        'Lake': ln_df,
-        'Winston': ws_df
+    # Load sales data with error handling
+    dataframes = {}
+    sales_files = {
+        'Concord': 'files/Concord90.xls',
+        'Hickory': 'files/Hickory90.xls',
+        'Lake': 'files/Lake90.xls',
+        'Winston': 'files/Winston90.xls'
     }
+    
+    for name, file_path in sales_files.items():
+        try:
+            if os.path.exists(file_path):
+                dataframes[name] = process_excel(file_path)
+            else:
+                st.warning(f"⚠️ File not found: {file_path}")
+        except Exception as e:
+            st.warning(f"⚠️ Error processing {name}: {str(e)}")
+    
+    if not dataframes:
+        st.error("❌ No sales data files found. Please upload the 90-day sales files.")
     
     bl1, col1, col2, bl2 = st.columns([0.1, 1, 1, 0.1])
     with col1:
