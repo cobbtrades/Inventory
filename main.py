@@ -1027,6 +1027,19 @@ dataframe_css = """
     background-color: #ffffff !important;
     color: #000000 !important;
 }
+
+/* Incoming tab: minimal padding, larger font for numeric cells */
+.dataframe-container-incoming.dataframe-container {
+    font-size: 14px;
+}
+.dataframe-container-incoming.dataframe-container th,
+.dataframe-container-incoming.dataframe-container td {
+    padding: 2px 4px !important;
+}
+.dataframe-container-incoming.dataframe-container td:not(:first-child) {
+    font-size: 15px !important;
+    font-weight: 500;
+}
 </style>
 """
 st.markdown(dataframe_css, unsafe_allow_html=True)
@@ -1221,14 +1234,14 @@ with tab4:
                     current_month_summary_filtered = reindex_table_to_match_models(current_month_summary, balance_models, 'MDL')
                 else:
                     current_month_summary_filtered = current_month_summary
-                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(current_month_summary_filtered)}</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='dataframe-container dataframe-container-incoming'>{dataframe_to_html(current_month_summary_filtered)}</div>", unsafe_allow_html=True)
                 
                 st.markdown(f"<h5 style='text-align: center;'>90-Day Sales Summary</h5>", unsafe_allow_html=True)
                 if balance_models:
                     formatted_90_day_sales_filtered = reindex_table_to_match_models(formatted_90_day_sales, balance_models, 'Model')
                 else:
                     formatted_90_day_sales_filtered = formatted_90_day_sales
-                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html_90(formatted_90_day_sales_filtered)}</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='dataframe-container dataframe-container-incoming'>{dataframe_to_html_90(formatted_90_day_sales_filtered)}</div>", unsafe_allow_html=True)
             
             with col2:
                 next_month_summary = summarize_incoming_data(combined_data, next_month_start, next_month_end, all_models, all_dealers)
@@ -1239,14 +1252,14 @@ with tab4:
                     next_month_summary_filtered = reindex_table_to_match_models(next_month_summary, balance_models, 'MDL')
                 else:
                     next_month_summary_filtered = next_month_summary
-                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(next_month_summary_filtered)}</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='dataframe-container dataframe-container-incoming'>{dataframe_to_html(next_month_summary_filtered)}</div>", unsafe_allow_html=True)
                 
                 st.markdown(f"<h5 style='text-align: center;'>Current Inventory</h5>", unsafe_allow_html=True)
                 if balance_models:
                     current_inventory_summary_filtered = reindex_table_to_match_models(current_inventory_summary, balance_models, 'Model')
                 else:
                     current_inventory_summary_filtered = current_inventory_summary
-                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html_90(current_inventory_summary_filtered)}</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='dataframe-container dataframe-container-incoming'>{dataframe_to_html_90(current_inventory_summary_filtered)}</div>", unsafe_allow_html=True)
             
             with col3:
                 following_month_summary = summarize_incoming_data(combined_data, following_month_start, following_month_end, all_models, all_dealers)
@@ -1256,10 +1269,10 @@ with tab4:
                     following_month_summary_filtered = reindex_table_to_match_models(following_month_summary, balance_models, 'MDL')
                 else:
                     following_month_summary_filtered = following_month_summary
-                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(following_month_summary_filtered)}</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='dataframe-container dataframe-container-incoming'>{dataframe_to_html(following_month_summary_filtered)}</div>", unsafe_allow_html=True)
                 
                 st.markdown(f"<h5 style='text-align: center;'>Balance to Arrive for {start_of_month.strftime('%B')}</h5>", unsafe_allow_html=True)
-                st.markdown(f"<div class='dataframe-container'>{dataframe_to_html(balance_to_arrive)}</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='dataframe-container dataframe-container-incoming'>{dataframe_to_html(balance_to_arrive)}</div>", unsafe_allow_html=True)
     else:
         st.error("No data to display.")
 
