@@ -81,6 +81,26 @@ dlr_acronyms = {
     'Winston-Salem': 'WINSTON'
 }
 
+reverse_mdl_mapping = {'ALT': 'ALTIMA', 'ARM': 'ARMADA', '720': 'FRONTIER', 'KIX': 'KICKS', 'LEF': 'LEAF',
+    'MUR': 'MURANO', 'PTH': 'PATHFINDER', 'RGE': 'ROGUE', 'SEN': 'SENTRA', 'TTN': 'TITAN', 'VSD': 'VERSA',
+    'ARI': 'ARIYA', 'TXD': 'TITAN XD'}
+
+# Aliases so variants collapse to one row with the canonical name
+model_canonical_aliases = {
+    'PTHFINDR': 'PATHFINDER',
+    'NKX': 'KICKS',
+    'N KICKS': 'KICKS',
+    'Z COUPE': 'Z',
+    'VSD': 'VERSA',
+}
+
+def norm_canonical_model(m):
+    """Normalize model name: apply code→full name, then alias→canonical (e.g. PTHFINDR→PATHFINDER, NKX→KICKS)."""
+    s = str(m).strip().upper()
+    s = reverse_mdl_mapping.get(s, s)
+    s = model_canonical_aliases.get(s, s)
+    return s
+
 excluded_dealers = ["NISSAN OF BOONE", "EAST CHARLOTTE NISSAN"]
 
 def clean_dataframe_types(df):
@@ -257,8 +277,13 @@ def summarize_90_day_sales_by_store():
             store: df for store, df in store_summaries.items()
             if store.upper() != "NISSAN OF BOONE" and store.upper() != "EAST CHARLTOTE NISSAN" and not df.empty
         }
+        # Normalize model names (e.g. PTHFINDR→PATHFINDER, NKX/N KICKS→KICKS) and aggregate so one row per model
+        def store_agg(df):
+            d = df.copy()
+            d["Model"] = d["Model"].apply(norm_canonical_model)
+            return d.groupby("Model", as_index=True)["Units Sold Rolling Days 90"].sum().to_frame()
         all_stores_summary = pd.concat(
-            {store: df.set_index("Model")[["Units Sold Rolling Days 90"]] for store, df in filtered_summaries.items()},
+            {store: store_agg(df) for store, df in filtered_summaries.items()},
             axis=1
         ).fillna(0)
         all_stores_summary.columns = all_stores_summary.columns.get_level_values(0)
@@ -1048,10 +1073,6 @@ def replace_mdl_with_full_name(df, reverse_mdl_mapping):
     df['MDL'] = df['MDL'].replace(reverse_mdl_mapping)
     return df
 
-reverse_mdl_mapping = {'ALT': 'ALTIMA', 'ARM': 'ARMADA', '720': 'FRONTIER', 'KIX': 'KICKS', 'LEF': 'LEAF',
-    'MUR': 'MURANO', 'PTH': 'PATHFINDER', 'RGE': 'ROGUE', 'SEN': 'SENTRA', 'TTN': 'TITAN', 'VSD': 'VERSA',
-    'ARI': 'ARIYA',  'TXD': 'TITAN XD'}
-
 @st.cache_data
 def summarize_incoming_data(df, start_date, end_date, all_models, all_dealers):
     src = df.copy()
@@ -1072,8 +1093,9 @@ def summarize_incoming_data(df, start_date, end_date, all_models, all_dealers):
     filtered.sort_values(['DEALER_NAME', 'UNIT_KEY', 'ETA'], inplace=True)
     filtered = filtered.drop_duplicates(subset=['DEALER_NAME','UNIT_KEY'], keep='last')
 
-    # model labels to full names
+    # model labels to full names, then canonical (e.g. PTHFINDR→PATHFINDER, NKX/N KICKS→KICKS)
     filtered = replace_mdl_with_full_name(filtered, reverse_mdl_mapping)
+    filtered['MDL'] = filtered['MDL'].apply(norm_canonical_model)
 
     combos = pd.MultiIndex.from_product([all_dealers, all_models], names=['DEALER_NAME','MDL'])
     summary = (filtered
@@ -1106,18 +1128,28 @@ def summarize_retailed_data(df, start_date, end_date, all_models, all_dealers):
     return pivot_table
 
 def summarize_current_inventory(dataframes):
-    combined_data = pd.concat(
-        {store: df.set_index("Model")["Dlr Inventory"] for store, df in dataframes.items() if "Dlr Inventory" in df},
-        axis=1,
-    ).fillna(0)
+    series_by_store = {}
+    for store, df in dataframes.items():
+        if "Dlr Inventory" not in df.columns or df.empty:
+            continue
+        d = df.copy()
+        d["Model"] = d["Model"].apply(norm_canonical_model)
+        d = d[d["Model"].str.upper() != "TOTAL"]
+        d = d[~d["Model"].isin(["GT-R", "TITAN XD"])]
+        agg = d.groupby("Model", as_index=True)["Dlr Inventory"].sum()
+        series_by_store[store] = agg
+
+    if not series_by_store:
+        return pd.DataFrame(columns=["Model", "Total"])
+
+    combined_data = pd.concat(series_by_store, axis=1).fillna(0)
     combined_data.columns = [dlr_acronyms.get(col, col) for col in combined_data.columns]
     combined_data.reset_index(inplace=True)
-    combined_data = combined_data[~combined_data["Model"].isin(["GT-R", "TITAN XD"])]
     combined_data["Total"] = combined_data.iloc[:, 1:].sum(axis=1)
-    total_row = combined_data.loc[combined_data["Model"].str.lower() == "total"]
-    combined_data = combined_data[combined_data["Model"].str.lower() != "total"].sort_values("Model")
-    if not total_row.empty:
-        combined_data = pd.concat([combined_data, total_row], ignore_index=True)
+    combined_data = combined_data.sort_values("Model", key=lambda x: x.str.lower())
+    total_vals = combined_data.drop(columns=["Model"]).sum(numeric_only=True)
+    total_vals["Model"] = "Total"
+    combined_data = pd.concat([combined_data, pd.DataFrame([total_vals])], ignore_index=True)
     return combined_data
 
 def summarize_dlv_date_data(df, start_date, end_date, all_models, all_dealers):
@@ -1126,10 +1158,71 @@ def summarize_dlv_date_data(df, start_date, end_date, all_models, all_dealers):
     filtered_df = filtered_df[~filtered_df['DEALER_NAME'].str.upper().isin(["NISSAN OF BOONE", "EAST CHARLOTTE NISSAN"])]
     filtered_df['DEALER_NAME'] = filtered_df['DEALER_NAME'].replace(dealer_acronyms)
     filtered_df = replace_mdl_with_full_name(filtered_df, reverse_mdl_mapping)
+    filtered_df['MDL'] = filtered_df['MDL'].apply(norm_canonical_model)
     all_combinations = pd.MultiIndex.from_product([all_dealers, all_models], names=['DEALER_NAME', 'MDL'])
     summary = filtered_df.groupby(['DEALER_NAME', 'MDL']).size().reindex(all_combinations, fill_value=0).reset_index(name='Count')
     pivot_table = pd.pivot_table(summary, values='Count', index='MDL', columns='DEALER_NAME', aggfunc='sum', fill_value=0, margins=True, margins_name='Total')
     return pivot_table
+
+def _model_has_any_nonzero_pivot(pivot_df, model):
+    """Return True if model row in pivot (index=MDL) has at least one non-zero value."""
+    if pivot_df.empty or model is None or str(model).upper() == "TOTAL":
+        return False
+    model_upper = str(model).upper()
+    match_idx = [i for i in pivot_df.index if str(i).strip().upper() == model_upper]
+    if not match_idx:
+        return False
+    row = pivot_df.loc[match_idx[0]]
+    return (row != 0).any() if hasattr(row, "__len__") else row != 0
+
+def _model_has_any_nonzero_model_col(df, model):
+    """Return True if model has at least one non-zero in the row (DataFrame with Model column)."""
+    if df.empty or model is None or str(model).upper() == "TOTAL":
+        return False
+    match = df[df["Model"].astype(str).str.upper() == str(model).upper()]
+    if match.empty:
+        return False
+    row = match.iloc[0]
+    numeric = row.drop(labels=["Model"], errors="ignore")
+    numeric = pd.to_numeric(numeric, errors="coerce").fillna(0)
+    return (numeric != 0).any()
+
+def incoming_tab_visible_models(
+    current_month_summary,
+    next_month_summary,
+    following_month_summary,
+    balance_to_arrive,
+    formatted_90_day_sales,
+    current_inventory_summary,
+):
+    """Return list of models that have at least one non-zero in any of the Incoming tab tables."""
+    candidates = set()  # use uppercase to avoid duplicate models
+    for pivot in (current_month_summary, next_month_summary, following_month_summary, balance_to_arrive):
+        if not pivot.empty and hasattr(pivot, "index"):
+            for m in pivot.index:
+                k = str(m).strip().upper()
+                if k != "TOTAL":
+                    candidates.add(k)
+    if not formatted_90_day_sales.empty and "Model" in formatted_90_day_sales.columns:
+        for m in formatted_90_day_sales["Model"].astype(str):
+            k = m.strip().upper()
+            if k != "TOTAL":
+                candidates.add(k)
+    if not current_inventory_summary.empty and "Model" in current_inventory_summary.columns:
+        for m in current_inventory_summary["Model"].astype(str):
+            k = m.strip().upper()
+            if k != "TOTAL":
+                candidates.add(k)
+    visible = [
+        m for m in candidates
+        if _model_has_any_nonzero_pivot(current_month_summary, m)
+        or _model_has_any_nonzero_pivot(next_month_summary, m)
+        or _model_has_any_nonzero_pivot(following_month_summary, m)
+        or _model_has_any_nonzero_pivot(balance_to_arrive, m)
+        or _model_has_any_nonzero_model_col(formatted_90_day_sales, m)
+        or _model_has_any_nonzero_model_col(current_inventory_summary, m)
+    ]
+    return sorted(visible, key=lambda x: x.upper())
 
 def dataframe_to_html(df):
     html = df.to_html(classes='dataframe-container', border=0, index_names=False)
@@ -1211,7 +1304,7 @@ with tab4:
         end_of_month = next_month_start - timedelta(days=1)
         next_month_end = following_month_start - timedelta(days=1)
         following_month_end = start_for_calc - timedelta(days=1)
-        all_models = combined_data['MDL'].replace(reverse_mdl_mapping).unique()
+        all_models = combined_data['MDL'].replace(reverse_mdl_mapping).apply(norm_canonical_model).unique()
         all_dealers = combined_data['DEALER_NAME'].replace(dealer_acronyms)
         all_dealers = all_dealers[~combined_data['DEALER_NAME'].str.upper().isin([d.upper() for d in excluded_dealers])].unique()
         with container:
@@ -1220,59 +1313,65 @@ with tab4:
             current_month_dlv_summary = summarize_dlv_date_data(combined_data, start_of_month, end_of_month, all_models, all_dealers)
             balance_to_arrive = current_month_summary.subtract(current_month_dlv_summary, fill_value=0)
             
-            # Get models from balance_to_arrive (excluding Total row)
-            if not balance_to_arrive.empty:
-                balance_models = [str(m) for m in balance_to_arrive.index if str(m).upper() != 'TOTAL']
-            else:
-                balance_models = []
-            
+            # Get next month and following month summaries and current inventory (needed for visible-models)
+            next_month_summary = summarize_incoming_data(combined_data, next_month_start, next_month_end, all_models, all_dealers)
+            following_month_summary = summarize_incoming_data(combined_data, following_month_start, following_month_end, all_models, all_dealers)
+            current_inventory_summary = summarize_current_inventory(store_summaries)
+            # Only show models that have at least one non-zero in any of the six tables
+            visible_models = incoming_tab_visible_models(
+                current_month_summary,
+                next_month_summary,
+                following_month_summary,
+                balance_to_arrive,
+                formatted_90_day_sales,
+                current_inventory_summary,
+            )
+
             blank_col1, col1, col2, col3, blank_col2 = st.columns([0.1, 1, 1, 1, 0.1])
             with col1:
-                
                 st.markdown(f"<h5 style='text-align: center;'>Incoming for {start_of_month.strftime('%B')}</h5>", unsafe_allow_html=True)
-                if balance_models:
-                    current_month_summary_filtered = reindex_table_to_match_models(current_month_summary, balance_models, 'MDL')
+                if visible_models:
+                    current_month_summary_filtered = reindex_table_to_match_models(current_month_summary, visible_models, 'MDL')
                 else:
                     current_month_summary_filtered = current_month_summary
                 st.markdown(f"<div class='dataframe-container dataframe-container-incoming'>{dataframe_to_html(current_month_summary_filtered)}</div>", unsafe_allow_html=True)
-                
+
                 st.markdown(f"<h5 style='text-align: center;'>90-Day Sales Summary</h5>", unsafe_allow_html=True)
-                if balance_models:
-                    formatted_90_day_sales_filtered = reindex_table_to_match_models(formatted_90_day_sales, balance_models, 'Model')
+                if visible_models:
+                    formatted_90_day_sales_filtered = reindex_table_to_match_models(formatted_90_day_sales, visible_models, 'Model')
                 else:
                     formatted_90_day_sales_filtered = formatted_90_day_sales
                 st.markdown(f"<div class='dataframe-container dataframe-container-incoming'>{dataframe_to_html_90(formatted_90_day_sales_filtered)}</div>", unsafe_allow_html=True)
-            
+
             with col2:
-                next_month_summary = summarize_incoming_data(combined_data, next_month_start, next_month_end, all_models, all_dealers)
-                current_inventory_summary = summarize_current_inventory(store_summaries)
-                
                 st.markdown(f"<h5 style='text-align: center;'>Incoming for {next_month_start.strftime('%B')}</h5>", unsafe_allow_html=True)
-                if balance_models:
-                    next_month_summary_filtered = reindex_table_to_match_models(next_month_summary, balance_models, 'MDL')
+                if visible_models:
+                    next_month_summary_filtered = reindex_table_to_match_models(next_month_summary, visible_models, 'MDL')
                 else:
                     next_month_summary_filtered = next_month_summary
                 st.markdown(f"<div class='dataframe-container dataframe-container-incoming'>{dataframe_to_html(next_month_summary_filtered)}</div>", unsafe_allow_html=True)
-                
+
                 st.markdown(f"<h5 style='text-align: center;'>Current Inventory</h5>", unsafe_allow_html=True)
-                if balance_models:
-                    current_inventory_summary_filtered = reindex_table_to_match_models(current_inventory_summary, balance_models, 'Model')
+                if visible_models:
+                    current_inventory_summary_filtered = reindex_table_to_match_models(current_inventory_summary, visible_models, 'Model')
                 else:
                     current_inventory_summary_filtered = current_inventory_summary
                 st.markdown(f"<div class='dataframe-container dataframe-container-incoming'>{dataframe_to_html_90(current_inventory_summary_filtered)}</div>", unsafe_allow_html=True)
-            
+
             with col3:
-                following_month_summary = summarize_incoming_data(combined_data, following_month_start, following_month_end, all_models, all_dealers)
-                
                 st.markdown(f"<h5 style='text-align: center;'>Incoming for {following_month_start.strftime('%B')}</h5>", unsafe_allow_html=True)
-                if balance_models:
-                    following_month_summary_filtered = reindex_table_to_match_models(following_month_summary, balance_models, 'MDL')
+                if visible_models:
+                    following_month_summary_filtered = reindex_table_to_match_models(following_month_summary, visible_models, 'MDL')
                 else:
                     following_month_summary_filtered = following_month_summary
                 st.markdown(f"<div class='dataframe-container dataframe-container-incoming'>{dataframe_to_html(following_month_summary_filtered)}</div>", unsafe_allow_html=True)
-                
+
                 st.markdown(f"<h5 style='text-align: center;'>Balance to Arrive for {start_of_month.strftime('%B')}</h5>", unsafe_allow_html=True)
-                st.markdown(f"<div class='dataframe-container dataframe-container-incoming'>{dataframe_to_html(balance_to_arrive)}</div>", unsafe_allow_html=True)
+                if visible_models:
+                    balance_to_arrive_filtered = reindex_table_to_match_models(balance_to_arrive, visible_models, 'MDL')
+                else:
+                    balance_to_arrive_filtered = balance_to_arrive
+                st.markdown(f"<div class='dataframe-container dataframe-container-incoming'>{dataframe_to_html(balance_to_arrive_filtered)}</div>", unsafe_allow_html=True)
     else:
         st.error("No data to display.")
 
